@@ -1,0 +1,61 @@
+/* =========================================================
+   Campus · The English Room — ajustes propios del sitio del campus
+   (se carga después de room.css)
+   ========================================================= */
+
+.hd-campus { font-family: var(--script); font-style: normal; font-weight: 700; font-size: 15px; letter-spacing: 0; color: var(--turq); text-transform: lowercase; }
+.hero-sub .script-in { display: block; font-family: var(--script); font-weight: 700; font-size: 1.35em; color: var(--turq); margin-bottom: 4px; }
+
+/* dos puertas: alumnos y profes */
+.doors { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(14px, 2vw, 26px); }
+.doors .next-card { min-height: clamp(340px, 52vh, 520px); }
+
+/* el teléfono con la proporción real de las capturas del campus (468×850), sin recortar el texto */
+.dev[data-mode="phone"] { --w: calc(var(--ph) * .56); }
+.dev[data-mode="phone"] .dev-screen img { object-position: center top; }
+.dev-btn { left: calc(50% + var(--ph) * .28 + 2px); }
+.dev[data-mode="phone"] .dev-tag { left: calc(50% - var(--ph) * .28 - 200px); }
+@media (max-width: 900px) { .dev[data-mode="phone"] .dev-tag { left: auto; } }
+
+/* ingreso */
+.signin { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, .8fr); gap: clamp(30px, 6vw, 100px); align-items: center; }
+.ways { list-style: none; margin: 34px 0 0; padding: 0; display: grid; gap: 10px; }
+.ways li { display: grid; grid-template-columns: 52px 1fr; gap: 16px; align-items: start; padding: 18px; border: 1px solid var(--line); border-radius: 18px; background: rgba(255,255,255,.035); }
+.ways b { display: block; font-family: var(--serif); font-weight: 400; font-size: 28px; line-height: 1; margin-bottom: 6px; }
+.ways p { margin: 0; color: rgba(243,247,246,.8); font-size: 16px; }
+.w-ic { width: 52px; height: 52px; border-radius: 14px; display: grid; place-items: center; background: #fff; color: var(--ink); font-weight: 700; font-size: 22px; }
+.w-ic.g { color: #4285f4; }
+.w-ic.m { grid-template-columns: 1fr 1fr; gap: 3px; padding: 13px; }
+.w-ic.m i { display: block; width: 100%; aspect-ratio: 1; }
+.w-ic.m i:nth-child(1) { background: #f25022; } .w-ic.m i:nth-child(2) { background: #7fba00; }
+.w-ic.m i:nth-child(3) { background: #00a4ef; } .w-ic.m i:nth-child(4) { background: #ffb900; }
+.w-ic.e { background: var(--turq); }
+.rules { margin-top: 24px; padding-left: 16px; border-left: 3px solid var(--pink); }
+.rules p { font-size: 15px; color: rgba(243,247,246,.86); margin-bottom: 10px; }
+.phone-shot { margin: 0; justify-self: center; width: min(340px, 100%); padding: 12px; border-radius: 46px; background: #060708; box-shadow: 0 0 0 1.5px #3d454a, 0 0 0 3px #15191c, 0 60px 110px -40px rgba(0,0,0,.9), 0 0 120px -40px rgba(38,204,200,.3); }
+.phone-shot img { width: 100%; border-radius: 36px; display: block; }
+
+@media (max-width: 900px) {
+  .doors, .signin { grid-template-columns: 1fr; }
+  .phone-shot { width: min(300px, 82%); }
+  .hd-logo span { display: none; }
+  .hd-talk::before { content: none; }
+  .hd-talk .roll { display: inline-block; }
+}
+
+/* =========================================================
+   Celular fluido: sin desenfoques de vidrio (son muy caros en
+   GPU móvil), sombras más simples y menos capas animadas.
+   ========================================================= */
+@media (max-width: 900px), (pointer: coarse) {
+  .msg, .cd-shell, .cd-top, .channels a, .story-step, .portrait figcaption, .hd-round, .call-bar span, .contact-card {
+    -webkit-backdrop-filter: none !important; backdrop-filter: none !important;
+  }
+  .msg { background: rgba(8, 26, 31, .94); }
+  .story-step { background: rgba(6, 19, 23, .9); }
+  .cd-top { background: rgba(6, 19, 23, .97); }
+  .dev-lid { box-shadow: 0 0 0 1.5px #3d454a, 0 30px 60px -30px rgba(0,0,0,.9); }
+  .phone-shot { box-shadow: 0 0 0 1.5px #3d454a, 0 30px 60px -30px rgba(0,0,0,.9); }
+  .dev-shadow { filter: none; }
+  .loader-word span { animation-duration: .45s; }
+}

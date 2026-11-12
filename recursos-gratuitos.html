@@ -1,202 +1,177 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es" class="no-js">
+<head>
+    <meta charset="utf-8">
+    <title>The English Room</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="inglés, cursos de inglés, aprender inglés, the english room" name="keywords">
+    <meta content="¿Buscas pasarla bien mientras aprendes? Llegaste. Empieza a disfrutar del inglés. Mi nombre es Carla, soy una uruguaya amante de los viajes y profesora de inglés, estudié ciencias de la comunicación y me recibí como teacher of english as a second language en el año 2011." name="description">
+    <meta name="theme-color" content="#103741">
+    <link href="img/logo.jpeg" rel="icon">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600&family=Lobster+Two:wght@700&display=swap" rel="stylesheet">
+    <link href="css/room.css" rel="stylesheet">
+    <script>document.documentElement.className = 'js';</script>
+    <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+      }
+    }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js" defer></script>
+    <script type="module" src="js/room/app.js"></script>
+</head>
 
-    <head>
-        <meta charset="utf-8">
-        <title>The English Room</title>
-        <meta content="width=device-width, initial-scale=1.0" name="viewport">
-        <meta content="inglés, cursos de inglés, aprender inglés, the english room" name="keywords">
-        <meta content="¿Buscas pasarla bien mientras aprendes? Llegaste. Empieza a disfrutar del inglés. Mi nombre es Carla, soy una uruguaya amante de los viajes y profesora de inglés, estudié ciencias de la comunicación y me recibí como teacher of english as a second language en el año 2011." name="description">
-    
-        <!-- Favicon -->
-        <link href="img/logo.jpeg" rel="icon">
-    
-        <!-- Google Web Fonts -->
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600&family=Inter:wght@600&family=Lobster+Two:wght@700&display=swap" rel="stylesheet">
-        
-        <!-- Icon Font Stylesheet -->
-        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
-    
-        <!-- Libraries Stylesheet -->
-        <link href="lib/animate/animate.min.css" rel="stylesheet">
-        <link href="lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
-    
-        <!-- Customized Bootstrap Stylesheet -->
-        <link href="css/bootstrap.min.css" rel="stylesheet">
-    
-        <!-- Template Stylesheet -->
-        <link href="css/style.css" rel="stylesheet">
-    </head>
+<body data-page="recursos" data-theme="light">
 
-<body>
-    <div class="container-xxl bg-white p-0">
-        <!-- Spinner Start -->
-        <div id="spinner" class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
-            <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
-                <span class="sr-only">Loading...</span>
-            </div>
+    <a class="skip" href="#main">Saltar al contenido</a>
+
+    <div class="loader" id="loader" aria-hidden="true">
+        <div class="loader-bubble">
+            <svg viewBox="0 0 120 90" aria-hidden="true">
+                <path d="M6 10 L114 4 L110 66 L52 66 L38 86 L36 66 L10 64 Z" fill="none" stroke="rgba(255,245,243,.25)" stroke-width="3" stroke-linejoin="round"/>
+                <path class="fill" d="M6 10 L114 4 L110 66 L52 66 L38 86 L36 66 L10 64 Z" fill="#26ccc8" style="clip-path: inset(0 100% 0 0)"/>
+            </svg>
         </div>
-        <!-- Spinner End -->
-
-
-             <!-- Navbar Start -->
-             <nav class="navbar navbar-expand-lg bg-white navbar-light sticky-top px-4 px-lg-5 py-lg-0">
-                <a href="index.html" class="navbar-brand">
-                   <img src="img/logo.jpeg" alt="">
-                </a>
-                <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarCollapse">
-                    <div class="navbar-nav mx-auto">
-                        <a href="index.html" class="nav-item nav-link">Inicio</a>
-                        <a href="sobre-mi.html" class="nav-item nav-link">Sobre mí</a>
-                        <a href="cursos.html" class="nav-item nav-link">Cursos</a>
-                        <a href="recursos-gratuitos.html" class="nav-item nav-link">Recursos gratuitos</a>
-                        <a href="https://www.cambridgeenglish.org/es/test-your-english/" target="_blank" class="nav-item nav-link">Qué nivel tengo ?</a>
-                        <a href="contacto.html" class="nav-item nav-link">Contacto</a>
-                    </div>
-                    <a href="https://wa.me/+59892354225?text=¡Que bueno que estás acá! En breve nos vamos a estar comunicando con vos. ¡Saludos! Carla Migliarini" target="_blank" class="btn btn-primary rounded-pill px-3  d-lg-block a-btn-wpp">Hablemos por Whatsapp <img src="img/whatsApp_icon.png" alt=""></a>
-                </div>
-            </nav>
-            <!-- Navbar End -->
-
-
-        <!-- Page Header End -->
-        <div class="container-xxl py-5 page-header position-relative mb-5">
-            <div class="container py-5">
-                <h1 class="display-2 text-white animated slideInDown mb-4">Recursos Gratuitos</h1>
-                <nav aria-label="breadcrumb animated slideInDown">
-                    <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="index.html">Inicio</a></li>
-                        <li class="breadcrumb-item text-white active" aria-current="page">Recursos Gratuitos</li>
-                    </ol>
-                </nav>
-            </div>
-        </div>
-        <!-- Page Header End -->
-
-
- 
-
-        <!-- Call To Action Start -->
-        <div class="container-xxl py-5">
-            <div class="container">
-                <div class="bg-light rounded">
-                    <div class="row g-0">
-                        <div class="col-lg-6 wow fadeIn" data-wow-delay="0.1s" style="min-height: 400px;">
-                            <div class="position-relative h-100">
-                                <img class="position-absolute w-100 h-100 rounded" src="img/foto-13.png" style="object-fit: cover;">
-                            </div>
-                        </div>
-                        <div class="col-lg-6 wow fadeIn" data-wow-delay="0.5s">
-                            <div class="h-100 d-flex flex-column justify-content-center p-5">
-                                <h2 class="mb-5">Descarga tu pdf completamente gratis</h2>
-                                <a class="btn btn-primary py-3 px-5" target="_blank" href="pdf/silent-letters.pdf">Descargar PDF<i class="fa fa-arrow-right ms-2"></i></a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- Call To Action End -->
-
-           <!-- Call To Action Start -->
-           <div class="container-xxl py-5">
-            <div class="container">
-                <div class="bg-light rounded">
-                    <div class="row g-0">
-                        <div class="col-lg-6 wow fadeIn" data-wow-delay="0.5s">
-                            <div class="h-100 d-flex flex-column justify-content-center p-5">
-                                <h2 class="mb-5">Descarga tu pdf completamente gratis</h2>
-                                <a class="btn btn-primary py-3 px-5" target="_blank" href="pdf/30-expresiones.pdf" >Descargar PDF<i class="fa fa-arrow-right ms-2"></i></a>
-                            </div>
-                        </div>
-                        <div class="col-lg-6 wow fadeIn" data-wow-delay="0.1s" style="min-height: 400px;">
-                            <div class="position-relative h-100">
-                                <img class="position-absolute w-100 h-100 rounded" src="img/foto-15.png" style="object-fit: cover;">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- Call To Action End -->
-
-          <!-- Call To Action Start -->
-          <div class="container-xxl py-5">
-            <div class="container">
-                <div class="bg-light rounded">
-                    <div class="row g-0">
-                        <div class="col-lg-6 wow fadeIn" data-wow-delay="0.1s" style="min-height: 400px;">
-                            <div class="position-relative h-100">
-                                <img class="position-absolute w-100 h-100 rounded" src="img/foto-cursos.png" style="object-fit: cover;">
-                            </div>
-                        </div>
-                        <div class="col-lg-6 wow fadeIn" data-wow-delay="0.5s">
-                            <div class="h-100 d-flex flex-column justify-content-center p-5">
-                                <h2 class="mb-5">Descarga tu pdf completamente gratis</h2>
-                                <a class="btn btn-primary py-3 px-5" target="_blank" href="pdf/IDIOMS-FREE-RESOURCE.pdf">Descargar PDF<i class="fa fa-arrow-right ms-2"></i></a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-
-        <!-- Footer Start -->
-        <div class="container-fluid bg-dark text-white-50 footer pt-5 mt-5 wow fadeIn" data-wow-delay="0.1s">
-            <div class="container py-5">
-                <div class="row g-5 footer-div">
-                    <div class="col-lg-4 col-md-6">
-                        <h3 class="text-white mb-4">Contacto</h3>
-                        <p class="mb-2"><i class="fa fa-phone-alt me-3"></i>+598 92 354 225</p> 
-                        <p class="mb-2"><i class="fa fa-envelope me-3"></i> info@theenglishroom.edu.uy</p>
-                        <div class="d-flex pt-2">
-                            <a class="btn btn-outline-light btn-social" href="https://www.instagram.com/theenglish.room/" target="_blank"><i class="fab fa-instagram"></i></a>
-                            <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-linkedin-in"></i></a>
-                        </div>
-                    </div>
-                    <div class="col-lg-4 col-md-6 footer-div-img">
-                        <div class="footer-title"><h3 class="text-white mb-4">“Learn English From Your Favourite Spot”</h3></div>
-                        <div class="footer-img"><img style="width: 120px; margin-top: -20px;" src="img/logo-transparente.png" alt=""></div>
-                    </div>
-                </div>
-            </div>
-            <div class="container">
-                <div class="copyright">
-                    <div class="row">
-                        <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
-                            &copy; <a class="border-bottom" href="#">theenglishroom.edu.uy</a>, Todos Los Derechos Reservados. 
-							
-							<!--/*** This template is free as long as you keep the footer author’s credit link/attribution link/backlink. If you'd like to use the template without the footer author’s credit link/attribution link/backlink, you can purchase the Credit Removal License from "https://htmlcodex.com/credit-removal". Thank you for your support. ***/-->
-                           <br> <br>Sitio Desarrollado Por | <a class="border-bottom" href="https://digitalbuilders.uy" target="_blank">Digital Builders</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- Footer End -->
-
-
-        <!-- Back to Top -->
-        <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>
+        <div class="loader-count" id="loaderCount">000</div>
+        <div class="loader-word">The English Room<br>Entrando a la clase</div>
     </div>
 
-    <!-- JavaScript Libraries -->
-    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="lib/wow/wow.min.js"></script>
-    <script src="lib/easing/easing.min.js"></script>
-    <script src="lib/waypoints/waypoints.min.js"></script>
-    <script src="lib/owlcarousel/owl.carousel.min.js"></script>
+    <canvas id="gl" aria-hidden="true"></canvas>
 
-    <!-- Template Javascript -->
-    <script src="js/main.js"></script>
+    <header class="hd" id="hd">
+        <a class="hd-logo" href="index.html" aria-label="The English Room, inicio">
+            <img src="img/logo-transparente.png" alt="">
+            <span>THE ENGLISH<br>ROOM</span>
+        </a>
+        <p class="hd-tag">Learn English<br>From Your Favourite Spot</p>
+        <div class="hd-right">
+            <a class="hd-round" href="https://www.cambridgeenglish.org/es/test-your-english/" target="_blank" rel="noopener" title="¿Qué nivel tengo?" aria-label="¿Qué nivel tengo? Test de Cambridge (abre en otra pestaña)"><span aria-hidden="true">Aa</span></a>
+            <a class="hd-talk" href="https://wa.me/+59892354225?text=¡Que bueno que estás acá! En breve nos vamos a estar comunicando con vos. ¡Saludos! Carla Migliarini" target="_blank" rel="noopener" aria-label="Hablemos por WhatsApp (abre en otra pestaña)"><span class="roll"><span>Hablemos</span><span aria-hidden="true">Hablemos</span></span><i class="dot" aria-hidden="true"></i></a>
+            <button class="hd-menu" id="menuBtn" type="button" aria-expanded="false" aria-controls="menu"><span class="roll"><span>Menú</span><span aria-hidden="true">Menú</span></span><i class="dots" aria-hidden="true"></i></button>
+        </div>
+        <nav class="menu" id="menu" aria-label="Principal" hidden>
+            <div class="menu-card menu-links">
+                <a href="index.html" data-nav="inicio"><span class="roll"><span>Inicio</span><span aria-hidden="true">Inicio</span></span></a>
+                <a href="sobre-mi.html" data-nav="sobre-mi"><span class="roll"><span>Sobre mí</span><span aria-hidden="true">Sobre mí</span></span></a>
+                <a href="cursos.html" data-nav="cursos"><span class="roll"><span>Cursos</span><span aria-hidden="true">Cursos</span></span></a>
+                <a href="recursos-gratuitos.html" data-nav="recursos" aria-current="page"><span class="roll"><span>Recursos gratuitos</span><span aria-hidden="true">Recursos gratuitos</span></span></a>
+                <a href="contacto.html" data-nav="contacto"><span class="roll"><span>Contacto</span><span aria-hidden="true">Contacto</span></span></a>
+            </div>
+            <a class="menu-card menu-level" href="https://www.cambridgeenglish.org/es/test-your-english/" target="_blank" rel="noopener">
+                <strong>¿Qué nivel<br>tengo?</strong>
+                <span>Hacé el test de Cambridge →</span>
+            </a>
+            <a class="menu-card menu-ig" href="https://www.instagram.com/theenglish.room/" target="_blank" rel="noopener"><span>Instagram</span><b>@theenglish.room ↗</b></a>
+        </nav>
+    </header>
+
+    <main id="main" class="page page-recursos" data-page="recursos" data-theme="light" data-hero="docs" tabindex="-1">
+
+        <section class="hero" aria-labelledby="h-recursos">
+            <div class="frame frame-hero" data-gl="docs" data-variant="stack" data-hero-frame>
+                <img class="frame-fallback" src="img/foto-13.png" alt="">
+                <div class="hero-copy">
+                    <ol class="crumbs"><li><a href="index.html">Inicio</a></li><li aria-current="page">Recursos Gratuitos</li></ol>
+                    <h1 id="h-recursos" class="hero-title" data-split>Recursos Gratuitos</h1>
+                </div>
+                <p class="frame-hint" aria-hidden="true">Tres PDFs · gratis para tu clase</p>
+            </div>
+            <div class="crosses" aria-hidden="true"><i>+</i><i>+</i><span>Deslizá para descargar</span><i>+</i><i>+</i></div>
+        </section>
+
+        <ul class="resources over" data-ribbon="resources">
+            <li class="resource">
+                <section class="split" aria-labelledby="h-pdf-0">
+                    <div class="split-media" data-reveal>
+                        <div class="frame" data-gl="docs" data-variant="0" data-img="img/foto-13.png" style="aspect-ratio:1/1">
+                            <img class="frame-fallback" src="img/foto-13.png" alt="" loading="lazy">
+                        </div>
+                    </div>
+                    <div class="split-text">
+                        <span class="file" data-reveal>PDF 01 · silent-letters.pdf</span>
+                        <h2 id="h-pdf-0" class="big" data-split>Descarga tu pdf completamente gratis</h2>
+                        <p data-reveal><a class="pill pill-blue pill-arrow" target="_blank" rel="noopener" href="pdf/silent-letters.pdf">Descargar PDF</a></p>
+                    </div>
+                </section>
+            </li>
+            <li class="resource">
+                <section class="split rev" aria-labelledby="h-pdf-1">
+                    <div class="split-media" data-reveal>
+                        <div class="frame" data-gl="docs" data-variant="1" data-img="img/foto-15.png" style="aspect-ratio:1/1">
+                            <img class="frame-fallback" src="img/foto-15.png" alt="" loading="lazy">
+                        </div>
+                    </div>
+                    <div class="split-text">
+                        <span class="file" data-reveal>PDF 02 · 30-expresiones.pdf</span>
+                        <h2 id="h-pdf-1" class="big" data-split>Descarga tu pdf completamente gratis</h2>
+                        <p data-reveal><a class="pill pill-blue pill-arrow" target="_blank" rel="noopener" href="pdf/30-expresiones.pdf">Descargar PDF</a></p>
+                    </div>
+                </section>
+            </li>
+            <li class="resource">
+                <section class="split" aria-labelledby="h-pdf-2">
+                    <div class="split-media" data-reveal>
+                        <div class="frame" data-gl="docs" data-variant="2" data-img="img/foto-cursos.png" style="aspect-ratio:1/1">
+                            <img class="frame-fallback" src="img/foto-cursos.png" alt="" loading="lazy">
+                        </div>
+                    </div>
+                    <div class="split-text">
+                        <span class="file" data-reveal>PDF 03 · IDIOMS-FREE-RESOURCE.pdf</span>
+                        <h2 id="h-pdf-2" class="big" data-split>Descarga tu pdf completamente gratis</h2>
+                        <p data-reveal><a class="pill pill-blue pill-arrow" target="_blank" rel="noopener" href="pdf/IDIOMS-FREE-RESOURCE.pdf">Descargar PDF</a></p>
+                    </div>
+                </section>
+            </li>
+        </ul>
+
+        <footer class="ft over" aria-labelledby="ft-contacto">
+            <div class="ft-top">
+                <p class="ft-quote" data-reveal>“Learn English From Your Favourite Spot”</p>
+                <div data-reveal style="--d:100">
+                    <h3 id="ft-contacto">Contacto</h3>
+                    <ul>
+                        <li><a href="tel:+59892354225">+598 92 354 225</a></li>
+                        <li><a href="mailto:info@theenglishroom.edu.uy">info@theenglishroom.edu.uy</a></li>
+                        <li><a href="https://www.instagram.com/theenglish.room/" target="_blank" rel="noopener">Instagram ↗</a></li>
+                        <li><a href="https://wa.me/+59892354225?text=¡Que bueno que estás acá! En breve nos vamos a estar comunicando con vos. ¡Saludos! Carla Migliarini" target="_blank" rel="noopener">Hablemos por Whatsapp ↗</a></li>
+                    </ul>
+                </div>
+                <div data-reveal style="--d:200">
+                    <h3>Navegar</h3>
+                    <ul>
+                        <li><a href="index.html">Inicio</a></li>
+                        <li><a href="sobre-mi.html">Sobre mí</a></li>
+                        <li><a href="cursos.html">Cursos</a></li>
+                        <li><a href="recursos-gratuitos.html">Recursos gratuitos</a></li>
+                        <li><a href="contacto.html">Contacto</a></li>
+                        <li><a href="https://www.cambridgeenglish.org/es/test-your-english/" target="_blank" rel="noopener">Qué nivel tengo ? ↗</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="ft-bottom">
+                <img src="img/logo-transparente.png" alt="The English Room">
+                <p>&copy; <a href="index.html">theenglishroom.edu.uy</a>, Todos Los Derechos Reservados.<br><br>Sitio Desarrollado Por | <a href="https://digitalbuilders.uy" target="_blank" rel="noopener">Digital Builders</a></p>
+            </div>
+        </footer>
+
+        <section class="portal" data-portal data-next="contacto.html" aria-label="Siguiente: Contacto">
+            <div class="portal-sticky">
+                <div class="portal-view" data-gl="portal"></div>
+                <div class="portal-copy over">
+                    <span class="eyebrow">Siguiente clase</span><br>
+                    <a href="contacto.html">Contacto</a>
+                </div>
+                <p class="portal-hint over" aria-hidden="true">Seguí bajando para entrar</p>
+            </div>
+        </section>
+
+    </main>
+
+    <div class="veil" id="veil" aria-hidden="true"></div>
+    <div class="sr-only" id="announcer" aria-live="polite"></div>
 </body>
-
 </html>

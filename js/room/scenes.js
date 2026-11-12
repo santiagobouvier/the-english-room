@@ -13,7 +13,7 @@ export const C = { blue: 0x296f8d, turq: 0x26ccc8, pink: 0xF5A7B5, cream: 0xFFF5
 
 /** Escena principal de cada página: lo que se ve dentro de la pantalla al viajar. */
 export const PAGE_HERO = {
-  'index.html': ['classroom'], '': ['classroom'], 'sobre-mi.html': ['desk'], 'cursos.html': ['levels'],
+  'index.html': ['classroom'], '': ['classroom'], 'sobre-mi.html': ['about'], 'cursos.html': ['levels'],
   'recursos-gratuitos.html': ['docs', 'stack'], 'contacto.html': ['lobby'],
 };
 
@@ -1867,252 +1867,75 @@ class Spine extends Base {
 
 
 // =============================================================
-// SOBRE MÍ · "The English Room", literalmente: el cuarto de Carla.
-// Escritorio con lámpara, la laptop con la clase en curso, y en la
-// pared un corcho con las postales de su historia unidas por un hilo.
-// Cada párrafo lleva la cámara a lo que cuenta.
+// SOBRE MÍ · fondo abstracto de marca: pocos globos de diálogo de
+// vidrio (la forma del logo) que flotan lento en la oscuridad.
+// Cada párrafo cambia apenas el tono de la luz; la historia manda.
 // =============================================================
-function postcard(kind) {
-  return canvasTex(1024, 680, (x, w, h) => {
-    if (kind === 'australia') {
-      const g = x.createLinearGradient(0, 0, 0, h); g.addColorStop(0, '#ffb36b'); g.addColorStop(0.55, '#ffd9a0'); g.addColorStop(0.56, '#26ccc8'); g.addColorStop(1, '#1b8f9e');
-      x.fillStyle = g; x.fillRect(0, 0, w, h);
-      x.fillStyle = '#fff3c4'; x.beginPath(); x.arc(w * 0.72, h * 0.36, 70, 0, Math.PI * 2); x.fill();
-      x.strokeStyle = 'rgba(255,255,255,.7)'; x.lineWidth = 6;
-      for (let i = 0; i < 5; i++) { x.beginPath(); x.moveTo(60, h * 0.66 + i * 38); x.quadraticCurveTo(w / 2, h * 0.62 + i * 38, w - 60, h * 0.66 + i * 38); x.stroke(); }
-      x.fillStyle = '#103741'; x.font = '700 46px "Inter Tight", sans-serif'; x.fillText('Greetings from', 60, 110);
-      x.font = '700 120px "Lobster Two", Georgia, serif'; x.fillStyle = '#ffffff'; x.fillText('Australia', 54, 240);
-    } else if (kind === 'ushuaia') {
-      const g = x.createLinearGradient(0, 0, 0, h); g.addColorStop(0, '#9fd6e8'); g.addColorStop(0.6, '#e8f6fa'); g.addColorStop(0.61, '#296f8d'); g.addColorStop(1, '#103741');
-      x.fillStyle = g; x.fillRect(0, 0, w, h);
-      const mt = (ox, oy, wd, ht, col) => { x.fillStyle = col; x.beginPath(); x.moveTo(ox, oy); x.lineTo(ox + wd / 2, oy - ht); x.lineTo(ox + wd, oy); x.closePath(); x.fill(); x.fillStyle = '#ffffff'; x.beginPath(); x.moveTo(ox + wd * 0.38, oy - ht * 0.76); x.lineTo(ox + wd / 2, oy - ht); x.lineTo(ox + wd * 0.62, oy - ht * 0.76); x.closePath(); x.fill(); };
-      mt(-40, h * 0.61, 520, 300, '#5d7f8c'); mt(300, h * 0.61, 600, 360, '#476a78'); mt(640, h * 0.61, 480, 260, '#5d7f8c');
-      // faro
-      x.fillStyle = '#ffffff'; x.fillRect(w * 0.18, h * 0.52, 34, 120);
-      x.fillStyle = '#e0566b'; for (let i = 0; i < 3; i++) x.fillRect(w * 0.18, h * 0.52 + 12 + i * 36, 34, 16);
-      x.fillStyle = '#F5A7B5'; x.fillRect(w * 0.18 - 6, h * 0.52 - 18, 46, 18);
-      x.fillStyle = '#103741'; x.font = '700 46px "Inter Tight", sans-serif'; x.fillText('Fin del mundo', 60, 100);
-      x.font = '700 120px "Lobster Two", Georgia, serif'; x.fillStyle = '#103741'; x.fillText('Ushuaia', 54, 225);
-    } else if (kind === 'teacher') {
-      x.fillStyle = '#fffaf0'; x.fillRect(0, 0, w, h);
-      x.strokeStyle = '#26ccc8'; x.lineWidth = 14; x.strokeRect(30, 30, w - 60, h - 60);
-      x.strokeStyle = 'rgba(16,55,65,.25)'; x.lineWidth = 3; x.strokeRect(54, 54, w - 108, h - 108);
-      x.fillStyle = '#103741'; x.textAlign = 'center';
-      x.font = '400 70px "Instrument Serif", Georgia, serif'; x.fillText('Teacher of English', w / 2, 270);
-      x.font = '400 150px "Instrument Serif", Georgia, serif'; x.fillStyle = '#296f8d'; x.fillText('2011', w / 2, 450);
-      x.font = '700 54px "Lobster Two", Georgia, serif'; x.fillStyle = '#F5A7B5'; x.fillText('¡Me recibí!', w / 2, 560);
-    } else if (kind === 'note') {
-      x.fillStyle = '#F5A7B5'; x.fillRect(0, 0, w, h);
-      x.fillStyle = '#103741'; x.textAlign = 'center'; x.font = '700 150px "Lobster Two", Georgia, serif';
-      x.fillText('Are you', w / 2, 300); x.fillText('ready?', w / 2, 470);
-    }
-    if (kind === 'australia' || kind === 'ushuaia') {
-      x.fillStyle = '#fffaf0'; x.fillRect(w - 170, 40, 120, 150);
-      x.strokeStyle = '#F5A7B5'; x.setLineDash([8, 6]); x.lineWidth = 4; x.strokeRect(w - 162, 48, 104, 134); x.setLineDash([]);
-      x.fillStyle = '#26ccc8'; x.beginPath(); x.arc(w - 110, 115, 32, 0, Math.PI * 2); x.fill();
-    }
-  });
-}
+const ABOUT_TONES = { intro: C.turq, australia: C.pink, uruguay: C.blue, ushuaia: C.cream, world: C.turq };
 
-function laptopScreen(canvas) {
-  const ctx = canvas.getContext('2d');
-  const w = canvas.width, h = canvas.height;
-  ctx.fillStyle = '#071a1f'; ctx.fillRect(0, 0, w, h);
-  const people = [['img/room/foto-30.jpg', 'Carla', 'Teacher', false], ['img/student-1.png', 'Mica', null, true], ['img/student-2.png', 'Seba', null, true],
-    ['img/student-3.png', 'Bruna', null, true], ['img/room/caro.jpg', 'Caro', null, true], ['img/room/mika.jpg', 'Mika', null, true]];
-  const tw = (w - 60) / 3, th = (h - 110) / 2;
-  return Promise.all([fontsReady(), ...people.map(([src]) => img(src))]).then(([, ...ims]) => {
-    people.forEach(([, name, role, avatar], i) => {
-      const c = document.createElement('canvas'); c.width = 800; c.height = 500;
-      drawPerson(c, ims[i], { name, role, avatar, speaking: i === 0 });
-      ctx.save(); ctx.beginPath(); ctx.roundRect(20 + (i % 3) * (tw + 10), 20 + Math.floor(i / 3) * (th + 10), tw, th, 14); ctx.clip();
-      ctx.drawImage(c, 20 + (i % 3) * (tw + 10), 20 + Math.floor(i / 3) * (th + 10), tw, th); ctx.restore();
-    });
-    ctx.fillStyle = 'rgba(255,255,255,.12)';
-    [w / 2 - 120, w / 2 - 40, w / 2 + 40].forEach((cx) => { ctx.beginPath(); ctx.arc(cx, h - 42, 24, 0, Math.PI * 2); ctx.fill(); });
-    ctx.fillStyle = '#e0566b'; ctx.beginPath(); ctx.roundRect(w / 2 + 84, h - 66, 70, 48, 24); ctx.fill();
-  });
-}
-
-class Desk extends Base {
+class AboutBg extends Base {
   constructor(world) {
-    super(world, 34);
-    this.scene.background = null; // se ve el fondo animado
-    const root = new THREE.Group();
-    this.scene.add(root);
-    // luz: lámpara cálida + relleno suave en los colores de la marca
-    this.scene.add(new THREE.AmbientLight(0xffffff, 0.35));
-    const key = new THREE.DirectionalLight(0xffffff, 0.9); key.position.set(3, 6, 6); this.scene.add(key);
-    const lamp = new THREE.PointLight(0xffd6a0, 14, 9, 1.8); lamp.position.set(-2.1, 1.2, 0.6); this.scene.add(lamp);
-    const rim = new THREE.PointLight(C.turq, 18, 14, 2); rim.position.set(4, 2.5, 1.5); this.scene.add(rim);
-
-    // pared y escritorio
-    const wall = new THREE.Mesh(new THREE.PlaneGeometry(26, 14), new THREE.MeshStandardMaterial({ color: 0x0a2228, roughness: 0.95 }));
-    wall.position.set(0, 2.5, -2.05);
-    root.add(wall);
-    const desk = new THREE.Mesh(new RoundedBoxGeometry(10, 0.24, 3.8, 3, 0.06), new THREE.MeshStandardMaterial({ color: 0x5e3f2c, roughness: 0.55 }));
-    desk.position.set(0, -1.12, -0.15);
-    root.add(desk);
-
-    // corcho con la historia
-    const cork = new THREE.Mesh(new RoundedBoxGeometry(5.6, 3.2, 0.1, 3, 0.05), new THREE.MeshStandardMaterial({ color: 0x9c7450, roughness: 0.95 }));
-    cork.position.set(-0.5, 2.15, -1.98);
-    const corkFrame = new THREE.Mesh(new RoundedBoxGeometry(5.8, 3.4, 0.08, 3, 0.06), glossy(0x5a3a26, { clearcoat: 0.2 }));
-    corkFrame.position.set(-0.5, 2.15, -2.01);
-    root.add(corkFrame, cork);
-    const pinMat = glossy(C.pink);
-    const pinned = (map, wdt, hgt, x, y, rz, frame = false) => {
-      const g = new THREE.Group();
-      if (frame) { const f = new THREE.Mesh(new THREE.BoxGeometry(wdt + 0.14, hgt + 0.36, 0.02), basic({ color: 0xffffff })); f.position.y = -0.08; g.add(f); }
-      const m = new THREE.Mesh(new THREE.PlaneGeometry(wdt, hgt), new THREE.MeshBasicMaterial({ map, color: 0xe6e6e6 }));
-      m.position.z = 0.012;
-      const pin = new THREE.Mesh(new THREE.SphereGeometry(0.06, 14, 10), pinMat);
-      pin.position.set(0, hgt / 2 - 0.08 + (frame ? 0.08 : 0), 0.06);
-      g.add(m, pin);
-      g.position.set(x, y, -1.92);
-      g.rotation.z = rz;
-      root.add(g);
-      return { g, pin };
-    };
-    this.spots = {
-      australia: pinned(postcard('australia'), 1.45, 0.96, -2.25, 2.85, 0.05),
-      uruguay: pinned(postcard('teacher'), 1.25, 0.83, -0.55, 3.0, -0.04),
-      ushuaia: pinned(postcard('ushuaia'), 1.45, 0.96, 1.2, 2.7, -0.06),
-    };
-    const p1 = pinned(tex('img/room/foto-perfil.jpg'), 0.84, 0.74, -1.55, 1.45, 0.08, true);
-    const p2 = pinned(tex('img/room/foto-12.jpg'), 0.8, 0.8, 0.2, 1.4, -0.07, true);
-    const note = pinned(postcard('note'), 0.75, 0.5, 1.55, 1.35, 0.05);
-    // hilo rosa que une los lugares de su historia
-    const pinPos = (o) => o.pin.getWorldPosition(new THREE.Vector3());
-    root.updateMatrixWorld(true);
-    const route = [pinPos(this.spots.australia), pinPos(this.spots.uruguay), pinPos(this.spots.ushuaia), pinPos(note), pinPos(p2), pinPos(p1)];
-    const pts = [];
-    for (let i = 0; i < route.length - 1; i++) {
-      const a = route[i], b = route[i + 1];
-      for (let k = 0; k <= 12; k++) { const t = k / 12; const p = a.clone().lerp(b, t); p.y -= Math.sin(Math.PI * t) * 0.18; p.z += 0.02; pts.push(p); }
-    }
-    this.thread = new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), 260, 0.012, 6, false), new THREE.MeshBasicMaterial({ color: C.pink, toneMapped: false }));
-    this.threadTotal = this.thread.geometry.index.count;
-    root.add(this.thread);
-
-    // laptop con la clase en curso
-    const laptop = new THREE.Group();
-    const base = new THREE.Mesh(new RoundedBoxGeometry(2.2, 0.08, 1.5, 3, 0.04), glossy(0x23333a, { metalness: 0.6, roughness: 0.3 }));
-    const lid = new THREE.Group();
-    const lidBody = new THREE.Mesh(new RoundedBoxGeometry(2.2, 1.42, 0.06, 3, 0.04), glossy(0x23333a, { metalness: 0.6, roughness: 0.3 }));
-    const sc = document.createElement('canvas'); sc.width = 1280; sc.height = 800;
-    const smap = new THREE.CanvasTexture(sc); smap.colorSpace = THREE.SRGBColorSpace; smap.anisotropy = 12;
-    laptopScreen(sc).then(() => { smap.needsUpdate = true; });
-    const screen = new THREE.Mesh(new THREE.PlaneGeometry(2.06, 1.28), new THREE.MeshBasicMaterial({ map: smap, toneMapped: false }));
-    screen.position.z = 0.035;
-    lidBody.position.y = 0; lid.add(lidBody, screen);
-    lid.position.set(0, 0.72, -0.72); lid.rotation.x = -0.18;
-    laptop.add(base, lid);
-    laptop.position.set(2.55, -0.96, 0.15);
-    laptop.rotation.y = -0.38;
-    root.add(laptop);
-    this.screen = screen;
-    // glow de la pantalla sobre el escritorio
-    const glow = new THREE.PointLight(0x7fe0dc, 8, 4, 2); glow.position.set(2.4, -0.2, 0.9); this.scene.add(glow);
-
-    // objetos del escritorio
-    const mug = new THREE.Group();
-    const cup = new THREE.Mesh(new THREE.CylinderGeometry(0.26, 0.23, 0.5, 28), glossy(C.turq));
-    const handle = new THREE.Mesh(new THREE.TorusGeometry(0.14, 0.04, 10, 24), glossy(C.turq));
-    handle.position.set(0.28, 0.02, 0); handle.rotation.y = 0;
-    const coffee = new THREE.Mesh(new THREE.CircleGeometry(0.22, 24), basic({ color: 0x4a2c1c }));
-    coffee.rotation.x = -Math.PI / 2; coffee.position.y = 0.2;
-    mug.add(cup, handle, coffee);
-    mug.position.set(0.85, -0.75, 0.75);
-    root.add(mug);
-    this.steam = [0, 1, 2].map((i) => {
-      const m = new THREE.Mesh(new THREE.SphereGeometry(0.045, 10, 8), new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.2, depthWrite: false }));
-      m.position.set(0.85, -0.4, 0.75); root.add(m); return { m, ph: i / 3 };
+    super(world, 32);
+    this.scene.background = null; // se ve el fondo animado del sitio
+    this.scene.add(new THREE.AmbientLight(0xffffff, 0.25));
+    const key = new THREE.DirectionalLight(0xffffff, 0.8); key.position.set(-3, 5, 6); this.scene.add(key);
+    this.accent = new THREE.PointLight(C.turq, 22, 40, 1.4); this.accent.position.set(-6, 4, 12); this.scene.add(this.accent);
+    this.fill = new THREE.PointLight(C.blue, 12, 40, 1.4); this.fill.position.set(7, -4, 10); this.scene.add(this.fill);
+    this.group = new THREE.Group();
+    this.scene.add(this.group);
+    const rand = rng(17);
+    const tints = [0x0e2f36, 0x113840, 0x0c2a31, 0x15424c];
+    const N = world.mobile ? 6 : 9;
+    this.items = Array.from({ length: N }, (_, i) => {
+      const mat = new THREE.MeshPhysicalMaterial({
+        color: tints[i % tints.length], roughness: 0.12, metalness: 0.15, clearcoat: 1, clearcoatRoughness: 0.08,
+        iridescence: 0.5, iridescenceIOR: 1.35, envMapIntensity: 0.9, transparent: true, opacity: 0.38, depthWrite: false,
+      });
+      const m = new THREE.Mesh(bubbleGeo(i % 3 === 0 ? 1 : 0), mat);
+      const big = i === 0;
+      const sc = big ? 2.2 : 0.35 + rand() * 0.75;
+      m.scale.setScalar(sc);
+      if (rand() > 0.5) m.scale.x *= -1;
+      const base = big ? new THREE.Vector3(-4.5, 1.2, -7) : new THREE.Vector3(-10 + rand() * 18, -4 + rand() * 8, -12 + rand() * 7);
+      m.position.copy(base);
+      this.group.add(m);
+      return { m, base, ph: rand() * 6.28, sp: 0.15 + rand() * 0.25, rot: (rand() - 0.5) * 0.3 };
     });
-    const books = CAMPUS.books(); books.position.set(-3.3, -0.92, 0.2); books.rotation.y = 0.3; root.add(books);
-    const hp = CAMPUS.headphones(); hp.position.set(-0.6, -0.86, 1.05); hp.rotation.set(-Math.PI / 2 + 0.2, 0, 0.4); root.add(hp);
-    const nb = CAMPUS.notebook(); nb.position.set(-1.55, -0.98, 0.95); nb.rotation.set(-Math.PI / 2, 0, 0.25); root.add(nb);
-    const pen = CAMPUS.pencil(); pen.position.set(-0.95, -0.96, 1.15); pen.rotation.set(Math.PI / 2, 0, 1.2); pen.scale.setScalar(0.7); root.add(pen);
-    // lámpara
-    const lampG = new THREE.Group();
-    const lb = new THREE.Mesh(new THREE.CylinderGeometry(0.32, 0.36, 0.08, 24), glossy(C.dark));
-    const arm = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.035, 1.9, 10), glossy(C.dark));
-    arm.position.set(0.22, 0.9, 0); arm.rotation.z = -0.22;
-    const shade = new THREE.Mesh(new THREE.ConeGeometry(0.42, 0.5, 28, 1, true), glossy(C.pink));
-    shade.material.side = THREE.DoubleSide;
-    shade.position.set(0.55, 1.85, 0.15); shade.rotation.z = 0.7;
-    const bulb = new THREE.Mesh(new THREE.SphereGeometry(0.11, 14, 10), new THREE.MeshBasicMaterial({ color: 0xfff0c8, toneMapped: false }));
-    bulb.position.set(0.5, 1.72, 0.18);
-    lampG.add(lb, arm, shade, bulb);
-    lampG.position.set(-2.55, -0.98, -0.6);
-    root.add(lampG);
-    // planta
-    const plant = new THREE.Group();
-    const pot = new THREE.Mesh(new THREE.CylinderGeometry(0.34, 0.26, 0.55, 24), glossy(C.cream));
-    plant.add(pot);
-    const leafMat = glossy(0x2f8f73, { clearcoat: 0.5 });
-    for (let i = 0; i < 9; i++) {
-      const leaf = new THREE.Mesh(new THREE.SphereGeometry(0.18, 12, 8), leafMat);
-      const a = i * 0.7;
-      leaf.scale.set(0.55, 1.6, 0.25);
-      leaf.position.set(Math.cos(a) * 0.18, 0.55 + (i % 3) * 0.16, Math.sin(a) * 0.18);
-      leaf.rotation.set(Math.sin(a) * 0.6, a, Math.cos(a) * 0.6);
-      plant.add(leaf);
-    }
-    plant.position.set(4.1, -0.73, -1.0);
-    root.add(plant);
-    this.plant = plant;
-
-    // focos de cámara: [mirar a, distancia]
-    this.focusPts = {
-      intro: [new THREE.Vector3(0.2, 1.25, -0.6), 10.2],
-      australia: [this.spots.australia.g.position.clone(), 5.4],
-      uruguay: [this.spots.uruguay.g.position.clone(), 5.0],
-      ushuaia: [this.spots.ushuaia.g.position.clone(), 5.4],
-      world: [new THREE.Vector3(2.55, -0.05, -0.25), 5.2],
-    };
-    this.look = this.focusPts.intro[0].clone();
-    this.camPos = new THREE.Vector3(0.3, 1.7, 8);
-    this.threadProg = 0;
+    // brillo mínimo: polvo de luz muy suave
+    const P = 260, pos = new Float32Array(P * 3);
+    for (let i = 0; i < P; i++) pos.set([(rand() - 0.5) * 22, (rand() - 0.5) * 12, -8 + rand() * 9], i * 3);
+    const pg = new THREE.BufferGeometry(); pg.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+    this.dust = new THREE.Points(pg, new THREE.PointsMaterial({ size: 0.03, color: C.cream, transparent: true, opacity: 0.35, depthWrite: false, toneMapped: false }));
+    this.scene.add(this.dust);
+    this.tone = new THREE.Color(C.turq);
+    this.camX = 0; this.camY = 0; this.camZ = 12;
   }
 
   update(t, dt, view) {
-    const focus = view.el?.dataset.focus || (view.preview ? 'intro' : 'intro');
+    const focus = view.el?.dataset.focus || 'intro';
     const sp = view.el ? parseFloat(view.el.dataset.sp || 0) : 0;
-    const key = sp < 0.06 ? 'intro' : (this.focusPts[focus] ? focus : 'intro');
-    const [target, dist] = this.focusPts[key];
+    const key = sp < 0.06 ? 'intro' : (ABOUT_TONES[focus] != null ? focus : 'intro');
+    this.tone.lerp(new THREE.Color(ABOUT_TONES[key]), 0.03);
+    this.accent.color.copy(this.tone);
+    this.items.forEach((it, i) => {
+      it.m.position.set(
+        it.base.x + Math.sin(t * it.sp + it.ph) * 0.35,
+        it.base.y + Math.sin(t * it.sp * 0.8 + it.ph * 1.7) * 0.28 + sp * (i % 2 ? 0.8 : -0.6),
+        it.base.z,
+      );
+      it.m.rotation.set(Math.sin(t * 0.3 + it.ph) * 0.12, Math.sin(t * 0.25 + it.ph) * 0.4 + it.rot, Math.sin(t * 0.2 + i) * 0.06);
+    });
+    this.dust.rotation.y = t * 0.01;
+    // cámara: deriva lenta con el scroll y el cursor
     const wide = this.aspect > 1.15;
-    // con texto a la derecha, el objeto queda en el tercio izquierdo
-    const lateral = key === 'intro' ? 0 : (wide ? dist * 0.36 : 0);
-    const lift = key === 'intro' ? 0 : (wide ? 0 : -dist * 0.16);
-    const desiredLook = target.clone().add(new THREE.Vector3(lateral, lift, 0));
-    const fitD = key === 'intro' ? (wide ? dist : dist * 1.55) : (wide ? dist : dist * 1.35);
-    const desiredPos = target.clone().add(new THREE.Vector3(lateral + view.local.x * 0.35, 0.25 + lift + view.local.y * 0.2, fitD));
-    if (key === 'world') desiredPos.add(new THREE.Vector3(-0.9, 0.3, 0));
-    const k = this.world.reduced ? 1 : 0.045;
-    this.look.lerp(desiredLook, k);
-    this.camPos.lerp(desiredPos, k);
-    // el hilo de la historia se va tendiendo con cada párrafo
-    const prog = { intro: 0.15, australia: 0.25, uruguay: 0.48, ushuaia: 0.72, world: 1 }[key];
-    this.threadProg = lerp(this.threadProg, prog, 0.03);
-    this.thread.geometry.setDrawRange(0, Math.floor(this.threadProg * this.threadTotal / 3) * 3);
-    Object.entries(this.spots).forEach(([name, sp2]) => {
-      const on = name === key;
-      sp2.g.scale.setScalar(lerp(sp2.g.scale.x, on ? 1.06 : 1, 0.08));
-    });
-    this.steam.forEach((st) => {
-      const p = (t * 0.35 + st.ph) % 1;
-      st.m.position.y = -0.4 + p * 0.9;
-      st.m.position.x = 0.85 + Math.sin(p * 6 + st.ph * 6) * 0.06;
-      st.m.scale.setScalar(0.6 + p * 1.4);
-      st.m.material.opacity = 0.16 * Math.sin(Math.PI * p);
-    });
-    this.plant.rotation.z = Math.sin(t * 0.6) * 0.02;
+    this.camX = lerp(this.camX, (wide ? 1.2 : 0) * Math.min(1, sp * 8) + view.local.x * 0.5, 0.04);
+    this.camY = lerp(this.camY, -sp * 1.5 + view.local.y * 0.3, 0.04);
+    this.camZ = lerp(this.camZ, 12 - sp * 2.5, 0.04);
   }
 
   beforeRender() {
-    this.camera.position.copy(this.camPos);
-    this.camera.lookAt(this.look);
+    this.camera.position.set(this.camX, this.camY, this.camZ);
+    this.camera.lookAt(this.camX * 0.6, this.camY * 0.6, -2);
   }
 }
 
@@ -2121,7 +1944,7 @@ export function createModule(name, world, el, variant) {
     case 'bubbles': return new Bubbles(world);
     case 'classroom': return new Classroom(world);
     case 'spine': return new Spine(world);
-    case 'desk': return new Desk(world);
+    case 'about': return new AboutBg(world);
     case 'call': return new Call(world);
     case 'globe': return new Globe(world);
     case 'levels': return new Levels(world);

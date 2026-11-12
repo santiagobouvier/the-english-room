@@ -6,11 +6,11 @@
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <meta content="inglés, cursos de inglés, aprender inglés, the english room" name="keywords">
     <meta content="¿Buscas pasarla bien mientras aprendes? Llegaste. Empieza a disfrutar del inglés. Mi nombre es Carla, soy una uruguaya amante de los viajes y profesora de inglés, estudié ciencias de la comunicación y me recibí como teacher of english as a second language en el año 2011." name="description">
-    <meta name="theme-color" content="#103741">
+    <meta name="theme-color" content="#061317">
     <link href="img/logo.jpeg" rel="icon">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600&family=Lobster+Two:wght@700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter+Tight:wght@400;500;600&family=Lobster+Two:wght@700&display=swap" rel="stylesheet">
     <link href="css/room.css" rel="stylesheet">
     <script>document.documentElement.className = 'js';</script>
     <script type="importmap">
@@ -25,10 +25,9 @@
     <script type="module" src="js/room/app.js"></script>
 </head>
 
-<body data-page="recursos" data-theme="light">
+<body data-page="recursos" data-theme="dark">
 
     <a class="skip" href="#main">Saltar al contenido</a>
-
     <div class="loader" id="loader" aria-hidden="true">
         <div class="loader-bubble">
             <svg viewBox="0 0 120 90" aria-hidden="true">
@@ -39,15 +38,14 @@
         <div class="loader-count" id="loaderCount">000</div>
         <div class="loader-word">The English Room<br>Entrando a la clase</div>
     </div>
-
+    <canvas id="bg" aria-hidden="true"></canvas>
     <canvas id="gl" aria-hidden="true"></canvas>
-
     <header class="hd" id="hd">
         <a class="hd-logo" href="index.html" aria-label="The English Room, inicio">
             <img src="img/logo-transparente.png" alt="">
             <span>THE ENGLISH<br>ROOM</span>
         </a>
-        <p class="hd-tag">Learn English<br>From Your Favourite Spot</p>
+        <p class="hd-tag">Learn English<br>From Your <em>Favourite Spot</em></p>
         <div class="hd-right">
             <a class="hd-round" href="https://www.cambridgeenglish.org/es/test-your-english/" target="_blank" rel="noopener" title="¿Qué nivel tengo?" aria-label="¿Qué nivel tengo? Test de Cambridge (abre en otra pestaña)"><span aria-hidden="true">Aa</span></a>
             <a class="hd-talk" href="https://wa.me/+59892354225?text=¡Que bueno que estás acá! En breve nos vamos a estar comunicando con vos. ¡Saludos! Carla Migliarini" target="_blank" rel="noopener" aria-label="Hablemos por WhatsApp (abre en otra pestaña)"><span class="roll"><span>Hablemos</span><span aria-hidden="true">Hablemos</span></span><i class="dot" aria-hidden="true"></i></a>
@@ -69,68 +67,66 @@
         </nav>
     </header>
 
-    <main id="main" class="page page-recursos" data-page="recursos" data-theme="light" data-hero="docs" tabindex="-1">
+    <main id="main" class="page page-recursos" data-page="recursos" data-theme="dark" data-hero="docs" tabindex="-1">
 
         <section class="hero" aria-labelledby="h-recursos">
             <div class="frame frame-hero" data-gl="docs" data-variant="stack" data-hero-frame>
-                <img class="frame-fallback" src="img/foto-13.png" alt="">
-                <div class="hero-copy">
-                    <ol class="crumbs"><li><a href="index.html">Inicio</a></li><li aria-current="page">Recursos Gratuitos</li></ol>
-                    <h1 id="h-recursos" class="hero-title" data-split>Recursos Gratuitos</h1>
-                </div>
-                <p class="frame-hint" aria-hidden="true">Tres PDFs · gratis para tu clase</p>
+                <img class="frame-fallback" src="img/room/foto-13.jpg" alt="">
+            </div>
+            <div class="shade" aria-hidden="true"></div>
+            <div class="hero-top"><ol class="crumbs"><li><a href="index.html">Inicio</a></li><li aria-current="page">Recursos Gratuitos</li></ol></div>
+            <div class="hero-copy">
+                <h1 id="h-recursos" class="hero-title" data-split><span class="sm">Free resources</span> Recursos Gratuitos</h1>
             </div>
             <div class="crosses" aria-hidden="true"><i>+</i><i>+</i><span>Deslizá para descargar</span><i>+</i><i>+</i></div>
         </section>
 
-        <ul class="resources over" data-ribbon="resources">
-            <li class="resource">
-                <section class="split" aria-labelledby="h-pdf-0">
-                    <div class="split-media" data-reveal>
-                        <div class="frame" data-gl="docs" data-variant="0" data-img="img/foto-13.png" style="aspect-ratio:1/1">
-                            <img class="frame-fallback" src="img/foto-13.png" alt="" loading="lazy">
-                        </div>
+        <section class="sec over" data-ribbon="resources" aria-labelledby="h-pdfs">
+            <div class="sec-head">
+                <span class="eyebrow"><span class="n">01</span>Biblioteca</span>
+                <h2 id="h-pdfs" class="mega" data-split>Tres <em>PDFs</em></h2>
+            </div>
+            <ul class="resources">
+                <li class="resource" data-reveal style="--d:0">
+                    <div class="frame" data-gl="docs" data-variant="0" data-img="img/room/foto-13.jpg">
+                        <img class="frame-fallback" src="img/room/foto-13.jpg" alt="" loading="lazy">
                     </div>
-                    <div class="split-text">
-                        <span class="file" data-reveal>PDF 01 · silent-letters.pdf</span>
-                        <h2 id="h-pdf-0" class="big" data-split>Descarga tu pdf completamente gratis</h2>
-                        <p data-reveal><a class="pill pill-blue pill-arrow" target="_blank" rel="noopener" href="pdf/silent-letters.pdf">Descargar PDF</a></p>
+                    <span class="file">PDF 01 · silent-letters.pdf</span>
+                    <h2>Descarga tu pdf completamente gratis</h2>
+                    <a class="pill pill-turq pill-arrow" target="_blank" rel="noopener" href="pdf/silent-letters.pdf">Descargar PDF</a>
+                </li>
+                <li class="resource" data-reveal style="--d:120">
+                    <div class="frame" data-gl="docs" data-variant="1" data-img="img/room/foto-15.jpg">
+                        <img class="frame-fallback" src="img/room/foto-15.jpg" alt="" loading="lazy">
                     </div>
-                </section>
-            </li>
-            <li class="resource">
-                <section class="split rev" aria-labelledby="h-pdf-1">
-                    <div class="split-media" data-reveal>
-                        <div class="frame" data-gl="docs" data-variant="1" data-img="img/foto-15.png" style="aspect-ratio:1/1">
-                            <img class="frame-fallback" src="img/foto-15.png" alt="" loading="lazy">
-                        </div>
+                    <span class="file">PDF 02 · 30-expresiones.pdf</span>
+                    <h2>Descarga tu pdf completamente gratis</h2>
+                    <a class="pill pill-turq pill-arrow" target="_blank" rel="noopener" href="pdf/30-expresiones.pdf">Descargar PDF</a>
+                </li>
+                <li class="resource" data-reveal style="--d:240">
+                    <div class="frame" data-gl="docs" data-variant="2" data-img="img/room/foto-cursos.jpg">
+                        <img class="frame-fallback" src="img/room/foto-cursos.jpg" alt="" loading="lazy">
                     </div>
-                    <div class="split-text">
-                        <span class="file" data-reveal>PDF 02 · 30-expresiones.pdf</span>
-                        <h2 id="h-pdf-1" class="big" data-split>Descarga tu pdf completamente gratis</h2>
-                        <p data-reveal><a class="pill pill-blue pill-arrow" target="_blank" rel="noopener" href="pdf/30-expresiones.pdf">Descargar PDF</a></p>
-                    </div>
-                </section>
-            </li>
-            <li class="resource">
-                <section class="split" aria-labelledby="h-pdf-2">
-                    <div class="split-media" data-reveal>
-                        <div class="frame" data-gl="docs" data-variant="2" data-img="img/foto-cursos.png" style="aspect-ratio:1/1">
-                            <img class="frame-fallback" src="img/foto-cursos.png" alt="" loading="lazy">
-                        </div>
-                    </div>
-                    <div class="split-text">
-                        <span class="file" data-reveal>PDF 03 · IDIOMS-FREE-RESOURCE.pdf</span>
-                        <h2 id="h-pdf-2" class="big" data-split>Descarga tu pdf completamente gratis</h2>
-                        <p data-reveal><a class="pill pill-blue pill-arrow" target="_blank" rel="noopener" href="pdf/IDIOMS-FREE-RESOURCE.pdf">Descargar PDF</a></p>
-                    </div>
-                </section>
-            </li>
-        </ul>
+                    <span class="file">PDF 03 · IDIOMS-FREE-RESOURCE.pdf</span>
+                    <h2>Descarga tu pdf completamente gratis</h2>
+                    <a class="pill pill-turq pill-arrow" target="_blank" rel="noopener" href="pdf/IDIOMS-FREE-RESOURCE.pdf">Descargar PDF</a>
+                </li>
+            </ul>
+        </section>
+
+        <nav class="next over" aria-label="Siguiente página">
+            <a class="next-card" href="contacto.html">
+                <div class="frame" data-gl="portal" data-next="contacto.html"></div>
+                <div class="next-copy">
+                    <div><span class="eyebrow">Siguiente</span><strong>Contacto</strong></div>
+                    <span class="pill pill-arrow">Entrar</span>
+                </div>
+            </a>
+        </nav>
 
         <footer class="ft over" aria-labelledby="ft-contacto">
             <div class="ft-top">
-                <p class="ft-quote" data-reveal>“Learn English From Your Favourite Spot”</p>
+                <p class="ft-quote" data-reveal>“Learn English From Your <em>Favourite Spot</em>”</p>
                 <div data-reveal style="--d:100">
                     <h3 id="ft-contacto">Contacto</h3>
                     <ul>
@@ -157,17 +153,6 @@
                 <p>&copy; <a href="index.html">theenglishroom.edu.uy</a>, Todos Los Derechos Reservados.<br><br>Sitio Desarrollado Por | <a href="https://digitalbuilders.uy" target="_blank" rel="noopener">Digital Builders</a></p>
             </div>
         </footer>
-
-        <section class="portal" data-portal data-next="contacto.html" aria-label="Siguiente: Contacto">
-            <div class="portal-sticky">
-                <div class="portal-view" data-gl="portal"></div>
-                <div class="portal-copy over">
-                    <span class="eyebrow">Siguiente clase</span><br>
-                    <a href="contacto.html">Contacto</a>
-                </div>
-                <p class="portal-hint over" aria-hidden="true">Seguí bajando para entrar</p>
-            </div>
-        </section>
 
     </main>
 

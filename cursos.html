@@ -6,11 +6,11 @@
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <meta content="inglés, cursos de inglés, aprender inglés, the english room" name="keywords">
     <meta content="¿Buscas pasarla bien mientras aprendes? Llegaste. Empieza a disfrutar del inglés. Mi nombre es Carla, soy una uruguaya amante de los viajes y profesora de inglés, estudié ciencias de la comunicación y me recibí como teacher of english as a second language en el año 2011." name="description">
-    <meta name="theme-color" content="#103741">
+    <meta name="theme-color" content="#061317">
     <link href="img/logo.jpeg" rel="icon">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600&family=Lobster+Two:wght@700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter+Tight:wght@400;500;600&family=Lobster+Two:wght@700&display=swap" rel="stylesheet">
     <link href="css/room.css" rel="stylesheet">
     <script>document.documentElement.className = 'js';</script>
     <script type="importmap">
@@ -25,10 +25,9 @@
     <script type="module" src="js/room/app.js"></script>
 </head>
 
-<body data-page="cursos" data-theme="light">
+<body data-page="cursos" data-theme="dark">
 
     <a class="skip" href="#main">Saltar al contenido</a>
-
     <div class="loader" id="loader" aria-hidden="true">
         <div class="loader-bubble">
             <svg viewBox="0 0 120 90" aria-hidden="true">
@@ -39,15 +38,14 @@
         <div class="loader-count" id="loaderCount">000</div>
         <div class="loader-word">The English Room<br>Entrando a la clase</div>
     </div>
-
+    <canvas id="bg" aria-hidden="true"></canvas>
     <canvas id="gl" aria-hidden="true"></canvas>
-
     <header class="hd" id="hd">
         <a class="hd-logo" href="index.html" aria-label="The English Room, inicio">
             <img src="img/logo-transparente.png" alt="">
             <span>THE ENGLISH<br>ROOM</span>
         </a>
-        <p class="hd-tag">Learn English<br>From Your Favourite Spot</p>
+        <p class="hd-tag">Learn English<br>From Your <em>Favourite Spot</em></p>
         <div class="hd-right">
             <a class="hd-round" href="https://www.cambridgeenglish.org/es/test-your-english/" target="_blank" rel="noopener" title="¿Qué nivel tengo?" aria-label="¿Qué nivel tengo? Test de Cambridge (abre en otra pestaña)"><span aria-hidden="true">Aa</span></a>
             <a class="hd-talk" href="https://wa.me/+59892354225?text=¡Que bueno que estás acá! En breve nos vamos a estar comunicando con vos. ¡Saludos! Carla Migliarini" target="_blank" rel="noopener" aria-label="Hablemos por WhatsApp (abre en otra pestaña)"><span class="roll"><span>Hablemos</span><span aria-hidden="true">Hablemos</span></span><i class="dot" aria-hidden="true"></i></a>
@@ -69,30 +67,31 @@
         </nav>
     </header>
 
-    <main id="main" class="page page-cursos" data-page="cursos" data-theme="light" data-hero="levels" tabindex="-1">
+    <main id="main" class="page page-cursos" data-page="cursos" data-theme="dark" data-hero="levels" tabindex="-1">
 
         <section class="hero" aria-labelledby="h-cursos">
-            <div class="frame frame-hero frame-light" data-gl="levels" data-hero-frame>
-                <img class="frame-fallback" src="img/cursos.png" alt="">
-                <div class="hero-copy">
-                    <ol class="crumbs"><li><a href="index.html">Inicio</a></li><li aria-current="page">Cursos</li></ol>
-                    <h1 id="h-cursos" class="hero-title" data-split style="max-width:14ch">Cursos y Preparación de Exámenes</h1>
-                </div>
-                <p class="frame-hint" aria-hidden="true">Del A1 al C2 · un escalón por clase</p>
+            <div class="frame frame-hero" data-gl="levels" data-hero-frame>
+                <img class="frame-fallback" src="img/room/cursos.jpg" alt="">
+            </div>
+            <div class="shade" aria-hidden="true"></div>
+            <div class="hero-top"><ol class="crumbs"><li><a href="index.html">Inicio</a></li><li aria-current="page">Cursos</li></ol></div>
+            <div class="hero-copy">
+                <h1 id="h-cursos" class="hero-title" data-split style="font-size:clamp(52px,8.4vw,156px)"><span class="sm">Del A1 al C2</span> Cursos y Preparación de Exámenes</h1>
             </div>
             <div class="crosses" aria-hidden="true"><i>+</i><i>+</i><span>Deslizá para ver los cursos</span><i>+</i><i>+</i></div>
         </section>
 
-        <section class="over" data-ribbon="courses" aria-labelledby="h-lista">
-            <div class="list-head">
+        <section class="sec over" data-ribbon="courses" aria-labelledby="h-lista">
+            <div class="sec-head">
+                <span class="eyebrow"><span class="n">01</span>Catálogo</span>
                 <h2 id="h-lista" class="mega" data-split>Cursos</h2>
-                <p data-reveal>Hay un curso esperando por vos.</p>
+                <p class="lead" data-reveal>Hay un curso esperando por vos.</p>
             </div>
             <ul class="courses">
                 <li class="course" data-reveal style="--d:0">
                     <a class="course-link" href="cursos.html?curso=a1" data-curso="a1" aria-label="A1 Course Beginner: ver detalle">
-                        <div class="frame" data-gl="badge" data-variant="a1" data-img="img/foto-21.png">
-                            <img class="frame-fallback" src="img/foto-21.png" alt="" loading="lazy">
+                        <div class="frame" data-gl="badge" data-variant="a1" data-img="img/room/foto-21.jpg">
+                            <img class="frame-fallback" src="img/room/foto-21.jpg" alt="" loading="lazy">
                         </div>
                     </a>
                     <div class="course-tags"><span>Nivel: <b>Beginner</b></span><span>Hs / semana: <b>Consultar disponibilidad</b></span></div>
@@ -100,12 +99,12 @@
                         <h3>A1 Course Beginner</h3>
                         <a class="pill pill-ghost course-cta" href="cursos.html?curso=a1" data-curso="a1" tabindex="-1" aria-hidden="true">Ver Detalle</a>
                     </div>
-                    <span class="chip teacher"><span class="avatars"><img src="img/stefany.jpeg" alt="Stefany Amada" loading="lazy"></span><span><b>Stefany Amada</b><small>Teacher</small></span></span>
+                    <span class="chip teacher"><span class="avatars"><img src="img/room/stefany.jpg" alt="Stefany Amada" loading="lazy"></span><span><b>Stefany Amada</b><small>Teacher</small></span></span>
                 </li>
                 <li class="course" data-reveal style="--d:120">
                     <a class="course-link" href="cursos.html?curso=a2" data-curso="a2" aria-label="A2 Course Elementary: ver detalle">
-                        <div class="frame" data-gl="badge" data-variant="a2" data-img="img/foto-31.png">
-                            <img class="frame-fallback" src="img/foto-31.png" alt="" loading="lazy">
+                        <div class="frame" data-gl="badge" data-variant="a2" data-img="img/room/foto-31.jpg">
+                            <img class="frame-fallback" src="img/room/foto-31.jpg" alt="" loading="lazy">
                         </div>
                     </a>
                     <div class="course-tags"><span>Nivel: <b>Elementary</b></span><span>Hs / semana: <b>Consultar disponibilidad</b></span></div>
@@ -113,12 +112,12 @@
                         <h3>A2 Course Elementary</h3>
                         <a class="pill pill-ghost course-cta" href="cursos.html?curso=a2" data-curso="a2" tabindex="-1" aria-hidden="true">Ver Detalle</a>
                     </div>
-                    <span class="chip teacher"><span class="avatars"><img src="img/stefany.jpeg" alt="Stefany Amada" loading="lazy"></span><span><b>Stefany Amada</b><small>Teacher</small></span></span>
+                    <span class="chip teacher"><span class="avatars"><img src="img/room/stefany.jpg" alt="Stefany Amada" loading="lazy"></span><span><b>Stefany Amada</b><small>Teacher</small></span></span>
                 </li>
                 <li class="course" data-reveal style="--d:0">
                     <a class="course-link" href="cursos.html?curso=a2-plus" data-curso="a2-plus" aria-label="A2 + Course Pre-Intermediate: ver detalle">
-                        <div class="frame" data-gl="badge" data-variant="a2-plus" data-img="img/foto-31.png">
-                            <img class="frame-fallback" src="img/foto-31.png" alt="" loading="lazy">
+                        <div class="frame" data-gl="badge" data-variant="a2-plus" data-img="img/room/foto-31.jpg">
+                            <img class="frame-fallback" src="img/room/foto-31.jpg" alt="" loading="lazy">
                         </div>
                     </a>
                     <div class="course-tags"><span>Nivel: <b>Pre-Intermediate</b></span><span>Hs / semana: <b>Consultar disponibilidad</b></span></div>
@@ -126,12 +125,12 @@
                         <h3>A2 + Course Pre-Intermediate</h3>
                         <a class="pill pill-ghost course-cta" href="cursos.html?curso=a2-plus" data-curso="a2-plus" tabindex="-1" aria-hidden="true">Ver Detalle</a>
                     </div>
-                    <span class="chip teacher"><span class="avatars"><img src="img/stefany.jpeg" alt="Stefany Amada" loading="lazy"></span><span><b>Stefany Amada</b><small>Teacher</small></span></span>
+                    <span class="chip teacher"><span class="avatars"><img src="img/room/stefany.jpg" alt="Stefany Amada" loading="lazy"></span><span><b>Stefany Amada</b><small>Teacher</small></span></span>
                 </li>
                 <li class="course" data-reveal style="--d:120">
                     <a class="course-link" href="cursos.html?curso=b1" data-curso="b1" aria-label="B1-B1+ Course Intermediate: ver detalle">
-                        <div class="frame" data-gl="badge" data-variant="b1" data-img="img/foto-22.png">
-                            <img class="frame-fallback" src="img/foto-22.png" alt="" loading="lazy">
+                        <div class="frame" data-gl="badge" data-variant="b1" data-img="img/room/foto-22.jpg">
+                            <img class="frame-fallback" src="img/room/foto-22.jpg" alt="" loading="lazy">
                         </div>
                     </a>
                     <div class="course-tags"><span>Nivel: <b>Intermediate</b></span><span>Hs / semana: <b>Consultar disponibilidad</b></span></div>
@@ -143,8 +142,8 @@
                 </li>
                 <li class="course" data-reveal style="--d:0">
                     <a class="course-link" href="cursos.html?curso=b2" data-curso="b2" aria-label="B2 Course Upper-Intermediate / Fce: ver detalle">
-                        <div class="frame" data-gl="badge" data-variant="b2" data-img="img/foto-2.png">
-                            <img class="frame-fallback" src="img/foto-2.png" alt="" loading="lazy">
+                        <div class="frame" data-gl="badge" data-variant="b2" data-img="img/room/foto-2.jpg">
+                            <img class="frame-fallback" src="img/room/foto-2.jpg" alt="" loading="lazy">
                         </div>
                     </a>
                     <div class="course-tags"><span>Nivel: <b>Upper-Intermediate</b></span><span>Hs / semana: <b>Consultar disponibilidad</b></span></div>
@@ -152,12 +151,12 @@
                         <h3>B2 Course Upper-Intermediate / Fce</h3>
                         <a class="pill pill-ghost course-cta" href="cursos.html?curso=b2" data-curso="b2" tabindex="-1" aria-hidden="true">Ver Detalle</a>
                     </div>
-                    <span class="chip teacher"><span class="avatars"><img src="img/stefany.jpeg" alt="Stefany Amada" loading="lazy"><img src="img/foto-cursos.png" alt="Carla Migliarini" loading="lazy"></span><span><b>Stefany Amada / Carla Migliarini</b><small>Teachers</small></span></span>
+                    <span class="chip teacher"><span class="avatars"><img src="img/room/stefany.jpg" alt="Stefany Amada" loading="lazy"><img src="img/foto-cursos.png" alt="Carla Migliarini" loading="lazy"></span><span><b>Stefany Amada / Carla Migliarini</b><small>Teachers</small></span></span>
                 </li>
                 <li class="course" data-reveal style="--d:120">
                     <a class="course-link" href="cursos.html?curso=c1" data-curso="c1" aria-label="C1 Course Advanced / Cae: ver detalle">
-                        <div class="frame" data-gl="badge" data-variant="c1" data-img="img/foto-3.png">
-                            <img class="frame-fallback" src="img/foto-3.png" alt="" loading="lazy">
+                        <div class="frame" data-gl="badge" data-variant="c1" data-img="img/room/foto-3.jpg">
+                            <img class="frame-fallback" src="img/room/foto-3.jpg" alt="" loading="lazy">
                         </div>
                     </a>
                     <div class="course-tags"><span>Nivel: <b>Advanced</b></span><span>Hs / semana: <b>Consultar disponibilidad</b></span></div>
@@ -169,8 +168,8 @@
                 </li>
                 <li class="course" data-reveal style="--d:0">
                     <a class="course-link" href="cursos.html?curso=c2" data-curso="c2" aria-label="C2 Course - Proficient / Cpe: ver detalle">
-                        <div class="frame" data-gl="badge" data-variant="c2" data-img="img/foto-4.png">
-                            <img class="frame-fallback" src="img/foto-4.png" alt="" loading="lazy">
+                        <div class="frame" data-gl="badge" data-variant="c2" data-img="img/room/foto-4.jpg">
+                            <img class="frame-fallback" src="img/room/foto-4.jpg" alt="" loading="lazy">
                         </div>
                     </a>
                     <div class="course-tags"><span>Nivel: <b>Proficient</b></span><span>Hs / semana: <b>Consultar disponibilidad</b></span></div>
@@ -178,12 +177,12 @@
                         <h3>C2 Course - Proficient / Cpe</h3>
                         <a class="pill pill-ghost course-cta" href="cursos.html?curso=c2" data-curso="c2" tabindex="-1" aria-hidden="true">Ver Detalle</a>
                     </div>
-                    <span class="chip teacher"><span class="avatars"><img src="img/carolina.jpeg" alt="Carolina Veiga" loading="lazy"></span><span><b>Carolina Veiga</b><small>Docente nativa</small></span></span>
+                    <span class="chip teacher"><span class="avatars"><img src="img/room/carolina.jpg" alt="Carolina Veiga" loading="lazy"></span><span><b>Carolina Veiga</b><small>Docente nativa</small></span></span>
                 </li>
                 <li class="course" data-reveal style="--d:120">
                     <a class="course-link" href="cursos.html?curso=pronunciation" data-curso="pronunciation" aria-label="PRONUNCIATION COURSE: ver detalle">
-                        <div class="frame" data-gl="badge" data-variant="pronunciation" data-img="img/foto-6.png">
-                            <img class="frame-fallback" src="img/foto-6.png" alt="" loading="lazy">
+                        <div class="frame" data-gl="badge" data-variant="pronunciation" data-img="img/room/foto-6.jpg">
+                            <img class="frame-fallback" src="img/room/foto-6.jpg" alt="" loading="lazy">
                         </div>
                     </a>
                     <div class="course-tags"><span>Horario: <b>2do y 4to lunes | 8:30 - 9:30</b></span><span>Frecuencia: <b>Quincenal</b></span></div>
@@ -191,12 +190,12 @@
                         <h3>PRONUNCIATION COURSE</h3>
                         <a class="pill pill-ghost course-cta" href="cursos.html?curso=pronunciation" data-curso="pronunciation" tabindex="-1" aria-hidden="true">Ver Detalle</a>
                     </div>
-                    <span class="chip teacher"><span class="avatars"><img src="img/foto-18.png" alt="Carla Migliarini" loading="lazy"></span><span><b>Carla Migliarini</b><small>Teacher</small></span></span>
+                    <span class="chip teacher"><span class="avatars"><img src="img/room/foto-18.jpg" alt="Carla Migliarini" loading="lazy"></span><span><b>Carla Migliarini</b><small>Teacher</small></span></span>
                 </li>
                 <li class="course" data-reveal style="--d:0">
                     <a class="course-link" href="cursos.html?curso=conversational" data-curso="conversational" aria-label="CONVERSATIONAL SESSIONS: ver detalle">
-                        <div class="frame" data-gl="badge" data-variant="conversational" data-img="img/foto-7.png">
-                            <img class="frame-fallback" src="img/foto-7.png" alt="" loading="lazy">
+                        <div class="frame" data-gl="badge" data-variant="conversational" data-img="img/room/foto-7.jpg">
+                            <img class="frame-fallback" src="img/room/foto-7.jpg" alt="" loading="lazy">
                         </div>
                     </a>
                     <div class="course-tags"><span>Días: <b>2do martes y 4to miércoles</b></span><span>Hs / semana: <b>Frecuencia Quincenal</b></span></div>
@@ -204,12 +203,12 @@
                         <h3>CONVERSATIONAL SESSIONS</h3>
                         <a class="pill pill-ghost course-cta" href="cursos.html?curso=conversational" data-curso="conversational" tabindex="-1" aria-hidden="true">Ver Detalle</a>
                     </div>
-                    <span class="chip teacher"><span class="avatars"><img src="img/foto-carla.png" alt="Carla Migliarini" loading="lazy"></span><span><b>Carla Migliarini</b><small>Teacher</small></span></span>
+                    <span class="chip teacher"><span class="avatars"><img src="img/room/foto-carla.jpg" alt="Carla Migliarini" loading="lazy"></span><span><b>Carla Migliarini</b><small>Teacher</small></span></span>
                 </li>
                 <li class="course" data-reveal style="--d:120">
                     <a class="course-link" href="cursos.html?curso=legal" data-curso="legal" aria-label="LEGAL ENGLISH COURSE: ver detalle">
-                        <div class="frame" data-gl="badge" data-variant="legal" data-img="img/cira.png">
-                            <img class="frame-fallback" src="img/cira.png" alt="" loading="lazy">
+                        <div class="frame" data-gl="badge" data-variant="legal" data-img="img/room/cira.jpg">
+                            <img class="frame-fallback" src="img/room/cira.jpg" alt="" loading="lazy">
                         </div>
                     </a>
                     <div class="course-tags"><span>Días: <b>Martes y jueves</b></span><span>Hs / semana: <b>2 horas semanales</b></span></div>
@@ -217,15 +216,42 @@
                         <h3>LEGAL ENGLISH COURSE</h3>
                         <a class="pill pill-ghost course-cta" href="cursos.html?curso=legal" data-curso="legal" tabindex="-1" aria-hidden="true">Ver Detalle</a>
                     </div>
-                    <span class="chip teacher"><span class="avatars"><img src="img/cira.png" alt="Cira Fontoura" loading="lazy"></span><span><b>Cira Fontoura</b><small>Traductora Pública</small></span></span>
+                    <span class="chip teacher"><span class="avatars"><img src="img/room/cira.jpg" alt="Cira Fontoura" loading="lazy"></span><span><b>Cira Fontoura</b><small>Traductora Pública</small></span></span>
                 </li>
             </ul>
+        </section>
+
+        <section class="sec over" aria-labelledby="h-crono">
+            <div class="sec-head">
+                <span class="eyebrow"><span class="n">02</span>Cronograma 2027</span>
+                <h2 id="h-crono" class="big" data-split>Días, horarios y <em>docentes</em></h2>
+                <p class="muted" data-reveal>Resumen de los datos de cada curso. Tocá un nivel para ver el detalle completo.</p>
+            </div>
+            <div class="table-wrap" data-reveal>
+                <table class="timetable">
+                    <thead><tr><th scope="col">Nivel</th><th scope="col">Docente</th><th scope="col">Días y horario</th><th scope="col">Inicio – Fin</th><th scope="col">Carga</th></tr></thead>
+                    <tbody>
+                        <tr><td><a href="cursos.html?curso=a1" data-curso="a1">A1</a></td><td>Stefany Amada</td><td>Martes y Jueves, 18:30 a 19:30</td><td>09/03/2027 – 09/12/2027</td><td>2 × 60 min</td></tr>
+                        <tr><td><a href="cursos.html?curso=a2" data-curso="a2">A2</a></td><td>Stefany Amada</td><td>Lunes y Miércoles, 17:20 a 18:20</td><td>08/03/2027 – 08/12/2027</td><td>2 × 60 min</td></tr>
+                        <tr><td><a href="cursos.html?curso=a2-plus" data-curso="a2-plus">A2+</a></td><td>Stefany Amada</td><td>Lunes y Miércoles, 18:30 a 19:30</td><td>08/03/2027 – 08/12/2027</td><td>2 × 60 min</td></tr>
+                        <tr><td><a href="cursos.html?curso=b1" data-curso="b1">B1</a></td><td>Carla Migliarini</td><td>Martes y Jueves, 18:40 a 19:50</td><td>09/03/2027 – 09/12/2027</td><td>2 × 75 min</td></tr>
+                        <tr><td><a href="cursos.html?curso=b2" data-curso="b2">B2</a></td><td>Stefany Amada</td><td>FCE PM · Lunes y Miércoles, 19:40 a 21:10</td><td>08/03/2027 – 08/12/2027</td><td>2 × 90 min</td></tr>
+                        <tr><td><a href="cursos.html?curso=b2" data-curso="b2">B2</a></td><td>Carla Migliarini</td><td>FCE AM · Martes y Jueves, 08:00 a 09:30</td><td>09/03/2027 – 09/12/2027</td><td>2 × 90 min</td></tr>
+                        <tr><td><a href="cursos.html?curso=b2" data-curso="b2">B2</a></td><td>Carla Migliarini</td><td>FCE PM · Martes y Jueves, 17:00 a 18:30</td><td>09/03/2027 – 09/12/2027</td><td>2 × 90 min</td></tr>
+                        <tr><td><a href="cursos.html?curso=c1" data-curso="c1">C1</a></td><td>Carla Migliarini</td><td>Lunes y Miércoles, 08:00 a 09:45 / 18:40 a 20:30</td><td>08/03/2027 – 08/12/2027</td><td>2 × 105 min</td></tr>
+                        <tr><td><a href="cursos.html?curso=c2" data-curso="c2">C2</a></td><td>Carolina Veiga</td><td>Lunes y Miércoles, 10:00 a 11:45</td><td>08/03/2027 – 08/12/2027</td><td>2 × 105 min</td></tr>
+                        <tr><td><a href="cursos.html?curso=pronunciation" data-curso="pronunciation">Pron.</a></td><td>Carla Migliarini</td><td>2do y 4to lunes de cada mes, 8:30 a 9:30</td><td>—</td><td>Quincenal</td></tr>
+                        <tr><td><a href="cursos.html?curso=conversational" data-curso="conversational">Conv.</a></td><td>Carla Migliarini</td><td>2do martes y 4to miércoles de cada mes, horario a confirmar</td><td>—</td><td>Quincenal</td></tr>
+                        <tr><td><a href="cursos.html?curso=legal" data-curso="legal">Legal</a></td><td>Cira Fontoura</td><td>Martes y jueves, 17:00 a 18:00</td><td>Inicio 6/10/2026 · 2 meses</td><td>2 horas semanales</td></tr>
+                    </tbody>
+                </table>
+            </div>
         </section>
 
         <section class="course-details wrap over" aria-label="Detalle de los cursos">
             <article class="course-detail" id="curso-principiante" data-slug="a1">
                 <h3>A1 Course Beginner</h3>
-                <img src="img/foto-21.png" alt="" loading="lazy">
+                <img src="img/room/foto-21.jpg" alt="" loading="lazy">
             <p>El nivel A1 corresponde al primer nivel usuarios básicos con el idioma, es decir, aquellos
                 capaces de comunicarse en situaciones cotidianas con expresiones de uso frecuente y
                 utilizando vocabulario elemental.</p>
@@ -242,7 +268,7 @@
             </article>
             <article class="course-detail" id="curso-intermedio" data-slug="a2">
                 <h3>A2 Course Elementary</h3>
-                <img src="img/foto-31.png" alt="" loading="lazy">
+                <img src="img/room/foto-31.jpg" alt="" loading="lazy">
             <p>El nivel de inglés A2 se alcanza cuando se dominan las competencias básicas relacionadas con la realidad más cotidiana y cercana. Es la segunda y última parte del nivel básico y da paso a los niveles B, que equivaldrían a un nivel intermedio.</p>
             <ul>
                 <li>Fecha de inicio: 08/03/2027.</li>
@@ -257,7 +283,7 @@
             </article>
             <article class="course-detail" id="curso-preintermedio" data-slug="a2-plus">
                 <h3>A2 + Course Pre-Intermediate</h3>
-                <img src="img/foto-31.png" alt="" loading="lazy">
+                <img src="img/room/foto-31.jpg" alt="" loading="lazy">
             <p>El nivel de inglés A2 se alcanza cuando se dominan las competencias básicas relacionadas con la realidad más cotidiana y cercana. Es la segunda y última parte del nivel básico y da paso a los niveles B, que equivaldrían a un nivel intermedio.</p>
             <ul>
                 <li>Fecha de inicio: 08/03/2027.</li>
@@ -272,7 +298,7 @@
             </article>
             <article class="course-detail" id="curso-intermedio-b1" data-slug="b1">
                 <h3>B1-B1+ Course Intermediate</h3>
-                <img src="img/foto-22.png" alt="" loading="lazy">
+                <img src="img/room/foto-22.jpg" alt="" loading="lazy">
             <p>El nivel B1 corresponde a usuarios independientes con el idioma, es decir, que cuentan con la fluidez necesaria para comunicarse sin esfuerzo con hablantes nativos. El curso prepara a los alumnos en el formato del examen Preliminary English Test (PET) de la Universidad de Cambridge para quienes deseen presentarse al examen internacional y obtener dicha certificación.</p>
             <ul>
                 <li>Fecha de inicio: 09/03/2027.</li>
@@ -287,7 +313,7 @@
             </article>
             <article class="course-detail" id="curso-intermedio-b2" data-slug="b2">
                 <h3>B2 Course Upper-Intermediate / Fce</h3>
-                <img src="img/foto-2.png" alt="" loading="lazy">
+                <img src="img/room/foto-2.jpg" alt="" loading="lazy">
             <p>Con la titulación B2 First, demuestras ante el mundo que posees las destrezas lingüísticas
                 necesarias para vivir y trabajar de manera independiente en un país angloparlante, así como,
                 para estudiar cursos impartidos en inglés.
@@ -309,7 +335,7 @@
             </article>
             <article class="course-detail" id="curso-avanzado-cae" data-slug="c1">
                 <h3>C1 Course Advanced / Cae</h3>
-                <img src="img/foto-3.png" alt="" loading="lazy">
+                <img src="img/room/foto-3.jpg" alt="" loading="lazy">
             <p>El nivel C1 corresponde a usuarios competentes con el idioma, es decir, capacitados para tareas complejas de trabajo y estudio. La titulación de alto nivel demuestra que tienes las destrezas lingüísticas que las empresas y las universidades están buscando.</p>
             <ul>
                 <li>Fecha de inicio: 08/03/2027.</li>
@@ -325,7 +351,7 @@
             </article>
             <article class="course-detail" id="curso-avanzado-prof" data-slug="c2">
                 <h3>C2 Course - Proficient / Cpe</h3>
-                <img src="img/foto-4.png" alt="" loading="lazy">
+                <img src="img/room/foto-4.jpg" alt="" loading="lazy">
             <p>Es la certificación más alta que se puede alcanzar y demuestra un nivel similar al de un hablante nativo de inglés. El C2 Proficiency certifica un nivel C2 avanzado según el Marco Común Europeo de Referencia para las Lenguas. Este nivel demuestra un dominio del inglés que habilita a quien lo posee a estudiar, investigar, trabajar, o comunicarse efectivamente en cualquier tipo de circunstancia.</p>
             <ul>
                 <li>Fecha de inicio: 08/03/2027.</li>
@@ -341,7 +367,7 @@
             </article>
             <article class="course-detail" id="pronunciation-course" data-slug="pronunciation">
                 <h3>PRONUNCIATION COURSE</h3>
-                <img src="img/foto-6.png" alt="" loading="lazy">
+                <img src="img/room/foto-6.jpg" alt="" loading="lazy">
             <p>Este curso está enfocado en mejorar tu pronunciación en inglés para que hables con mayor claridad, confianza y naturalidad en situaciones reales.</p>
             <ul>
                 <li>Días: 2do y 4to lunes de cada mes.</li>
@@ -353,7 +379,7 @@
             </article>
             <article class="course-detail" id="conversational-english-sessions" data-slug="conversational">
                 <h3>CONVERSATIONAL SESSIONS</h3>
-                <img src="img/foto-7.png" alt="" loading="lazy">
+                <img src="img/room/foto-7.jpg" alt="" loading="lazy">
             <p>Las sesiones de inglés conversacional tienen como fin ponerte a hablar en inglés sin restricciones. Son sesiones donde vas a poder
                 charlar de lo que quieras, conocer gente, expandir tu vocabulario, recibir tips, mejorar tu fluidez y mucho más.</p>
             <p><b> IMPORTANTE: Inscriptos a los cursos FCE, CAE Y CPE tienen acceso gratuito.</b></p>
@@ -367,7 +393,7 @@
             </article>
             <article class="course-detail" id="legal-english-course" data-slug="legal">
                 <h3>LEGAL ENGLISH COURSE</h3>
-                <img src="img/cira.png" alt="" loading="lazy">
+                <img src="img/room/cira.jpg" alt="" loading="lazy">
             <p>Un curso corto de 2 meses diseñado como una introducción al mundo del inglés jurídico. A través de conceptos fundamentales, terminología específica y documentos legales frecuentes, los participantes desarrollarán las herramientas necesarias para comprender y utilizar el inglés en contextos profesionales del ámbito legal.</p>
             <p>Al finalizar el curso vas a poder comprender los conceptos y la terminología básica del inglés jurídico, desenvolverte con mayor seguridad frente a contratos y documentos legales, reconocer vocabulario propio del derecho societario, laboral y la resolución de conflictos, y aplicar estructuras y recursos básicos de redacción jurídica en inglés. Además, vas a poder analizar documentos legales sencillos.</p>
             <p><b>¿PARA QUIÉN ES?</b> Abogados/as, profesionales del ámbito jurídico, estudiantes de derecho, asistentes legales y profesionales que trabajan con clientes internacionales.</p>
@@ -387,25 +413,28 @@
         </section>
 
         <section class="room over" aria-labelledby="h-room">
-            <div class="room-head">
-                <h2 id="h-room" class="mega" data-split>Que Dicen Mis Estudiantes!</h2>
-                <p class="lead" data-reveal>El inglés, como cualquier idioma, es un universo cultural inmenso, y una vez que nos metemos en él, cosas y experiencias nuevas surgen una y otra vez.</p>
+            <div class="sec" style="padding-bottom:0">
+                <div class="sec-head" style="margin-bottom:0">
+                    <span class="eyebrow"><span class="n">03</span>Roommates</span>
+                    <h2 id="h-room" class="mega" data-split>Que Dicen Mis <em>Estudiantes</em>!</h2>
+                    <p class="lead" data-reveal>El inglés, como cualquier idioma, es un universo cultural inmenso, y una vez que nos metemos en él, cosas y experiencias nuevas surgen una y otra vez.</p>
+                </div>
             </div>
             <div class="room-stage" data-room>
                 <div class="room-sticky">
                     <div class="frame frame-call" data-gl="call" data-variant="speaker" data-speaker="0">
-                        <img class="frame-fallback" src="img/foto-21.png" alt="" loading="lazy">
+                        <img class="frame-fallback" src="img/room/foto-21.jpg" alt="" loading="lazy">
                         <div class="call-ui">
                             <div class="call-top"><i class="rec" aria-hidden="true"></i><span>The English Room · en vivo</span></div>
-                            <p class="call-title" aria-hidden="true"><span>Entrá</span><i class="join"></i><span>a clase</span></p>
+                            <p class="call-title" aria-hidden="true"><span>Entrá</span><i class="join"></i><em>a clase</em></p>
                             <span class="chat-label" aria-hidden="true">Chat de la clase</span>
                             <div class="chat">
                                 <ol>
                                     <li class="msg" data-speaker="1"><img src="img/student-1.png" alt="" loading="lazy"><div><b>Mica</b><p>"Las clases son super dinámicas y variadas. Carli hace que sea una experiencia distinta aprender inglés, dónde además de aprender un montón sobre el idioma podés divertirte!"</p></div></li>
                                     <li class="msg" data-speaker="2"><img src="img/student-2.png" alt="" loading="lazy"><div><b>Seba</b><p>"Carla es una excelente y dedicada profesora. Sus clases personalizadas hacen que me sienta motivado y enganchado. Retomé inglés después de 10 años cuando pensaba que era algo imposible."</p></div></li>
                                     <li class="msg" data-speaker="3"><img src="img/student-3.png" alt="" loading="lazy"><div><b>Bruna</b><p>"Aprender inglés hoy en día es un *debe* porque te abre las puertas al mundo y es posible aprenderlo de una manera personalizada, dinámica y divertida. Destaco la dedicación de Carla que hace que te guste el idioma y por lo tanto lo estudiarás con más motivación."</p></div></li>
-                                    <li class="msg" data-speaker="4"><img src="img/caro.png" alt="" loading="lazy"><div><b>Caro</b><p>"Aprender divirtiéndome y de forma ligera fue la mejor forma de volver a conectar con esta cultura increíble y enamorarme nuevamente de su idioma. Super agradecida de haber dado con The English Room y sus clases dinámicas!"</p></div></li>
-                                    <li class="msg" data-speaker="5"><img src="img/mika.png" alt="" loading="lazy"><div><b>Mika</b><p>"Las clases con Carla son duper dinámicas! La modalidad que utiliza para enseñar permite que aprendas y ejercites el inglés diariamente, de forma muy práctica."</p></div></li>
+                                    <li class="msg" data-speaker="4"><img src="img/room/caro.jpg" alt="" loading="lazy"><div><b>Caro</b><p>"Aprender divirtiéndome y de forma ligera fue la mejor forma de volver a conectar con esta cultura increíble y enamorarme nuevamente de su idioma. Super agradecida de haber dado con The English Room y sus clases dinámicas!"</p></div></li>
+                                    <li class="msg" data-speaker="5"><img src="img/room/mika.jpg" alt="" loading="lazy"><div><b>Mika</b><p>"Las clases con Carla son duper dinámicas! La modalidad que utiliza para enseñar permite que aprendas y ejercites el inglés diariamente, de forma muy práctica."</p></div></li>
                                 </ol>
                             </div>
                             <div class="call-bar" aria-hidden="true"><span>🎙</span><span>▣</span><span>☺</span><span class="leave">✕</span></div>
@@ -423,9 +452,19 @@
             </div>
         </dialog>
 
+        <nav class="next over" aria-label="Siguiente página">
+            <a class="next-card" href="recursos-gratuitos.html">
+                <div class="frame" data-gl="portal" data-next="recursos-gratuitos.html"></div>
+                <div class="next-copy">
+                    <div><span class="eyebrow">Siguiente</span><strong>Recursos gratuitos</strong></div>
+                    <span class="pill pill-arrow">Entrar</span>
+                </div>
+            </a>
+        </nav>
+
         <footer class="ft over" aria-labelledby="ft-contacto">
             <div class="ft-top">
-                <p class="ft-quote" data-reveal>“Learn English From Your Favourite Spot”</p>
+                <p class="ft-quote" data-reveal>“Learn English From Your <em>Favourite Spot</em>”</p>
                 <div data-reveal style="--d:100">
                     <h3 id="ft-contacto">Contacto</h3>
                     <ul>
@@ -452,17 +491,6 @@
                 <p>&copy; <a href="index.html">theenglishroom.edu.uy</a>, Todos Los Derechos Reservados.<br><br>Sitio Desarrollado Por | <a href="https://digitalbuilders.uy" target="_blank" rel="noopener">Digital Builders</a></p>
             </div>
         </footer>
-
-        <section class="portal" data-portal data-next="recursos-gratuitos.html" aria-label="Siguiente: Recursos gratuitos">
-            <div class="portal-sticky">
-                <div class="portal-view" data-gl="portal"></div>
-                <div class="portal-copy over">
-                    <span class="eyebrow">Siguiente clase</span><br>
-                    <a href="recursos-gratuitos.html">Recursos gratuitos</a>
-                </div>
-                <p class="portal-hint over" aria-hidden="true">Seguí bajando para entrar</p>
-            </div>
-        </section>
 
     </main>
 

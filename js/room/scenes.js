@@ -13,7 +13,7 @@ export const C = { blue: 0x296f8d, turq: 0x26ccc8, pink: 0xF5A7B5, cream: 0xFFF5
 
 /** Escena principal de cada página: lo que se ve dentro de la pantalla al viajar. */
 export const PAGE_HERO = {
-  'index.html': ['bubbles'], '': ['bubbles'], 'sobre-mi.html': ['globe'], 'cursos.html': ['levels'],
+  'index.html': ['classroom'], '': ['classroom'], 'sobre-mi.html': ['globe'], 'cursos.html': ['levels'],
   'recursos-gratuitos.html': ['docs', 'stack'], 'contacto.html': ['lobby'],
 };
 
@@ -33,7 +33,7 @@ export function tex(src) {
   if (!texCache.has(src)) {
     const t = texLoader.load(src);
     t.colorSpace = THREE.SRGBColorSpace;
-    t.anisotropy = 4;
+    t.anisotropy = 12;
     texCache.set(src, t);
   }
   return texCache.get(src);
@@ -250,70 +250,87 @@ class Bubbles extends Base {
 // Clase en vivo: grilla de videollamada con Carla y los roommates
 // =============================================================
 const PEOPLE = [
-  ['img/foto-30.png', 'Carla', 'Teacher'],
-  ['img/student-1.png', 'Mica'],
-  ['img/student-2.png', 'Seba'],
-  ['img/student-3.png', 'Bruna'],
-  ['img/caro.png', 'Caro'],
-  ['img/mika.png', 'Mika'],
+  ['img/room/foto-30.jpg', 'Carla Migliarini', 'Teacher'],
+  ['img/student-1.png', 'Mica', null, true],
+  ['img/student-2.png', 'Seba', null, true],
+  ['img/student-3.png', 'Bruna', null, true],
+  ['img/room/caro.jpg', 'Caro', null, true],
+  ['img/room/mika.jpg', 'Mika', null, true],
 ];
 
-function drawTile(canvas, image, name, role, speaking) {
+/**
+ * Dibuja una "cámara" de videollamada.
+ * Fotos grandes: encuadre cover, apuntando a la cara.
+ * Fotos chicas (avatar): fondo desenfocado de la misma foto + retrato circular nítido.
+ */
+export function drawPerson(canvas, image, { name, role, avatar = false, speaking = false } = {}) {
   const ctx = canvas.getContext('2d');
   const w = canvas.width, h = canvas.height;
-  ctx.fillStyle = '#16424d';
+  ctx.fillStyle = '#0f3039';
   ctx.fillRect(0, 0, w, h);
   if (image) {
-    // foto en modo "cover", recortada al cuadro de la cámara
-    const s = Math.max(w / image.width, h / image.height) * (role ? 1 : 0.86);
+    const s = Math.max(w / image.width, h / image.height);
     const iw = image.width * s, ih = image.height * s;
-    if (!role) {
-      // alumnos: avatar centrado sobre fondo de color, como cámara apagada con foto
-      ctx.fillStyle = '#1d5866';
-      ctx.fillRect(0, 0, w, h);
-      const r = h * 0.3;
+    if (avatar) {
       ctx.save();
-      ctx.beginPath(); ctx.arc(w / 2, h * 0.45, r, 0, Math.PI * 2); ctx.clip();
-      const k = Math.max((2 * r) / image.width, (2 * r) / image.height);
-      ctx.drawImage(image, w / 2 - (image.width * k) / 2, h * 0.45 - (image.height * k) / 2, image.width * k, image.height * k);
+      ctx.filter = 'blur(28px) saturate(1.25) brightness(.62)';
+      ctx.drawImage(image, (w - iw * 1.3) / 2, (h - ih * 1.3) / 2, iw * 1.3, ih * 1.3);
       ctx.restore();
-      ctx.strokeStyle = speaking ? '#26ccc8' : 'rgba(255,245,243,.25)';
-      ctx.lineWidth = 6;
-      ctx.beginPath(); ctx.arc(w / 2, h * 0.45, r + 6, 0, Math.PI * 2); ctx.stroke();
+      ctx.fillStyle = 'rgba(6,19,23,.18)';
+      ctx.fillRect(0, 0, w, h);
+      const r = h * 0.29, cx = w / 2, cy = h * 0.46;
+      ctx.save();
+      ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.clip();
+      const k = Math.max((2 * r) / image.width, (2 * r) / image.height);
+      ctx.imageSmoothingQuality = 'high';
+      ctx.drawImage(image, cx - (image.width * k) / 2, cy - (image.height * k) / 2, image.width * k, image.height * k);
+      ctx.restore();
+      ctx.lineWidth = 7;
+      ctx.strokeStyle = speaking ? '#26ccc8' : 'rgba(255,255,255,.22)';
+      ctx.beginPath(); ctx.arc(cx, cy, r + 8, 0, Math.PI * 2); ctx.stroke();
     } else {
-      ctx.drawImage(image, (w - iw) / 2, (h - ih) / 2 - h * 0.04, iw, ih);
+      ctx.imageSmoothingQuality = 'high';
+      ctx.drawImage(image, (w - iw) / 2, (h - ih) * 0.32, iw, ih);
     }
   }
-  const g = ctx.createLinearGradient(0, h * 0.6, 0, h);
-  g.addColorStop(0, 'rgba(11,34,41,0)'); g.addColorStop(1, 'rgba(11,34,41,.6)');
+  const g = ctx.createLinearGradient(0, h * 0.62, 0, h);
+  g.addColorStop(0, 'rgba(6,19,23,0)'); g.addColorStop(1, 'rgba(6,19,23,.62)');
   ctx.fillStyle = g; ctx.fillRect(0, 0, w, h);
-  const label = role ? `${name} · ${role}` : name;
-  ctx.font = '600 26px "Inter Tight", sans-serif';
-  const tw = ctx.measureText(label).width;
-  ctx.fillStyle = 'rgba(16,55,65,.82)';
-  ctx.beginPath(); ctx.roundRect(20, h - 66, tw + 66, 46, 23); ctx.fill();
-  ctx.fillStyle = speaking ? '#26ccc8' : '#F5A7B5';
-  ctx.beginPath(); ctx.arc(44, h - 43, 7, 0, Math.PI * 2); ctx.fill();
-  ctx.fillStyle = '#fff';
-  ctx.fillText(label, 62, h - 34);
+  // micrófono
+  ctx.fillStyle = speaking ? '#26ccc8' : 'rgba(6,19,23,.6)';
+  ctx.beginPath(); ctx.arc(w - 46, h - 44, 22, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = speaking ? '#06201f' : '#fff';
+  ctx.beginPath(); ctx.roundRect(w - 52, h - 58, 12, 20, 6); ctx.fill();
+  ctx.fillRect(w - 47, h - 36, 2, 6);
+  if (name) {
+    const label = role ? name + ' · ' + role : name;
+    ctx.font = '600 25px "Inter Tight", sans-serif';
+    const tw = ctx.measureText(label).width;
+    ctx.fillStyle = 'rgba(6,19,23,.72)';
+    ctx.beginPath(); ctx.roundRect(20, h - 66, tw + 64, 46, 23); ctx.fill();
+    ctx.fillStyle = speaking ? '#26ccc8' : '#F5A7B5';
+    ctx.beginPath(); ctx.arc(43, h - 43, 7, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = '#fff';
+    ctx.fillText(label, 60, h - 34);
+  }
 }
 
 class Call extends Base {
   constructor(world) {
     super(world, 28);
-    this.scene.background = new THREE.Color(0x0d2e37);
+    this.scene.background = new THREE.Color(0x071a1f);
     addLights(this.scene, { key: 1.6 });
     this.group = new THREE.Group();
     this.scene.add(this.group);
     const tileGeo = new RoundedBoxGeometry(3.2, 2.0, 0.08, 4, 0.12);
     const ringGeo = new RoundedBoxGeometry(3.38, 2.18, 0.04, 4, 0.2);
     const barGeo = new THREE.BoxGeometry(0.07, 0.34, 0.04);
-    this.tiles = PEOPLE.map(([src, name, role], i) => {
+    this.tiles = PEOPLE.map(([src, name, role, avatar], i) => {
       const canvas = document.createElement('canvas');
-      canvas.width = 640; canvas.height = 400;
+      canvas.width = 800; canvas.height = 500;
       const map = new THREE.CanvasTexture(canvas);
       map.colorSpace = THREE.SRGBColorSpace;
-      map.anisotropy = 4;
+      map.anisotropy = 12;
       const g = new THREE.Group();
       const mesh = new THREE.Mesh(tileGeo, new THREE.MeshBasicMaterial({ map }));
       const ring = new THREE.Mesh(ringGeo, new THREE.MeshBasicMaterial({ color: C.turq, transparent: true, opacity: 0, toneMapped: false }));
@@ -326,7 +343,7 @@ class Call extends Base {
       });
       g.add(ring, mesh);
       this.group.add(g);
-      const tile = { g, mesh, ring, bars, map, canvas, name, role, image: null, speaking: false, pos: new THREE.Vector3(), scale: 1 };
+      const tile = { g, mesh, ring, bars, map, canvas, name, role, avatar, image: null, speaking: false, pos: new THREE.Vector3(), scale: 1 };
       Promise.all([img(src), fontsReady()]).then(([image]) => { tile.image = image; this.redraw(tile); });
       tile.pos.set(((i % 3) - 1) * 3.42, i < 3 ? 1.11 : -1.11, 0);
       return tile;
@@ -341,7 +358,7 @@ class Call extends Base {
     this.nextPuff = 0;
   }
 
-  redraw(tile) { drawTile(tile.canvas, tile.image, tile.name, tile.role, tile.speaking); tile.map.needsUpdate = true; }
+  redraw(tile) { drawPerson(tile.canvas, tile.image, { name: tile.name, role: tile.role, avatar: tile.avatar, speaking: tile.speaking }); tile.map.needsUpdate = true; }
 
   layout(variant, speaker, side) {
     const out = [];
@@ -442,7 +459,7 @@ const PLACES = { uruguay: [-34.9, -56.2], australia: [-25.3, 133.8], ushuaia: [-
 class Globe extends Base {
   constructor(world) {
     super(world, 32);
-    this.scene.background = new THREE.Color(C.deep);
+    this.scene.background = null; // se ve el fondo animado
     this.root = new THREE.Group();
     this.globe = new THREE.Group();
     this.globe.rotation.order = 'XYZ';
@@ -569,7 +586,12 @@ class Globe extends Base {
       const k = (t * 0.8 + i * 0.33) % 1;
       m.ring.scale.setScalar(1 + k * 2.2);
       m.ring.material.opacity = (1 - k) * (focus === m.key ? 1 : 0.45);
-      if (m.label) m.label.material.opacity = lerp(m.label.material.opacity, focus === m.key || focus === 'world' ? 1 : 0.35, 0.06);
+      if (m.label) {
+        // solo se ven los nombres del lado que mira a cámara
+        const front = m.p.clone().applyQuaternion(this.globe.quaternion).z > 0.35;
+        m.label.visible = front;
+        m.label.material.opacity = lerp(m.label.material.opacity, focus === m.key || focus === 'world' ? 1 : 0.35, 0.06);
+      }
     });
 
     // hero: globo grande y bajo (bajo el título gigante); historia: a un costado
@@ -591,14 +613,15 @@ class Globe extends Base {
 // =============================================================
 const LEVELS = [
   ['A1', C.cream, C.dark], ['A2', C.pink, C.dark], ['A2+', C.cream, C.blue], ['B1', C.blue, C.cream],
-  ['B2', C.dark, C.turq], ['C1', C.blue, C.pink], ['C2', C.dark, C.pink],
+  ['B2', C.turq, C.dark], ['C1', C.blue, C.pink], ['C2', C.pink, C.dark],
 ];
 
 class Levels extends Base {
   constructor(world) {
     super(world, 30);
-    this.scene.background = new THREE.Color(C.turq);
-    addLights(this.scene, { rim: C.cream, fill: C.pink });
+    this.scene.background = null; // se ve el fondo animado
+    addLights(this.scene, { key: 2.6, rim: C.turq, fill: C.pink });
+    this.scene.add(new THREE.HemisphereLight(0xffffff, 0x103741, 1.1));
     this.group = new THREE.Group();
     this.scene.add(this.group);
     const stepGeo = new RoundedBoxGeometry(1.8, 0.44, 1.3, 4, 0.14);
@@ -806,7 +829,8 @@ class Sheet {
 class Docs extends Base {
   constructor(world) {
     super(world, 30);
-    this.scene.background = new THREE.Color(C.dark);
+    this.bgColor = new THREE.Color(C.dark);
+    this.scene.background = null;
     addLights(this.scene, { rim: C.turq, fill: C.pink });
     this.groups = {};
     this.font = null;
@@ -858,7 +882,7 @@ class Docs extends Base {
 
   beforeRender(view, t) {
     const variant = String(view.variant ?? 'stack');
-    this.scene.background.setHex(DOC_BG[variant] ?? C.dark);
+    this.scene.background = variant === 'stack' ? null : this.bgColor.setHex(DOC_BG[variant] ?? C.dark);
     const entry = this.group(variant);
     this.word(entry, variant);
     Object.values(this.groups).forEach((e) => { e.g.visible = e === entry; });
@@ -928,7 +952,7 @@ function drawLobby(canvas, image) {
 class Lobby extends Base {
   constructor(world) {
     super(world, 30);
-    this.scene.background = new THREE.Color(C.blue);
+    this.scene.background = null; // se ve el fondo animado
     addLights(this.scene, { rim: C.turq, fill: C.pink });
     this.device = new THREE.Group();
     this.scene.add(this.device);
@@ -943,7 +967,7 @@ class Lobby extends Base {
     const cam = new THREE.Mesh(new THREE.SphereGeometry(0.035, 12, 8), new THREE.MeshBasicMaterial({ color: 0x000000 }));
     cam.position.set(0, 1.47, 0.125);
     this.device.add(cam);
-    Promise.all([img('img/foto-perfil.png'), fontsReady()]).then(([image]) => { drawLobby(canvas, image); map.needsUpdate = true; });
+    Promise.all([img('img/room/foto-12.jpg'), fontsReady()]).then(([image]) => { drawLobby(canvas, image); map.needsUpdate = true; });
     drawLobby(canvas, null);
     this.bubbles = [['Hi!', C.cream, C.dark], ['Hello!', C.turq, C.dark], ["Let's talk", C.pink, C.dark]].map(([word, color, fg], i) => {
       const m = new THREE.Mesh(bubbleGeo(i % 2), glossy(color));
@@ -975,7 +999,7 @@ class Lobby extends Base {
 
   beforeRender() {
     const off = this.aspect > 1.2 ? -2.4 : 0;
-    const offY = this.aspect < 0.9 ? -0.8 : 0;
+    const offY = this.aspect < 0.9 ? -1.5 : 0;
     this.camera.position.set(off, offY, this.fit(off ? 11.5 : 7.4, 5.6));
     this.camera.lookAt(off, offY, 0);
   }
@@ -1073,7 +1097,7 @@ class Photo {
 class Portal extends Base {
   constructor(world) {
     super(world, 35);
-    this.scene.background = new THREE.Color(C.deep);
+    this.scene.background = null; // se ve el fondo animado
     addLights(this.scene, { rim: C.turq, fill: C.pink });
     this.device = new THREE.Group();
     this.scene.add(this.device);
@@ -1117,7 +1141,7 @@ class Portal extends Base {
   }
 
   update(t, dt, view) {
-    const p = view.state.p ?? parseFloat(view.el?.dataset.p || 0);
+    const p = view.state.p ?? (view.el ? view.hover * 0.22 : 0);
     this.p = p;
     const speed = 2 + p * 45;
     this.streamData.forEach((d, i) => {
@@ -1135,15 +1159,17 @@ class Portal extends Base {
 
   beforeRender(view, t) {
     if (Math.abs(this.aspectBuilt - this.aspect) > 0.02) this.build(this.aspect);
-    const p = view.state.p ?? parseFloat(view.el?.dataset.p || 0);
+    const p = view.state.p ?? (view.el ? view.hover * 0.22 : 0);
     // la escena de destino
     let dest = view.state.dest, destVariant = view.state.destVariant;
     if (!dest && view.el) {
-      const next = view.el.closest('[data-portal]')?.dataset.next || 'index.html';
+      const next = view.el.dataset.next || view.el.closest('[data-portal]')?.dataset.next || 'index.html';
       [dest, destVariant] = PAGE_HERO[next] || PAGE_HERO['index.html'];
     }
     const r = view.rect;
-    const tx = this.world.renderDestination(dest || 'bubbles', destVariant, r.w, r.h);
+    // la escena de destino se dibuja con la proporción de la pantalla de la tablet
+    const sa = clamp(this.aspect, 0.5, 2.1);
+    const tx = this.world.renderDestination(dest || 'classroom', destVariant, r.h * sa, r.h);
     this.screen.material.map = tx; this.screen.material.needsUpdate = this.lastTx !== tx; this.lastTx = tx;
     this.cover.material.map = tx;
 
@@ -1168,9 +1194,135 @@ class Portal extends Base {
   }
 }
 
+
+// =============================================================
+// INICIO · portada: la clase en vivo. Una pared de cámaras con
+// alumnos reales del sitio, Carla al centro, globos de diálogo
+// flotando. Al hacer scroll la cámara entra en la pantalla de Carla.
+// =============================================================
+const WALL = [
+  ['foto-11'], ['foto-2'], ['foto-16'], ['foto-22'], ['foto-7'], ['foto-8'], ['foto1'],
+  ['foto-21'], ['foto-3'], ['student-1', 'Mica', true], ['CARLA'], ['student-2', 'Seba', true], ['foto-4'], ['foto-9'],
+  ['foto-17'], ['caro', 'Caro', true], ['foto-31'], ['student-3', 'Bruna', true], ['foto-6'], ['mika', 'Mika', true], ['foto2'],
+];
+const wallSrc = (n) => (n.startsWith('student') ? 'img/' + n + '.png' : 'img/room/' + n + '.jpg');
+const CLASS_WORDS = ['Hello!', 'Hi!', 'Why?', 'Great!', "Let's talk", 'Yes!', 'Ready?', 'Cheers', 'Wow', 'OK!'];
+
+class Classroom extends Base {
+  constructor(world) {
+    super(world, 32);
+    this.scene.background = null; // se ve el fondo animado
+    addLights(this.scene, { key: 1.4 });
+    this.wall = new THREE.Group();
+    this.scene.add(this.wall);
+    const TW = 3.2, TH = 2.0, GX = 3.44, GY = 2.24;
+    const tileGeo = new RoundedBoxGeometry(TW, TH, 0.06, 4, 0.12);
+    const ringGeo = new RoundedBoxGeometry(TW + 0.18, TH + 0.18, 0.03, 4, 0.2);
+    this.tiles = WALL.map(([name, label, avatar], i) => {
+      const c = i % 7, r = Math.floor(i / 7);
+      const carla = name === 'CARLA';
+      const canvas = document.createElement('canvas');
+      canvas.width = carla ? 1280 : 800; canvas.height = carla ? 800 : 500;
+      const map = new THREE.CanvasTexture(canvas);
+      map.colorSpace = THREE.SRGBColorSpace;
+      map.anisotropy = 12;
+      const g = new THREE.Group();
+      const mesh = new THREE.Mesh(tileGeo, new THREE.MeshBasicMaterial({ map }));
+      const ring = new THREE.Mesh(ringGeo, new THREE.MeshBasicMaterial({ color: C.turq, transparent: true, opacity: 0, toneMapped: false }));
+      ring.position.z = -0.03;
+      g.add(ring, mesh);
+      const x = (c - 3) * GX, y = (1 - r) * GY;
+      g.position.set(x, y, -x * x * 0.03);
+      g.rotation.y = -x * 0.045;
+      this.wall.add(g);
+      const t = { g, mesh, ring, map, canvas, carla, label, avatar, image: null, speaking: carla, base: g.position.clone(), ph: i * 0.7 };
+      const src = carla ? 'img/room/foto-30.jpg' : wallSrc(name);
+      Promise.all([img(src), fontsReady()]).then(([im]) => { t.image = im; this.draw(t); });
+      return t;
+    });
+    this.carla = this.tiles.find((t) => t.carla);
+    this.speakerIdx = 0;
+    this.nextSwap = 0;
+
+    // globos de diálogo que flotan entre la cámara y la pared
+    const rand = rng(21);
+    this.bubbles = CLASS_WORDS.map((word, i) => {
+      const color = [C.turq, C.pink, C.cream, C.blue][i % 4];
+      const m = new THREE.Mesh(bubbleGeo(i % 3 === 0 ? 1 : 0), glossy(color));
+      const sc = 0.38 + rand() * 0.32;
+      m.scale.setScalar(sc);
+      if (rand() > 0.5) m.scale.x *= -1;
+      this.scene.add(m);
+      font().then((f) => {
+        if (!f) return;
+        const tg = textGeo(f, word, 0.36, 0.06);
+        tg.computeBoundingBox();
+        const w = tg.boundingBox.max.x - tg.boundingBox.min.x;
+        const tm = new THREE.Mesh(tg, glossy(color === C.blue ? C.cream : C.dark, { clearcoat: 0.3 }));
+        const k = Math.min(1, 1.55 / w);
+        tm.scale.set(k * Math.sign(m.scale.x), k, 1);
+        tm.position.set(0, 0.12, BUBBLE_FRONT + 0.03);
+        m.add(tm);
+      });
+      return { m, x: (rand() - 0.5) * 16, y: (rand() - 0.5) * 6.5, z: 1.2 + rand() * 5.5, ph: rand() * 6.28, sp: 0.15 + rand() * 0.25 };
+    });
+
+    // polvo de luz
+    const N = 500, pos = new Float32Array(N * 3);
+    for (let i = 0; i < N; i++) pos.set([(rand() - 0.5) * 30, (rand() - 0.5) * 16, rand() * 12 - 2], i * 3);
+    const pg = new THREE.BufferGeometry();
+    pg.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+    this.dust = new THREE.Points(pg, new THREE.PointsMaterial({ size: 0.035, color: C.cream, transparent: true, opacity: 0.45, depthWrite: false, toneMapped: false }));
+    this.scene.add(this.dust);
+  }
+
+  draw(t) {
+    if (t.carla) drawPerson(t.canvas, t.image, { name: 'Carla Migliarini', role: 'Teacher', speaking: true });
+    else drawPerson(t.canvas, t.image, { name: t.label, avatar: t.avatar, speaking: t.speaking });
+    t.map.needsUpdate = true;
+  }
+
+  update(t, dt, view) {
+    // cada tanto habla otro alumno
+    if (t > this.nextSwap) {
+      const others = this.tiles.filter((x) => !x.carla);
+      const prev = others[this.speakerIdx];
+      if (prev) { prev.speaking = false; if (prev.image) this.draw(prev); }
+      this.speakerIdx = Math.floor(Math.random() * others.length);
+      const cur = others[this.speakerIdx];
+      cur.speaking = true; if (cur.image) this.draw(cur);
+      this.nextSwap = t + 2.6;
+    }
+    this.tiles.forEach((x) => {
+      x.g.position.y = x.base.y + Math.sin(t * 0.7 + x.ph) * 0.05;
+      x.ring.material.opacity = lerp(x.ring.material.opacity, x.speaking ? (x.carla ? 1 : 0.85) : 0, 0.08);
+    });
+    this.bubbles.forEach((b, i) => {
+      b.m.position.set(b.x + Math.sin(t * b.sp + b.ph) * 0.6, b.y + Math.sin(t * b.sp * 1.3 + b.ph) * 0.35, b.z);
+      b.m.rotation.set(Math.sin(t * 0.5 + b.ph) * 0.15, Math.sin(t * 0.4 + b.ph) * 0.35, Math.sin(t * 0.3 + i) * 0.08);
+    });
+    this.dust.rotation.z = t * 0.01;
+  }
+
+  beforeRender(view) {
+    const p = view.el ? parseFloat(view.el.dataset.p || 0) : 0;
+    const e = ease(clamp(p));
+    const t2 = Math.tan(THREE.MathUtils.degToRad(this.camera.fov / 2));
+    const c = this.carla.g.position;
+    // distancia para que la pantalla de Carla llene el cuadro
+    const dFill = Math.max(1.0 / t2, 1.6 / (t2 * this.aspect)) * 1.02;
+    const d0 = this.fit(this.aspect < 1 ? 7.6 : 17.5, 9.2);
+    const free = 1 - e;
+    const oy = (this.aspect < 1 ? -1.4 : 0.15) * free;
+    this.camera.position.set(c.x + view.local.x * 1.1 * free, c.y + oy + view.local.y * 0.6 * free, c.z + lerp(d0, dFill, e) + 0.03);
+    this.camera.lookAt(c.x + view.local.x * 0.4 * free, c.y + oy, c.z);
+  }
+}
+
 export function createModule(name, world, el, variant) {
   switch (name) {
     case 'bubbles': return new Bubbles(world);
+    case 'classroom': return new Classroom(world);
     case 'call': return new Call(world);
     case 'globe': return new Globe(world);
     case 'levels': return new Levels(world);

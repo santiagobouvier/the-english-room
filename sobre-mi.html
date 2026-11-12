@@ -6,11 +6,11 @@
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <meta content="inglés, cursos de inglés, aprender inglés, the english room" name="keywords">
     <meta content="¿Buscas pasarla bien mientras aprendes? Llegaste. Empieza a disfrutar del inglés. Mi nombre es Carla, soy una uruguaya amante de los viajes y profesora de inglés, estudié ciencias de la comunicación y me recibí como teacher of english as a second language en el año 2011." name="description">
-    <meta name="theme-color" content="#103741">
+    <meta name="theme-color" content="#061317">
     <link href="img/logo.jpeg" rel="icon">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600&family=Lobster+Two:wght@700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter+Tight:wght@400;500;600&family=Lobster+Two:wght@700&display=swap" rel="stylesheet">
     <link href="css/room.css" rel="stylesheet">
     <script>document.documentElement.className = 'js';</script>
     <script type="importmap">
@@ -28,7 +28,6 @@
 <body data-page="sobre-mi" data-theme="dark">
 
     <a class="skip" href="#main">Saltar al contenido</a>
-
     <div class="loader" id="loader" aria-hidden="true">
         <div class="loader-bubble">
             <svg viewBox="0 0 120 90" aria-hidden="true">
@@ -39,15 +38,14 @@
         <div class="loader-count" id="loaderCount">000</div>
         <div class="loader-word">The English Room<br>Entrando a la clase</div>
     </div>
-
+    <canvas id="bg" aria-hidden="true"></canvas>
     <canvas id="gl" aria-hidden="true"></canvas>
-
     <header class="hd" id="hd">
         <a class="hd-logo" href="index.html" aria-label="The English Room, inicio">
             <img src="img/logo-transparente.png" alt="">
             <span>THE ENGLISH<br>ROOM</span>
         </a>
-        <p class="hd-tag">Learn English<br>From Your Favourite Spot</p>
+        <p class="hd-tag">Learn English<br>From Your <em>Favourite Spot</em></p>
         <div class="hd-right">
             <a class="hd-round" href="https://www.cambridgeenglish.org/es/test-your-english/" target="_blank" rel="noopener" title="¿Qué nivel tengo?" aria-label="¿Qué nivel tengo? Test de Cambridge (abre en otra pestaña)"><span aria-hidden="true">Aa</span></a>
             <a class="hd-talk" href="https://wa.me/+59892354225?text=¡Que bueno que estás acá! En breve nos vamos a estar comunicando con vos. ¡Saludos! Carla Migliarini" target="_blank" rel="noopener" aria-label="Hablemos por WhatsApp (abre en otra pestaña)"><span class="roll"><span>Hablemos</span><span aria-hidden="true">Hablemos</span></span><i class="dot" aria-hidden="true"></i></a>
@@ -74,73 +72,87 @@
         <section class="about-stage" data-about aria-labelledby="h-about">
             <div class="about-sticky">
                 <div class="frame" data-gl="globe" data-hero-frame data-focus="uruguay">
-                    <img class="frame-fallback" src="img/foto-perfil.png" alt="">
+                    <img class="frame-fallback" src="img/room/foto-perfil.jpg" alt="">
                 </div>
                 <div class="about-top over">
                     <ol class="crumbs"><li><a href="index.html">Inicio</a></li><li aria-current="page">Sobre Mí</li></ol>
                 </div>
-                <h1 id="h-about" class="about-giant over" data-split>Sobre Mí</h1>
+                <h1 id="h-about" class="about-giant over" data-split>Sobre <em>Mí</em></h1>
             </div>
             <div class="about-scroll">
                 <div class="story">
                     <article class="story-step" data-focus="australia">
-                        <span class="tag">Australia · a los 4 años</span>
-                        <h2 data-split>Sobre Mí</h2>
+                        <span class="num">01 / 04</span>
                         <p>¡Qué bueno que estés acá! Mi nombre es Carla y soy amante de los viajes, la música y por supuesto el inglés. Comencé a estudiarlo a los 4 años para visitar a mis abuelos quienes
                             vivían en Australia y desde ahí nunca más deje de estar conectada a este
                             fantástico idioma.</p>
                     </article>
                     <article class="story-step" data-focus="uruguay">
-                        <span class="tag">Uruguay · 2011</span>
+                        <span class="num">02 / 04</span>
                         <p>Estudié ciencias de la comunicación y me recibí como
                             profesora de inglés en el año 2011, certificándome internacionalmente y
                             habiendo tenido el privilegio de tener excelentes profesores que hicieron que me apasione lo que hago.</p>
                     </article>
                     <article class="story-step" data-focus="ushuaia">
-                        <span class="tag">Ushuaia · el fin del mundo</span>
+                        <span class="num">03 / 04</span>
                         <h3>¿Cómo llegue hasta acá?</h3>
                         <p>Trabaje muchos años en diferentes instituciones como profesora de inglés pero también como examinadora y mentor teacher. <br><br> Cansada de los sistemas
                             tradicionales, decidí tomarme un  ̈gap year" mejor conocido como "año sabático".
-                            Estando en Usuhaia, en el fin del mundo, comencé a adentrarme en las miles de
+                            Estando en Ushuaia, en el fin del mundo, comencé a adentrarme en las miles de
                             posibilidades que la enseñanza a distancia tiene para ofrecer y así fue como decidí dedicarme de lleno a las clases online y a mi manera.</p>
                     </article>
                     <article class="story-step" data-focus="world">
-                        <span class="tag">Online · desde tu lugar favorito</span>
+                        <span class="num">04 / 04</span>
                         <p>Aprendí inglés divirtiéndome, siempre adoré el rol del estudiante, por eso
                             cuando pienso en mis clases busco darles a ustedes lo que a mí me gustaría recibir.</p>
                         <div class="ready">
                             <h3 class="ready-title">Are you ready?</h3>
-                            <a class="pill" href="https://wa.me/+59892354225?text=¡Que bueno que estás acá! En breve nos vamos a estar comunicando con vos. ¡Saludos! Carla Migliarini" target="_blank" rel="noopener">Hablemos por Whatsapp <i class="dot" aria-hidden="true"></i></a>
-                            <span class="chip"><img src="img/foto-perfil.png" alt=""><span><b>Carla Migliarini</b><small>Profesora de inglés</small></span></span>
+                            <a class="pill pill-turq" href="https://wa.me/+59892354225?text=¡Que bueno que estás acá! En breve nos vamos a estar comunicando con vos. ¡Saludos! Carla Migliarini" target="_blank" rel="noopener">Hablemos por Whatsapp <i class="dot" aria-hidden="true"></i></a>
+                            <span class="chip"><img src="img/room/foto-perfil.jpg" alt=""><span><b>Carla Migliarini</b><small>Profesora de inglés</small></span></span>
                         </div>
                     </article>
                 </div>
             </div>
         </section>
 
-        <section class="split over" data-ribbon="about" aria-label="Fotos de Carla">
-            <div class="split-media" data-reveal>
-                <div class="frame" data-gl="teacher" style="aspect-ratio:1/1;border-radius:0">
-                    <img class="frame-fallback" src="img/foto-30.png" alt="">
+        <section class="sec over" data-ribbon="about" aria-labelledby="h-online">
+            <div class="profile">
+                <div class="profile-media" data-reveal>
+                    <figure class="portrait" data-tilt>
+                        <img src="img/room/foto-30.jpg" alt="Carla Migliarini, profesora de inglés">
+                        <figcaption><span><b>Carla Migliarini</b>Profesora de inglés</span><span class="live">Online</span></figcaption>
+                    </figure>
+                    <div class="discs"><img src="img/room/logo.jpg" alt="Logo de The English Room"><img src="img/room/foto-12.jpg" alt=""></div>
                 </div>
-            </div>
-            <div class="split-text">
-                <h2 class="big" data-split>¿ Por Qué Elegí La Modalidad Online ?</h2>
-                <p class="lead" data-reveal>A lo largo de más de 12 años me dediqué a trabajar en colegios, institutos de idiomas y liceos.</p>
-                <p class="lead" data-reveal>Estando en Ushuaia, en el fin del mundo, comencé a descubrir las posibilidades que el "Remote Learning" tiene para ofrecer.</p>
-                <p data-reveal><a class="pill pill-turq pill-arrow" href="cursos.html">Mira Los Cursos</a></p>
+                <div class="profile-text">
+                    <span class="eyebrow"><span class="n">§</span>Modalidad online</span>
+                    <h2 id="h-online" class="mega" data-split style="margin-top:18px">¿ Por Qué Elegí La Modalidad <em>Online</em> ?</h2>
+                    <p class="lead" data-reveal style="margin-top:30px">A lo largo de más de 12 años me dediqué a trabajar en colegios, institutos de idiomas y liceos.</p>
+                    <p class="lead" data-reveal>Estando en Ushuaia, en el fin del mundo, comencé a descubrir las posibilidades que el "Remote Learning" tiene para ofrecer.</p>
+                    <p data-reveal style="margin-top:30px"><a class="pill pill-turq pill-arrow" href="cursos.html">Mira Los Cursos</a></p>
+                </div>
             </div>
         </section>
 
-        <section class="wrap over" aria-label="Imagen">
-            <div class="frame" data-gl="photo" data-src="img/foto-20.png" style="aspect-ratio:16/9" data-reveal>
-                <img class="frame-fallback" src="img/foto-20.png" alt="">
+        <section class="photo-wide over" aria-label="Imagen">
+            <div class="frame" data-gl="photo" data-src="img/room/foto-20.jpg" style="aspect-ratio:16/8" data-reveal>
+                <img class="frame-fallback" src="img/room/foto-20.jpg" alt="">
             </div>
         </section>
+
+        <nav class="next over" aria-label="Siguiente página">
+            <a class="next-card" href="cursos.html">
+                <div class="frame" data-gl="portal" data-next="cursos.html"></div>
+                <div class="next-copy">
+                    <div><span class="eyebrow">Siguiente</span><strong>Cursos</strong></div>
+                    <span class="pill pill-arrow">Entrar</span>
+                </div>
+            </a>
+        </nav>
 
         <footer class="ft over" aria-labelledby="ft-contacto">
             <div class="ft-top">
-                <p class="ft-quote" data-reveal>“Learn English From Your Favourite Spot”</p>
+                <p class="ft-quote" data-reveal>“Learn English From Your <em>Favourite Spot</em>”</p>
                 <div data-reveal style="--d:100">
                     <h3 id="ft-contacto">Contacto</h3>
                     <ul>
@@ -167,17 +179,6 @@
                 <p>&copy; <a href="index.html">theenglishroom.edu.uy</a>, Todos Los Derechos Reservados.<br><br>Sitio Desarrollado Por | <a href="https://digitalbuilders.uy" target="_blank" rel="noopener">Digital Builders</a></p>
             </div>
         </footer>
-
-        <section class="portal" data-portal data-next="cursos.html" aria-label="Siguiente: Cursos">
-            <div class="portal-sticky">
-                <div class="portal-view" data-gl="portal"></div>
-                <div class="portal-copy over">
-                    <span class="eyebrow">Siguiente clase</span><br>
-                    <a href="cursos.html">Cursos</a>
-                </div>
-                <p class="portal-hint over" aria-hidden="true">Seguí bajando para entrar</p>
-            </div>
-        </section>
 
     </main>
 

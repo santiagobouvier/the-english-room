@@ -7,6 +7,7 @@
 // escena; el contenido nuevo se monta sin recargar.
 // =============================================================
 import { PAGE_HERO, BADGE_LABEL, font } from './scenes.js';
+import { startBackdrop } from './backdrop.js';
 
 const doc = document.documentElement;
 // ?reducido fuerza el modo sin movimiento (útil para revisarlo sin tocar el sistema)
@@ -53,7 +54,7 @@ let busy = false;
 let pageCleanup = [];
 let course = null;          // { slug, pushed }
 let lastScrollY = 0;
-let scrollDir = 1;
+let backdrop = null;
 const announcer = $('#announcer');
 
 // =============================================================
@@ -63,6 +64,8 @@ async function boot() {
   initLenis();
   initMenu();
   initLinks();
+  initTilt();
+  try { backdrop = startBackdrop($('#bg'), { reduced }); } catch (err) { console.warn('[room] sin fondo animado', err); }
 
   try {
     const { World } = await import('./world.js');
@@ -137,10 +140,26 @@ function initLenis() {
 function onFrame() {
   if (lenis) lenis.raf(performance.now());
   const y = window.scrollY;
-  if (y !== lastScrollY) scrollDir = y > lastScrollY ? 1 : -1;
   lastScrollY = y;
   $('#hd')?.classList.toggle('scrolled', y > 60);
   updateStages();
+  backdrop?.frame();
+}
+
+// Retrato con inclinación 3D y reflejo que sigue al cursor
+function initTilt() {
+  if (reduced) return;
+  document.addEventListener('pointermove', (e) => {
+    const el = e.target.closest?.('[data-tilt]');
+    document.querySelectorAll('[data-tilt]').forEach((t) => {
+      if (t !== el) { t.style.transform = ''; return; }
+      const r = t.getBoundingClientRect();
+      const x = (e.clientX - r.left) / r.width, y = (e.clientY - r.top) / r.height;
+      t.style.transform = `perspective(1100px) rotateY(${(x - 0.5) * 9}deg) rotateX(${(0.5 - y) * 9}deg)`;
+      t.style.setProperty('--gx', `${x * 100}%`);
+      t.style.setProperty('--gy', `${y * 100}%`);
+    });
+  }, { passive: true });
 }
 
 // =============================================================
@@ -296,7 +315,7 @@ function teardownPage() {
 }
 
 function revealHero() {
-  main.querySelectorAll('.hero [data-split], .about-sticky [data-split]').forEach((el, i) => setTimeout(() => el.classList.add('in'), reduced ? 0 : 500 + i * 120));
+  main.querySelectorAll('.hero [data-split], .cover [data-split], .about-sticky [data-split]').forEach((el, i) => setTimeout(() => el.classList.add('in'), reduced ? 0 : 500 + i * 120));
 }
 
 function splitWords(root) {
@@ -328,7 +347,7 @@ function splitWords(root) {
 }
 
 function initReveal() {
-  const els = $$('[data-split], [data-reveal]', main).filter((el) => !el.closest('.hero') && !el.closest('.about-sticky'));
+  const els = $$('[data-split], [data-reveal]', main).filter((el) => !el.closest('.hero') && !el.closest('.cover') && !el.closest('.about-sticky'));
   if (reduced || !('IntersectionObserver' in window)) { els.forEach((el) => el.classList.add('in')); return; }
   const io = new IntersectionObserver((entries) => {
     entries.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
@@ -400,16 +419,14 @@ function updateStages() {
     frame.dataset.focus = focus;
   });
 
-  // Portal: la cámara entra en la tablet; al llenarse, se pasa de página
-  main.querySelectorAll('[data-portal]').forEach((sec) => {
+  // Portada de Inicio: un tramo corto de scroll en el que la cámara
+  // entra en la pantalla de Carla; después sigue la página normal.
+  main.querySelectorAll('[data-cover]').forEach((sec) => {
     const r = sec.getBoundingClientRect();
-    const pp = reduced ? 0.15 : clamp(-r.top / Math.max(1, r.height - vh));
-    sec.style.setProperty('--pp', pp.toFixed(4));
-    const view = sec.querySelector('[data-gl="portal"]');
-    view.dataset.p = pp.toFixed(4);
-    if (!reduced && !busy && pp >= 0.995 && scrollDir > 0) {
-      navigate(new URL(sec.dataset.next, location.href), { viaPortal: true });
-    }
+    const cp = reduced ? 0 : clamp(-r.top / Math.max(1, r.height - vh));
+    sec.style.setProperty('--cp', cp.toFixed(4));
+    const frame = sec.querySelector('[data-gl]');
+    if (frame) frame.dataset.p = cp.toFixed(4);
   });
 }
 

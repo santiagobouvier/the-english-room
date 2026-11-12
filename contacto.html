@@ -6,11 +6,11 @@
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <meta content="inglés, cursos de inglés, aprender inglés, the english room" name="keywords">
     <meta content="¿Buscas pasarla bien mientras aprendes? Llegaste. Empieza a disfrutar del inglés. Mi nombre es Carla, soy una uruguaya amante de los viajes y profesora de inglés, estudié ciencias de la comunicación y me recibí como teacher of english as a second language en el año 2011." name="description">
-    <meta name="theme-color" content="#103741">
+    <meta name="theme-color" content="#061317">
     <link href="img/logo.jpeg" rel="icon">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600&family=Lobster+Two:wght@700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter+Tight:wght@400;500;600&family=Lobster+Two:wght@700&display=swap" rel="stylesheet">
     <link href="css/room.css" rel="stylesheet">
     <script>document.documentElement.className = 'js';</script>
     <script type="importmap">
@@ -25,10 +25,9 @@
     <script type="module" src="js/room/app.js"></script>
 </head>
 
-<body data-page="contacto" data-theme="light">
+<body data-page="contacto" data-theme="dark">
 
     <a class="skip" href="#main">Saltar al contenido</a>
-
     <div class="loader" id="loader" aria-hidden="true">
         <div class="loader-bubble">
             <svg viewBox="0 0 120 90" aria-hidden="true">
@@ -39,15 +38,14 @@
         <div class="loader-count" id="loaderCount">000</div>
         <div class="loader-word">The English Room<br>Entrando a la clase</div>
     </div>
-
+    <canvas id="bg" aria-hidden="true"></canvas>
     <canvas id="gl" aria-hidden="true"></canvas>
-
     <header class="hd" id="hd">
         <a class="hd-logo" href="index.html" aria-label="The English Room, inicio">
             <img src="img/logo-transparente.png" alt="">
             <span>THE ENGLISH<br>ROOM</span>
         </a>
-        <p class="hd-tag">Learn English<br>From Your Favourite Spot</p>
+        <p class="hd-tag">Learn English<br>From Your <em>Favourite Spot</em></p>
         <div class="hd-right">
             <a class="hd-round" href="https://www.cambridgeenglish.org/es/test-your-english/" target="_blank" rel="noopener" title="¿Qué nivel tengo?" aria-label="¿Qué nivel tengo? Test de Cambridge (abre en otra pestaña)"><span aria-hidden="true">Aa</span></a>
             <a class="hd-talk" href="https://wa.me/+59892354225?text=¡Que bueno que estás acá! En breve nos vamos a estar comunicando con vos. ¡Saludos! Carla Migliarini" target="_blank" rel="noopener" aria-label="Hablemos por WhatsApp (abre en otra pestaña)"><span class="roll"><span>Hablemos</span><span aria-hidden="true">Hablemos</span></span><i class="dot" aria-hidden="true"></i></a>
@@ -69,41 +67,62 @@
         </nav>
     </header>
 
-    <main id="main" class="page page-contacto" data-page="contacto" data-theme="light" data-hero="lobby" tabindex="-1">
+    <main id="main" class="page page-contacto" data-page="contacto" data-theme="dark" data-hero="lobby" tabindex="-1">
 
         <section class="hero" aria-labelledby="h-contacto">
             <div class="frame frame-hero" data-gl="lobby" data-hero-frame>
-                <img class="frame-fallback" src="img/foto-carla.png" alt="">
-                <div class="hero-copy">
-                    <ol class="crumbs"><li><a href="index.html">Inicio</a></li><li aria-current="page">Contacto</li></ol>
-                    <h1 id="h-contacto" class="hero-title" data-split>Contacto</h1>
-                </div>
-                <p class="frame-hint" aria-hidden="true">La sala está abierta</p>
+                <img class="frame-fallback" src="img/room/foto-perfil.jpg" alt="">
+            </div>
+            <div class="shade" aria-hidden="true"></div>
+            <div class="hero-top"><ol class="crumbs"><li><a href="index.html">Inicio</a></li><li aria-current="page">Contacto</li></ol></div>
+            <div class="hero-copy">
+                <h1 id="h-contacto" class="hero-title" data-split><span class="sm">Let's talk</span> Contacto</h1>
             </div>
             <div class="crosses" aria-hidden="true"><i>+</i><i>+</i><span>Deslizá para escribirme</span><i>+</i><i>+</i></div>
         </section>
 
-        <section class="contact-grid over" data-ribbon="contact" aria-labelledby="h-hablemos">
-            <div>
-                <h2 id="h-hablemos" class="mega" data-split>Hablemos</h2>
-                <p class="lead" data-reveal>Déjame tu mensaje, me comunicaré a la brevedad.</p>
-                <div class="contact-lines" data-reveal>
-                    <a href="mailto:info@theenglishroom.edu.uy"><i aria-hidden="true">✉</i>info@theenglishroom.edu.uy</a>
-                    <a href="tel:+59892354225"><i aria-hidden="true">☎</i>+598 92 354 225</a>
+        <section class="sec over" data-ribbon="contact" aria-labelledby="h-hablemos">
+            <div class="contact">
+                <div>
+                    <span class="eyebrow"><span class="n">01</span>Contacto</span>
+                    <h2 id="h-hablemos" class="mega" data-split style="margin:18px 0 22px">Hablemos</h2>
+                    <p class="lead" data-reveal>Déjame tu mensaje, me comunicaré a la brevedad.</p>
+                    <div data-reveal style="margin-top:34px">
+
+                    <div class="channels static">
+                        <a href="https://wa.me/+59892354225?text=¡Que bueno que estás acá! En breve nos vamos a estar comunicando con vos. ¡Saludos! Carla Migliarini" target="_blank" rel="noopener"><i aria-hidden="true">✆</i><span><small>WhatsApp</small><b>Hablemos por Whatsapp</b></span><em aria-hidden="true">↗</em></a>
+                        <a href="mailto:info@theenglishroom.edu.uy"><i aria-hidden="true">✉</i><span><small>Email</small><b>info@theenglishroom.edu.uy</b></span><em aria-hidden="true">→</em></a>
+                        <a href="tel:+59892354225"><i aria-hidden="true">☎</i><span><small>Teléfono</small><b>+598 92 354 225</b></span><em aria-hidden="true">→</em></a>
+                        <a href="https://www.instagram.com/theenglish.room/" target="_blank" rel="noopener"><i aria-hidden="true">◎</i><span><small>Instagram</small><b>@theenglish.room</b></span><em aria-hidden="true">↗</em></a>
+                    </div>
+                    </div>
+                </div>
+                <div class="contact-card" data-reveal style="--d:120">
+                    <span class="eyebrow"><span class="n">02</span>Mensaje</span>
+                    <form class="form" action="https://formsubmit.co/info@theenglishroom.edu.uy" method="POST" style="margin-top:34px">
+                        <div class="field"><span class="num">i.</span><input type="text" name="Nombre Completo" id="name" required><label for="name">Nombre Completo</label></div>
+                        <div class="field"><span class="num">ii.</span><input type="email" name="Email" id="email" required><label for="email">Email</label></div>
+                        <div class="field full"><span class="num">iii.</span><input type="text" name="Asunto" id="subject" required><label for="subject">Asunto</label></div>
+                        <div class="field full"><span class="num">iv.</span><textarea name="Mensaje" id="message" required></textarea><label for="message">Escribe aquí..</label></div>
+                        <div class="full send"><small>info@theenglishroom.edu.uy</small><button class="pill pill-turq pill-arrow" type="submit">Enviar</button></div>
+                    </form>
                 </div>
             </div>
-            <form class="form" action="https://formsubmit.co/info@theenglishroom.edu.uy" method="POST" data-reveal>
-                <div class="field"><input type="text" name="Nombre Completo" id="name" placeholder=" " required><label for="name">Nombre Completo</label></div>
-                <div class="field"><input type="email" name="Email" id="email" placeholder=" " required><label for="email">Email</label></div>
-                <div class="field full"><input type="text" name="Asunto" id="subject" placeholder=" " required><label for="subject">Asunto</label></div>
-                <div class="field full"><textarea name="Mensaje" id="message" placeholder=" " required></textarea><label for="message">Escribe aquí..</label></div>
-                <div class="full"><button class="pill pill-blue" type="submit">Enviar</button></div>
-            </form>
         </section>
+
+        <nav class="next over" aria-label="Siguiente página">
+            <a class="next-card" href="index.html">
+                <div class="frame" data-gl="portal" data-next="index.html"></div>
+                <div class="next-copy">
+                    <div><span class="eyebrow">Siguiente</span><strong>Inicio</strong></div>
+                    <span class="pill pill-arrow">Entrar</span>
+                </div>
+            </a>
+        </nav>
 
         <footer class="ft over" aria-labelledby="ft-contacto">
             <div class="ft-top">
-                <p class="ft-quote" data-reveal>“Learn English From Your Favourite Spot”</p>
+                <p class="ft-quote" data-reveal>“Learn English From Your <em>Favourite Spot</em>”</p>
                 <div data-reveal style="--d:100">
                     <h3 id="ft-contacto">Contacto</h3>
                     <ul>
@@ -130,17 +149,6 @@
                 <p>&copy; <a href="index.html">theenglishroom.edu.uy</a>, Todos Los Derechos Reservados.<br><br>Sitio Desarrollado Por | <a href="https://digitalbuilders.uy" target="_blank" rel="noopener">Digital Builders</a></p>
             </div>
         </footer>
-
-        <section class="portal" data-portal data-next="index.html" aria-label="Siguiente: Inicio">
-            <div class="portal-sticky">
-                <div class="portal-view" data-gl="portal"></div>
-                <div class="portal-copy over">
-                    <span class="eyebrow">Siguiente clase</span><br>
-                    <a href="index.html">Inicio</a>
-                </div>
-                <p class="portal-hint over" aria-hidden="true">Seguí bajando para entrar</p>
-            </div>
-        </section>
 
     </main>
 

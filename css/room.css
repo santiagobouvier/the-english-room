@@ -547,3 +547,8 @@ body.course-open #gl { z-index: 60; }
 .spine-sticky::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 60%; z-index: 9; pointer-events: none; background: linear-gradient(180deg, rgba(6,19,23,0), rgba(6,19,23,.9)); opacity: var(--tail, 0); }
 .spine-sec + .sec { margin-top: -42vh; padding-top: 90px; }
 @media (max-width: 900px) { .spine-sec { height: calc(100vh + 9 * 46vh + 70vh); } }
+
+/* Sobre mí: cada párrafo en un panel legible sobre la escena del cuarto */
+.story-step { background: rgba(6, 19, 23, .74); backdrop-filter: blur(14px) saturate(1.2); -webkit-backdrop-filter: blur(14px) saturate(1.2); border: 1px solid rgba(255, 255, 255, .1); border-radius: 22px; padding: clamp(22px, 2.4vw, 34px); }
+.story-step p { text-shadow: none; }
+@media (max-width: 900px) { .story-step { margin-top: 30vh; } }

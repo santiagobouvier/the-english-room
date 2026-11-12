@@ -410,9 +410,9 @@ function updateStages() {
     const r = stage.getBoundingClientRect();
     const sp = clamp(-r.top / Math.max(1, r.height - vh));
     stage.style.setProperty('--sp', sp.toFixed(4));
-    const frame = stage.querySelector('[data-gl="globe"]');
+    const frame = stage.querySelector('[data-hero-frame]');
     frame.dataset.sp = sp.toFixed(4);
-    let focus = 'uruguay';
+    let focus = 'intro';
     stage.querySelectorAll('.story-step').forEach((s) => {
       const sr = s.getBoundingClientRect();
       if (sr.top < vh * 0.62) focus = s.dataset.focus;

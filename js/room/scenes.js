@@ -1319,10 +1319,223 @@ class Classroom extends Base {
   }
 }
 
+
+// =============================================================
+// CURSOS · la espina del idioma
+// Una columna de globos de diálogo iridiscentes con un eje de luz;
+// las tarjetas de los 10 cursos giran en espiral a su alrededor,
+// del A1 (abajo) al Legal English (arriba). El scroll sube por la
+// espina curso por curso; al abrir uno, la cámara entra en su tarjeta.
+// =============================================================
+const SPINE_STEP = 2.7;   // altura entre cursos
+const SPINE_ANG = 1.18;   // giro entre cursos (rad)
+const SPINE_R = 3.3;      // radio de la órbita de tarjetas
+const CARD_W = 3.4, CARD_H = 2.12;
+
+function wrapText(ctx, text, maxW, maxLines) {
+  const words = text.split(' ');
+  const lines = [];
+  let line = '';
+  for (const w of words) {
+    const test = line ? line + ' ' + w : w;
+    if (ctx.measureText(test).width > maxW && line) { lines.push(line); line = w; } else line = test;
+  }
+  if (line) lines.push(line);
+  return lines.slice(0, maxLines);
+}
+
+function drawCourseCard(canvas, image, { level, title, teacher, num }) {
+  const ctx = canvas.getContext('2d');
+  const w = canvas.width, h = canvas.height;
+  ctx.fillStyle = '#0f3039';
+  ctx.fillRect(0, 0, w, h);
+  if (image) {
+    const sc = Math.max(w / image.width, h / image.height);
+    ctx.imageSmoothingQuality = 'high';
+    ctx.drawImage(image, (w - image.width * sc) / 2, (h - image.height * sc) * 0.3, image.width * sc, image.height * sc);
+  }
+  let g = ctx.createLinearGradient(0, 0, w * 0.75, 0);
+  g.addColorStop(0, 'rgba(6,19,23,.88)'); g.addColorStop(0.55, 'rgba(6,19,23,.45)'); g.addColorStop(1, 'rgba(6,19,23,0)');
+  ctx.fillStyle = g; ctx.fillRect(0, 0, w, h);
+  g = ctx.createLinearGradient(0, h * 0.5, 0, h);
+  g.addColorStop(0, 'rgba(6,19,23,0)'); g.addColorStop(1, 'rgba(6,19,23,.7)');
+  ctx.fillStyle = g; ctx.fillRect(0, 0, w, h);
+  ctx.textBaseline = 'alphabetic';
+  ctx.fillStyle = 'rgba(255,255,255,.72)';
+  ctx.font = '600 22px "Inter Tight", sans-serif';
+  if ('letterSpacing' in ctx) ctx.letterSpacing = '4px';
+  ctx.fillText(num, 52, 70);
+  if ('letterSpacing' in ctx) ctx.letterSpacing = '0px';
+  ctx.fillStyle = '#26ccc8';
+  ctx.font = '400 ' + (level.length > 3 ? 170 : 240) + 'px "Instrument Serif", Georgia, serif';
+  ctx.fillText(level, 44, 290);
+  ctx.fillStyle = '#ffffff';
+  ctx.font = '400 56px "Instrument Serif", Georgia, serif';
+  const lines = wrapText(ctx, title, 640, 2);
+  lines.forEach((ln, i) => ctx.fillText(ln, 52, h - 112 - (lines.length - 1 - i) * 58));
+  ctx.fillStyle = 'rgba(255,255,255,.75)';
+  ctx.font = '600 24px "Inter Tight", sans-serif';
+  ctx.fillText(teacher, 52, h - 52);
+  // borde fino
+  ctx.strokeStyle = 'rgba(255,255,255,.18)';
+  ctx.lineWidth = 3;
+  ctx.strokeRect(1.5, 1.5, w - 3, h - 3);
+}
+
+class Spine extends Base {
+  constructor(world) {
+    super(world, 34);
+    this.scene.background = null; // se ve el fondo animado
+    addLights(this.scene, { key: 1.8, rim: C.turq, fill: C.pink });
+    this.root = new THREE.Group();
+    this.scene.add(this.root);
+    this.items = [];
+    this.s = 0;
+    this.e = 0;
+  }
+
+  build(el) {
+    const sec = el.closest('[data-spine]');
+    const courses = sec ? [...sec.querySelectorAll('.course')] : [];
+    const N = Math.max(1, courses.length);
+    const H = (N - 1) * SPINE_STEP;
+    const rand = rng(31);
+
+    // vértebras: globos de diálogo apilados que giran como una columna
+    const vMat = new THREE.MeshPhysicalMaterial({
+      color: 0x2b6f7a, roughness: 0.16, metalness: 0.55, clearcoat: 1, clearcoatRoughness: 0.05, transparent: true, opacity: 0.92,
+      iridescence: 1, iridescenceIOR: 1.6, iridescenceThicknessRange: [260, 900], envMapIntensity: 2.2,
+    });
+    const count = Math.ceil((H + 7) / 0.22);
+    const vert = new THREE.InstancedMesh(bubbleGeo(0), vMat, count);
+    const d = new THREE.Object3D();
+    for (let k = 0; k < count; k++) {
+      const y = -3.5 + k * 0.22;
+      const sc = 0.34 + 0.08 * Math.sin(k * 0.9) + 0.04 * Math.sin(k * 0.23);
+      d.position.set(Math.sin(k * 0.21) * 0.06, y, Math.cos(k * 0.17) * 0.06);
+      d.rotation.set(-Math.PI / 2 + Math.sin(k * 0.7) * 0.14, k * 0.62, Math.sin(k * 0.4) * 0.1);
+      d.scale.set(sc * 1.15, sc * 0.9, sc * 0.9);
+      d.updateMatrix();
+      vert.setMatrixAt(k, d.matrix);
+    }
+    this.root.add(vert);
+
+    // eje de luz
+    const cord = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.07, 0.07, H + 8, 16, 1),
+      new THREE.MeshBasicMaterial({ color: C.turq, transparent: true, opacity: 0.55, toneMapped: false }),
+    );
+    cord.position.y = H / 2;
+    this.root.add(cord);
+
+    // partículas en espiral alrededor de la espina
+    const P = this.world.mobile ? 1400 : 2800;
+    const pos = new Float32Array(P * 3), col = new Float32Array(P * 3);
+    const pal = [new THREE.Color(C.turq), new THREE.Color(C.pink), new THREE.Color(C.cream), new THREE.Color(0x7fd6ff)];
+    for (let i = 0; i < P; i++) {
+      const y = -3.5 + rand() * (H + 7);
+      const band = Math.floor(rand() * 2);
+      const a = y * 1.4 + band * Math.PI + (rand() - 0.5) * 1.4;
+      const r = 1.2 + Math.pow(rand(), 1.6) * 3.6;
+      pos.set([Math.cos(a) * r, y, Math.sin(a) * r], i * 3);
+      const c = pal[Math.floor(rand() * pal.length)];
+      col.set([c.r, c.g, c.b], i * 3);
+    }
+    const pg = new THREE.BufferGeometry();
+    pg.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+    pg.setAttribute('color', new THREE.BufferAttribute(col, 3));
+    this.dust = new THREE.Points(pg, new THREE.PointsMaterial({ size: 0.045, vertexColors: true, transparent: true, opacity: 0.8, depthWrite: false, blending: THREE.AdditiveBlending, toneMapped: false }));
+    this.root.add(this.dust);
+
+    // tarjetas de los cursos
+    const cardGeo = new RoundedBoxGeometry(CARD_W, CARD_H, 0.06, 4, 0.12);
+    const glassGeo = new RoundedBoxGeometry(CARD_W + 0.22, CARD_H + 0.22, 0.04, 4, 0.2);
+    const glassMat = new THREE.MeshPhysicalMaterial({ color: 0x7fe0dc, transparent: true, opacity: 0.12, roughness: 0.1, metalness: 0.2, iridescence: 1, iridescenceIOR: 1.3, envMapIntensity: 1.6, depthWrite: false });
+    const ringGeo = new THREE.TorusGeometry(1.0, 0.018, 8, 96);
+    this.items = courses.map((li, i) => {
+      const canvas = document.createElement('canvas');
+      canvas.width = 1024; canvas.height = 640;
+      const map = new THREE.CanvasTexture(canvas);
+      map.colorSpace = THREE.SRGBColorSpace;
+      map.anisotropy = 12;
+      const g = new THREE.Group();
+      const card = new THREE.Mesh(cardGeo, new THREE.MeshBasicMaterial({ map }));
+      const glass = new THREE.Mesh(glassGeo, glassMat);
+      glass.position.z = -0.05;
+      g.add(glass, card);
+      const a = i * SPINE_ANG;
+      g.position.set(Math.sin(a) * SPINE_R, i * SPINE_STEP, Math.cos(a) * SPINE_R);
+      g.rotation.y = a;
+      this.root.add(g);
+      const ring = new THREE.Mesh(ringGeo, new THREE.MeshBasicMaterial({ color: i % 2 ? C.pink : C.turq, transparent: true, opacity: 0.25, toneMapped: false }));
+      ring.rotation.x = Math.PI / 2;
+      ring.position.y = i * SPINE_STEP;
+      this.root.add(ring);
+      const info = {
+        level: li.querySelector('.course-level')?.textContent.trim() || '',
+        title: li.querySelector('h3')?.textContent.trim() || '',
+        teacher: li.dataset.teacher || '',
+        num: li.querySelector('.course-count')?.textContent.trim() || '',
+      };
+      const item = { g, card, ring, map, canvas, info, base: g.position.clone(), a };
+      const fontP = document.fonts ? Promise.all([document.fonts.load('400 240px "Instrument Serif"'), document.fonts.load('600 24px "Inter Tight"')]) : Promise.resolve();
+      Promise.all([img(li.dataset.img), fontP]).then(([im]) => { drawCourseCard(canvas, im, info); map.needsUpdate = true; });
+      drawCourseCard(canvas, null, info);
+      return item;
+    });
+    this.ready = true;
+  }
+
+  update(t, dt, view) {
+    if (!this.ready && view.el) this.build(view.el);
+    if (!this.ready) return;
+    const el = view.el;
+    const force = el?.dataset.force;
+    const target = force != null && force !== '' ? +force : parseFloat(el?.dataset.s || 0);
+    this.s = this.world.reduced ? target : lerp(this.s, target, 0.075);
+    this.e = ease(clamp(view.expandT || 0));
+    const active = Math.round(this.s);
+    this.items.forEach((it, i) => {
+      const on = i === active;
+      it.g.position.y = it.base.y + Math.sin(t * 0.8 + i) * 0.04;
+      const sc = lerp(it.g.scale.x, on ? 1.06 : 0.94, 0.08);
+      it.g.scale.setScalar(sc);
+      it.ring.material.opacity = lerp(it.ring.material.opacity, on ? 0.9 : 0.18, 0.08);
+      it.ring.scale.setScalar(on ? 1 + Math.sin(t * 2) * 0.04 : 1);
+    });
+    this.dust.rotation.y = t * 0.04;
+  }
+
+  beforeRender(view) {
+    if (!this.ready) return;
+    const s = this.s, e = this.e;
+    const a = s * SPINE_ANG, y = s * SPINE_STEP;
+    const out = new THREE.Vector3(Math.sin(a), 0, Math.cos(a));
+    const right = new THREE.Vector3(Math.cos(a), 0, -Math.sin(a));
+    const C0 = out.clone().multiplyScalar(SPINE_R).setY(y);
+    const wide = this.aspect > 1.15;
+    const t2 = Math.tan(THREE.MathUtils.degToRad(this.camera.fov / 2));
+    const D0 = wide ? this.fit(8.4, 5.2) : this.fit(4.4, 6.4);
+    // al abrir un curso: la tarjeta llena la pantalla
+    const dFill = Math.min((CARD_H / 2) / t2, (CARD_W / 2) / (t2 * this.aspect)) * 0.97;
+    const dist = lerp(D0, dFill, e);
+    const free = 1 - e;
+    const sh = (wide ? 1.7 : 0) * free + view.local.x * 0.35 * free;
+    const shy = (wide ? 0 : -1.6) * free;
+    const cam = C0.clone().addScaledVector(out, dist).addScaledVector(right, sh);
+    cam.y += 0.45 * free + shy + view.local.y * 0.25 * free;
+    const look = C0.clone().addScaledVector(right, sh);
+    look.y += shy;
+    this.camera.position.copy(cam);
+    this.camera.lookAt(look);
+  }
+}
+
 export function createModule(name, world, el, variant) {
   switch (name) {
     case 'bubbles': return new Bubbles(world);
     case 'classroom': return new Classroom(world);
+    case 'spine': return new Spine(world);
     case 'call': return new Call(world);
     case 'globe': return new Globe(world);
     case 'levels': return new Levels(world);

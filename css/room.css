@@ -401,6 +401,48 @@ body.course-open #gl { z-index: 60; }
 .cd-body li { padding: 11px 0; border-bottom: 1px solid rgba(255,255,255,.14); font-weight: 500; font-size: 15px; }
 .cd-body .pill { margin-top: 14px; }
 
+/* ---------- Cursos: la espina (recorrido curso por curso) ---------- */
+.spine-sec { position: relative; height: calc(100vh + 9 * 42vh); }
+.spine-sticky { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; z-index: 10; }
+.spine-frame { position: absolute; inset: 0; border-radius: 0; }
+.spine-hit { position: absolute; left: 12%; right: 46%; top: 22%; bottom: 22%; z-index: 10; cursor: pointer; }
+.spine-head { position: absolute; left: var(--gutter); top: calc(var(--hd-h) + 10px); z-index: 11; }
+.spine-head .big { font-size: clamp(44px, 4.6vw, 80px); margin: 10px 0 4px; }
+.spine-head p { margin: 0; font-size: 14px; }
+.spine-index { position: absolute; left: var(--gutter); bottom: clamp(24px, 5vh, 50px); z-index: 11; }
+.spine-index ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
+.spine-index a { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; font-size: 12px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); padding: 3px 0; transition: color .3s; }
+.spine-index a::before { content: "→"; opacity: 0; transform: translateX(-6px); transition: opacity .3s, transform .4s var(--ease); color: var(--turq); }
+.spine-index a:hover, .spine-index a[aria-current="step"] { color: #fff; }
+.spine-index a[aria-current="step"]::before, .spine-index a:hover::before { opacity: 1; transform: none; }
+.spine-sec .courses { display: block; position: absolute; right: var(--gutter); top: 50%; transform: translateY(-46%); width: min(440px, 34vw); z-index: 11; margin: 0; padding: 0; list-style: none; }
+.spine-sec .course { position: absolute; inset: 0 0 auto 0; visibility: hidden; opacity: 0; transform: translateY(24px); transition: opacity .55s var(--ease), transform .7s var(--ease), visibility 0s linear .55s; }
+.spine-sec .course.on { position: relative; visibility: visible; opacity: 1; transform: none; transition: opacity .6s var(--ease) .08s, transform .8s var(--ease) .08s, visibility 0s; }
+.course-count { display: block; font-size: 12px; font-weight: 600; letter-spacing: .16em; color: var(--muted); }
+.course-level { display: block; font-family: var(--serif); font-size: clamp(90px, 9vw, 160px); line-height: .85; color: var(--turq); margin: 6px 0 10px; }
+.spine-sec .course:nth-child(even) .course-level { color: var(--pink); }
+.spine-sec .course h3 { font-family: var(--serif); font-size: clamp(30px, 2.6vw, 44px); line-height: 1; margin-bottom: 14px; }
+.spine-sec .course .course-tags { margin: 0 0 16px; }
+.spine-sec .course .teacher { margin-bottom: 22px; }
+.spine-hint { position: absolute; left: 0; right: 0; bottom: 18px; text-align: center; z-index: 11; font-size: 11px; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; color: var(--muted); margin: 0; }
+/* sin JavaScript: lista normal de cursos */
+.no-js .spine-sec { height: auto; }
+.no-js .spine-sticky { position: relative; height: auto; padding: 120px var(--gutter) 60px; }
+.no-js .spine-head, .no-js .spine-sec .courses { position: static; transform: none; width: auto; }
+.no-js .spine-sec .course { position: static; visibility: visible; opacity: 1; transform: none; margin-bottom: 40px; }
+.no-js .spine-index, .no-js .spine-hint, .no-js .spine-hit { display: none; }
+@media (max-width: 900px) {
+  .spine-sec { height: calc(100vh + 9 * 36vh); }
+  .spine-index, .spine-hint { display: none; }
+  .spine-hit { left: 8%; right: 8%; top: 18%; bottom: 52%; }
+  .spine-sec .courses { left: var(--gutter); right: var(--gutter); top: auto; bottom: 22px; width: auto; transform: none; }
+  .course-level { font-size: 64px; margin: 0 0 4px; }
+  .spine-sec .course h3 { font-size: 28px; margin-bottom: 8px; }
+  .spine-sec .course .course-tags { margin-bottom: 10px; }
+  .spine-sec .course .teacher { margin-bottom: 12px; }
+  .spine-head .big { font-size: 40px; }
+}
+
 /* ---------- Recursos ---------- */
 .resources { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(16px, 2vw, 28px); }
 .resource .frame { aspect-ratio: 1 / 1; }
@@ -462,3 +504,9 @@ body.course-open #gl { z-index: 60; }
 .reduced .chat ol { padding: 16px 0; transform: none !important; }
 .reduced .msg { opacity: .8; transform: none; }
 .reduced .msg.on { opacity: 1; }
+.spine-sec .course a.course-link { display: inline-flex; width: auto; }
+@media (max-width: 900px) {
+  /* móvil: la tarjeta ocupa la mitad de arriba; el título queda para lectores de pantalla */
+  .spine-head { clip: rect(0 0 0 0); clip-path: inset(50%); width: 1px; height: 1px; overflow: hidden; white-space: nowrap; }
+  .spine-sec .courses { left: 0; right: 0; bottom: 0; padding: 60px var(--gutter) 22px; background: linear-gradient(180deg, rgba(6,19,23,0), rgba(6,19,23,.88) 34%, rgba(6,19,23,.96)); }
+}

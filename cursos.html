@@ -81,144 +81,113 @@
             <div class="crosses" aria-hidden="true"><i>+</i><i>+</i><span>Deslizá para ver los cursos</span><i>+</i><i>+</i></div>
         </section>
 
-        <section class="sec over" data-ribbon="courses" aria-labelledby="h-lista">
-            <div class="sec-head">
-                <span class="eyebrow"><span class="n">01</span>Catálogo</span>
-                <h2 id="h-lista" class="mega" data-split>Cursos</h2>
-                <p class="lead" data-reveal>Hay un curso esperando por vos.</p>
-            </div>
-            <ul class="courses">
-                <li class="course" data-reveal style="--d:0">
-                    <a class="course-link" href="cursos.html?curso=a1" data-curso="a1" aria-label="A1 Course Beginner: ver detalle">
-                        <div class="frame" data-gl="badge" data-variant="a1" data-img="img/room/foto-21.jpg">
-                            <img class="frame-fallback" src="img/room/foto-21.jpg" alt="" loading="lazy">
-                        </div>
-                    </a>
-                    <div class="course-tags"><span>Nivel: <b>Beginner</b></span><span>Hs / semana: <b>Consultar disponibilidad</b></span></div>
-                    <div class="course-row">
+        <section class="spine-sec over" data-spine aria-labelledby="h-lista">
+            <div class="spine-sticky">
+                <div class="frame spine-frame" data-gl="spine"></div>
+                <a class="spine-hit" href="cursos.html?curso=a1" tabindex="-1" aria-hidden="true"></a>
+                <div class="spine-head">
+                    <span class="eyebrow"><span class="n">01</span>Catálogo</span>
+                    <h2 id="h-lista" class="big">Cursos</h2>
+                    <p class="muted">Hay un curso esperando por vos.</p>
+                </div>
+                <nav class="spine-index" aria-label="Saltar a un curso">
+                    <ol>
+                        <li><a href="cursos.html?curso=a1" data-step="0"><span>A1</span></a></li>
+                        <li><a href="cursos.html?curso=a2" data-step="1"><span>A2</span></a></li>
+                        <li><a href="cursos.html?curso=a2-plus" data-step="2"><span>A2+</span></a></li>
+                        <li><a href="cursos.html?curso=b1" data-step="3"><span>B1</span></a></li>
+                        <li><a href="cursos.html?curso=b2" data-step="4"><span>B2</span></a></li>
+                        <li><a href="cursos.html?curso=c1" data-step="5"><span>C1</span></a></li>
+                        <li><a href="cursos.html?curso=c2" data-step="6"><span>C2</span></a></li>
+                        <li><a href="cursos.html?curso=pronunciation" data-step="7"><span>Pron.</span></a></li>
+                        <li><a href="cursos.html?curso=conversational" data-step="8"><span>Conv.</span></a></li>
+                        <li><a href="cursos.html?curso=legal" data-step="9"><span>Legal</span></a></li>
+                    </ol>
+                </nav>
+                <ul class="courses">
+                    <li class="course" data-step="0" data-slug="a1" data-img="img/room/foto-21.jpg" data-teacher="Stefany Amada">
+                        <span class="course-count">01 / 10</span>
+                        <span class="course-level" aria-hidden="true">A1</span>
                         <h3>A1 Course Beginner</h3>
-                        <a class="pill pill-ghost course-cta" href="cursos.html?curso=a1" data-curso="a1" tabindex="-1" aria-hidden="true">Ver Detalle</a>
-                    </div>
-                    <span class="chip teacher"><span class="avatars"><img src="img/room/stefany.jpg" alt="Stefany Amada" loading="lazy"></span><span><b>Stefany Amada</b><small>Teacher</small></span></span>
-                </li>
-                <li class="course" data-reveal style="--d:120">
-                    <a class="course-link" href="cursos.html?curso=a2" data-curso="a2" aria-label="A2 Course Elementary: ver detalle">
-                        <div class="frame" data-gl="badge" data-variant="a2" data-img="img/room/foto-31.jpg">
-                            <img class="frame-fallback" src="img/room/foto-31.jpg" alt="" loading="lazy">
-                        </div>
-                    </a>
-                    <div class="course-tags"><span>Nivel: <b>Elementary</b></span><span>Hs / semana: <b>Consultar disponibilidad</b></span></div>
-                    <div class="course-row">
+                        <div class="course-tags"><span>Nivel: <b>Beginner</b></span><span>Hs / semana: <b>Consultar disponibilidad</b></span></div>
+                        <span class="chip teacher"><span class="avatars"><img src="img/room/stefany.jpg" alt="Stefany Amada" loading="lazy"></span><span><b>Stefany Amada</b><small>Teacher</small></span></span>
+                        <a class="pill pill-turq pill-arrow course-link" href="cursos.html?curso=a1" data-curso="a1">Ver Detalle</a>
+                    </li>
+                    <li class="course" data-step="1" data-slug="a2" data-img="img/room/foto-31.jpg" data-teacher="Stefany Amada">
+                        <span class="course-count">02 / 10</span>
+                        <span class="course-level" aria-hidden="true">A2</span>
                         <h3>A2 Course Elementary</h3>
-                        <a class="pill pill-ghost course-cta" href="cursos.html?curso=a2" data-curso="a2" tabindex="-1" aria-hidden="true">Ver Detalle</a>
-                    </div>
-                    <span class="chip teacher"><span class="avatars"><img src="img/room/stefany.jpg" alt="Stefany Amada" loading="lazy"></span><span><b>Stefany Amada</b><small>Teacher</small></span></span>
-                </li>
-                <li class="course" data-reveal style="--d:0">
-                    <a class="course-link" href="cursos.html?curso=a2-plus" data-curso="a2-plus" aria-label="A2 + Course Pre-Intermediate: ver detalle">
-                        <div class="frame" data-gl="badge" data-variant="a2-plus" data-img="img/room/foto-31.jpg">
-                            <img class="frame-fallback" src="img/room/foto-31.jpg" alt="" loading="lazy">
-                        </div>
-                    </a>
-                    <div class="course-tags"><span>Nivel: <b>Pre-Intermediate</b></span><span>Hs / semana: <b>Consultar disponibilidad</b></span></div>
-                    <div class="course-row">
+                        <div class="course-tags"><span>Nivel: <b>Elementary</b></span><span>Hs / semana: <b>Consultar disponibilidad</b></span></div>
+                        <span class="chip teacher"><span class="avatars"><img src="img/room/stefany.jpg" alt="Stefany Amada" loading="lazy"></span><span><b>Stefany Amada</b><small>Teacher</small></span></span>
+                        <a class="pill pill-turq pill-arrow course-link" href="cursos.html?curso=a2" data-curso="a2">Ver Detalle</a>
+                    </li>
+                    <li class="course" data-step="2" data-slug="a2-plus" data-img="img/room/foto-31.jpg" data-teacher="Stefany Amada">
+                        <span class="course-count">03 / 10</span>
+                        <span class="course-level" aria-hidden="true">A2+</span>
                         <h3>A2 + Course Pre-Intermediate</h3>
-                        <a class="pill pill-ghost course-cta" href="cursos.html?curso=a2-plus" data-curso="a2-plus" tabindex="-1" aria-hidden="true">Ver Detalle</a>
-                    </div>
-                    <span class="chip teacher"><span class="avatars"><img src="img/room/stefany.jpg" alt="Stefany Amada" loading="lazy"></span><span><b>Stefany Amada</b><small>Teacher</small></span></span>
-                </li>
-                <li class="course" data-reveal style="--d:120">
-                    <a class="course-link" href="cursos.html?curso=b1" data-curso="b1" aria-label="B1-B1+ Course Intermediate: ver detalle">
-                        <div class="frame" data-gl="badge" data-variant="b1" data-img="img/room/foto-22.jpg">
-                            <img class="frame-fallback" src="img/room/foto-22.jpg" alt="" loading="lazy">
-                        </div>
-                    </a>
-                    <div class="course-tags"><span>Nivel: <b>Intermediate</b></span><span>Hs / semana: <b>Consultar disponibilidad</b></span></div>
-                    <div class="course-row">
+                        <div class="course-tags"><span>Nivel: <b>Pre-Intermediate</b></span><span>Hs / semana: <b>Consultar disponibilidad</b></span></div>
+                        <span class="chip teacher"><span class="avatars"><img src="img/room/stefany.jpg" alt="Stefany Amada" loading="lazy"></span><span><b>Stefany Amada</b><small>Teacher</small></span></span>
+                        <a class="pill pill-turq pill-arrow course-link" href="cursos.html?curso=a2-plus" data-curso="a2-plus">Ver Detalle</a>
+                    </li>
+                    <li class="course" data-step="3" data-slug="b1" data-img="img/room/foto-22.jpg" data-teacher="Carla Migliarini">
+                        <span class="course-count">04 / 10</span>
+                        <span class="course-level" aria-hidden="true">B1</span>
                         <h3>B1-B1+ Course Intermediate</h3>
-                        <a class="pill pill-ghost course-cta" href="cursos.html?curso=b1" data-curso="b1" tabindex="-1" aria-hidden="true">Ver Detalle</a>
-                    </div>
-                    <span class="chip teacher"><span class="avatars"><img src="img/foto-cursos.png" alt="Carla Migliarini" loading="lazy"></span><span><b>Carla Migliarini</b><small>Teacher</small></span></span>
-                </li>
-                <li class="course" data-reveal style="--d:0">
-                    <a class="course-link" href="cursos.html?curso=b2" data-curso="b2" aria-label="B2 Course Upper-Intermediate / Fce: ver detalle">
-                        <div class="frame" data-gl="badge" data-variant="b2" data-img="img/room/foto-2.jpg">
-                            <img class="frame-fallback" src="img/room/foto-2.jpg" alt="" loading="lazy">
-                        </div>
-                    </a>
-                    <div class="course-tags"><span>Nivel: <b>Upper-Intermediate</b></span><span>Hs / semana: <b>Consultar disponibilidad</b></span></div>
-                    <div class="course-row">
+                        <div class="course-tags"><span>Nivel: <b>Intermediate</b></span><span>Hs / semana: <b>Consultar disponibilidad</b></span></div>
+                        <span class="chip teacher"><span class="avatars"><img src="img/foto-cursos.png" alt="Carla Migliarini" loading="lazy"></span><span><b>Carla Migliarini</b><small>Teacher</small></span></span>
+                        <a class="pill pill-turq pill-arrow course-link" href="cursos.html?curso=b1" data-curso="b1">Ver Detalle</a>
+                    </li>
+                    <li class="course" data-step="4" data-slug="b2" data-img="img/room/foto-2.jpg" data-teacher="Stefany Amada / Carla Migliarini">
+                        <span class="course-count">05 / 10</span>
+                        <span class="course-level" aria-hidden="true">B2</span>
                         <h3>B2 Course Upper-Intermediate / Fce</h3>
-                        <a class="pill pill-ghost course-cta" href="cursos.html?curso=b2" data-curso="b2" tabindex="-1" aria-hidden="true">Ver Detalle</a>
-                    </div>
-                    <span class="chip teacher"><span class="avatars"><img src="img/room/stefany.jpg" alt="Stefany Amada" loading="lazy"><img src="img/foto-cursos.png" alt="Carla Migliarini" loading="lazy"></span><span><b>Stefany Amada / Carla Migliarini</b><small>Teachers</small></span></span>
-                </li>
-                <li class="course" data-reveal style="--d:120">
-                    <a class="course-link" href="cursos.html?curso=c1" data-curso="c1" aria-label="C1 Course Advanced / Cae: ver detalle">
-                        <div class="frame" data-gl="badge" data-variant="c1" data-img="img/room/foto-3.jpg">
-                            <img class="frame-fallback" src="img/room/foto-3.jpg" alt="" loading="lazy">
-                        </div>
-                    </a>
-                    <div class="course-tags"><span>Nivel: <b>Advanced</b></span><span>Hs / semana: <b>Consultar disponibilidad</b></span></div>
-                    <div class="course-row">
+                        <div class="course-tags"><span>Nivel: <b>Upper-Intermediate</b></span><span>Hs / semana: <b>Consultar disponibilidad</b></span></div>
+                        <span class="chip teacher"><span class="avatars"><img src="img/room/stefany.jpg" alt="Stefany Amada" loading="lazy"><img src="img/foto-cursos.png" alt="Carla Migliarini" loading="lazy"></span><span><b>Stefany Amada / Carla Migliarini</b><small>Teachers</small></span></span>
+                        <a class="pill pill-turq pill-arrow course-link" href="cursos.html?curso=b2" data-curso="b2">Ver Detalle</a>
+                    </li>
+                    <li class="course" data-step="5" data-slug="c1" data-img="img/room/foto-3.jpg" data-teacher="Carla Migliarini">
+                        <span class="course-count">06 / 10</span>
+                        <span class="course-level" aria-hidden="true">C1</span>
                         <h3>C1 Course Advanced / Cae</h3>
-                        <a class="pill pill-ghost course-cta" href="cursos.html?curso=c1" data-curso="c1" tabindex="-1" aria-hidden="true">Ver Detalle</a>
-                    </div>
-                    <span class="chip teacher"><span class="avatars"><img src="img/foto-cursos.png" alt="Carla Migliarini" loading="lazy"></span><span><b>Carla Migliarini</b><small>Teacher</small></span></span>
-                </li>
-                <li class="course" data-reveal style="--d:0">
-                    <a class="course-link" href="cursos.html?curso=c2" data-curso="c2" aria-label="C2 Course - Proficient / Cpe: ver detalle">
-                        <div class="frame" data-gl="badge" data-variant="c2" data-img="img/room/foto-4.jpg">
-                            <img class="frame-fallback" src="img/room/foto-4.jpg" alt="" loading="lazy">
-                        </div>
-                    </a>
-                    <div class="course-tags"><span>Nivel: <b>Proficient</b></span><span>Hs / semana: <b>Consultar disponibilidad</b></span></div>
-                    <div class="course-row">
+                        <div class="course-tags"><span>Nivel: <b>Advanced</b></span><span>Hs / semana: <b>Consultar disponibilidad</b></span></div>
+                        <span class="chip teacher"><span class="avatars"><img src="img/foto-cursos.png" alt="Carla Migliarini" loading="lazy"></span><span><b>Carla Migliarini</b><small>Teacher</small></span></span>
+                        <a class="pill pill-turq pill-arrow course-link" href="cursos.html?curso=c1" data-curso="c1">Ver Detalle</a>
+                    </li>
+                    <li class="course" data-step="6" data-slug="c2" data-img="img/room/foto-4.jpg" data-teacher="Carolina Veiga">
+                        <span class="course-count">07 / 10</span>
+                        <span class="course-level" aria-hidden="true">C2</span>
                         <h3>C2 Course - Proficient / Cpe</h3>
-                        <a class="pill pill-ghost course-cta" href="cursos.html?curso=c2" data-curso="c2" tabindex="-1" aria-hidden="true">Ver Detalle</a>
-                    </div>
-                    <span class="chip teacher"><span class="avatars"><img src="img/room/carolina.jpg" alt="Carolina Veiga" loading="lazy"></span><span><b>Carolina Veiga</b><small>Docente nativa</small></span></span>
-                </li>
-                <li class="course" data-reveal style="--d:120">
-                    <a class="course-link" href="cursos.html?curso=pronunciation" data-curso="pronunciation" aria-label="PRONUNCIATION COURSE: ver detalle">
-                        <div class="frame" data-gl="badge" data-variant="pronunciation" data-img="img/room/foto-6.jpg">
-                            <img class="frame-fallback" src="img/room/foto-6.jpg" alt="" loading="lazy">
-                        </div>
-                    </a>
-                    <div class="course-tags"><span>Horario: <b>2do y 4to lunes | 8:30 - 9:30</b></span><span>Frecuencia: <b>Quincenal</b></span></div>
-                    <div class="course-row">
+                        <div class="course-tags"><span>Nivel: <b>Proficient</b></span><span>Hs / semana: <b>Consultar disponibilidad</b></span></div>
+                        <span class="chip teacher"><span class="avatars"><img src="img/room/carolina.jpg" alt="Carolina Veiga" loading="lazy"></span><span><b>Carolina Veiga</b><small>Docente nativa</small></span></span>
+                        <a class="pill pill-turq pill-arrow course-link" href="cursos.html?curso=c2" data-curso="c2">Ver Detalle</a>
+                    </li>
+                    <li class="course" data-step="7" data-slug="pronunciation" data-img="img/room/foto-6.jpg" data-teacher="Carla Migliarini">
+                        <span class="course-count">08 / 10</span>
+                        <span class="course-level" aria-hidden="true">Pron.</span>
                         <h3>PRONUNCIATION COURSE</h3>
-                        <a class="pill pill-ghost course-cta" href="cursos.html?curso=pronunciation" data-curso="pronunciation" tabindex="-1" aria-hidden="true">Ver Detalle</a>
-                    </div>
-                    <span class="chip teacher"><span class="avatars"><img src="img/room/foto-18.jpg" alt="Carla Migliarini" loading="lazy"></span><span><b>Carla Migliarini</b><small>Teacher</small></span></span>
-                </li>
-                <li class="course" data-reveal style="--d:0">
-                    <a class="course-link" href="cursos.html?curso=conversational" data-curso="conversational" aria-label="CONVERSATIONAL SESSIONS: ver detalle">
-                        <div class="frame" data-gl="badge" data-variant="conversational" data-img="img/room/foto-7.jpg">
-                            <img class="frame-fallback" src="img/room/foto-7.jpg" alt="" loading="lazy">
-                        </div>
-                    </a>
-                    <div class="course-tags"><span>Días: <b>2do martes y 4to miércoles</b></span><span>Hs / semana: <b>Frecuencia Quincenal</b></span></div>
-                    <div class="course-row">
+                        <div class="course-tags"><span>Horario: <b>2do y 4to lunes | 8:30 - 9:30</b></span><span>Frecuencia: <b>Quincenal</b></span></div>
+                        <span class="chip teacher"><span class="avatars"><img src="img/room/foto-18.jpg" alt="Carla Migliarini" loading="lazy"></span><span><b>Carla Migliarini</b><small>Teacher</small></span></span>
+                        <a class="pill pill-turq pill-arrow course-link" href="cursos.html?curso=pronunciation" data-curso="pronunciation">Ver Detalle</a>
+                    </li>
+                    <li class="course" data-step="8" data-slug="conversational" data-img="img/room/foto-7.jpg" data-teacher="Carla Migliarini">
+                        <span class="course-count">09 / 10</span>
+                        <span class="course-level" aria-hidden="true">Conv.</span>
                         <h3>CONVERSATIONAL SESSIONS</h3>
-                        <a class="pill pill-ghost course-cta" href="cursos.html?curso=conversational" data-curso="conversational" tabindex="-1" aria-hidden="true">Ver Detalle</a>
-                    </div>
-                    <span class="chip teacher"><span class="avatars"><img src="img/room/foto-carla.jpg" alt="Carla Migliarini" loading="lazy"></span><span><b>Carla Migliarini</b><small>Teacher</small></span></span>
-                </li>
-                <li class="course" data-reveal style="--d:120">
-                    <a class="course-link" href="cursos.html?curso=legal" data-curso="legal" aria-label="LEGAL ENGLISH COURSE: ver detalle">
-                        <div class="frame" data-gl="badge" data-variant="legal" data-img="img/room/cira.jpg">
-                            <img class="frame-fallback" src="img/room/cira.jpg" alt="" loading="lazy">
-                        </div>
-                    </a>
-                    <div class="course-tags"><span>Días: <b>Martes y jueves</b></span><span>Hs / semana: <b>2 horas semanales</b></span></div>
-                    <div class="course-row">
+                        <div class="course-tags"><span>Días: <b>2do martes y 4to miércoles</b></span><span>Hs / semana: <b>Frecuencia Quincenal</b></span></div>
+                        <span class="chip teacher"><span class="avatars"><img src="img/room/foto-carla.jpg" alt="Carla Migliarini" loading="lazy"></span><span><b>Carla Migliarini</b><small>Teacher</small></span></span>
+                        <a class="pill pill-turq pill-arrow course-link" href="cursos.html?curso=conversational" data-curso="conversational">Ver Detalle</a>
+                    </li>
+                    <li class="course" data-step="9" data-slug="legal" data-img="img/room/cira.jpg" data-teacher="Cira Fontoura">
+                        <span class="course-count">10 / 10</span>
+                        <span class="course-level" aria-hidden="true">Legal</span>
                         <h3>LEGAL ENGLISH COURSE</h3>
-                        <a class="pill pill-ghost course-cta" href="cursos.html?curso=legal" data-curso="legal" tabindex="-1" aria-hidden="true">Ver Detalle</a>
-                    </div>
-                    <span class="chip teacher"><span class="avatars"><img src="img/room/cira.jpg" alt="Cira Fontoura" loading="lazy"></span><span><b>Cira Fontoura</b><small>Traductora Pública</small></span></span>
-                </li>
-            </ul>
+                        <div class="course-tags"><span>Días: <b>Martes y jueves</b></span><span>Hs / semana: <b>2 horas semanales</b></span></div>
+                        <span class="chip teacher"><span class="avatars"><img src="img/room/cira.jpg" alt="Cira Fontoura" loading="lazy"></span><span><b>Cira Fontoura</b><small>Traductora Pública</small></span></span>
+                        <a class="pill pill-turq pill-arrow course-link" href="cursos.html?curso=legal" data-curso="legal">Ver Detalle</a>
+                    </li>
+                </ul>
+                <p class="spine-hint" aria-hidden="true">Deslizá o usá las flechas · un curso por paso</p>
+            </div>
         </section>
 
         <section class="sec over" aria-labelledby="h-crono">

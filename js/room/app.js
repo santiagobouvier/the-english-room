@@ -306,6 +306,7 @@ function setupPage({ first = false } = {}) {
   initReveal();
   initRotate();
   initCourses();
+  initSpine();
   if (first && !world) revealHero();
 }
 
@@ -419,6 +420,23 @@ function updateStages() {
     frame.dataset.focus = focus;
   });
 
+  // Espina de cursos: el paso (con decimales) mueve la cámara; el entero elige la ficha
+  const sp = main.querySelector('[data-spine]') && spineOf();
+  if (sp) {
+    const f = sp.float();
+    sp.frame.dataset.s = f.toFixed(4);
+    const i = Math.round(f);
+    if (sp.sec.dataset.active !== String(i)) {
+      sp.sec.dataset.active = String(i);
+      sp.items.forEach((li, k) => li.classList.toggle('on', k === i));
+      sp.sec.querySelectorAll('.spine-index a').forEach((a) => {
+        if (+a.dataset.step === i) a.setAttribute('aria-current', 'step'); else a.removeAttribute('aria-current');
+      });
+      const hit = sp.sec.querySelector('.spine-hit');
+      if (hit) { hit.href = `cursos.html?curso=${sp.steps[i]}`; hit.dataset.curso = sp.steps[i]; }
+    }
+  }
+
   // Portada de Inicio: un tramo corto de scroll en el que la cámara
   // entra en la pantalla de Carla; después sigue la página normal.
   main.querySelectorAll('[data-cover]').forEach((sec) => {
@@ -447,6 +465,94 @@ function initCourses() {
     dialog.removeEventListener('cancel', onCancel);
     dialog.removeEventListener('click', onClick);
     closeBtn.removeEventListener('click', onClose);
+  });
+}
+
+// =============================================================
+// Espina de cursos: un curso por paso
+// =============================================================
+function spineOf() {
+  const sec = main.querySelector('[data-spine]');
+  if (!sec) return null;
+  const items = [...sec.querySelectorAll('.course')];
+  const span = () => Math.max(1, sec.offsetHeight - window.innerHeight);
+  const top = () => sec.getBoundingClientRect().top + window.scrollY;
+  return {
+    sec, items,
+    frame: sec.querySelector('[data-gl="spine"]'),
+    steps: items.map((li) => li.dataset.slug),
+    n: items.length,
+    stepY: (i) => top() + (span() * i) / Math.max(1, items.length - 1),
+    float: () => clamp(-sec.getBoundingClientRect().top / span()) * (items.length - 1),
+    inside: () => { const r = sec.getBoundingClientRect(); return r.top <= 2 && r.bottom >= window.innerHeight - 2; },
+  };
+}
+
+function initSpine() {
+  const sp = spineOf();
+  if (!sp) return;
+  let moving = false, acc = 0, idle = null;
+  const go = (i) => {
+    i = Math.max(0, Math.min(sp.n - 1, i));
+    moving = true;
+    const y = sp.stepY(i);
+    if (lenis) lenis.scrollTo(y, { duration: 1.0, lock: true, force: true, onComplete: () => { moving = false; } });
+    else window.scrollTo({ top: y, behavior: reduced ? 'auto' : 'smooth' });
+    setTimeout(() => { moving = false; }, reduced ? 50 : 1050);
+  };
+  const current = () => Math.round(sp.float());
+
+  // rueda: un curso por gesto mientras estás dentro de la espina
+  const onWheel = (e) => {
+    if (course || !sp.inside() || Math.abs(e.deltaY) < Math.abs(e.deltaX)) return;
+    const dir = Math.sign(e.deltaY), i = current();
+    if ((dir < 0 && i === 0 && sp.float() < 0.05) || (dir > 0 && i === sp.n - 1 && sp.float() > sp.n - 1.05)) return; // salir de la espina
+    e.preventDefault();
+    e.stopImmediatePropagation();
+    if (moving) return;
+    acc += e.deltaY;
+    if (Math.abs(acc) > 24) { acc = 0; go(i + dir); }
+  };
+  window.addEventListener('wheel', onWheel, { passive: false, capture: true });
+
+  // flechas / avance de página
+  const onKey = (e) => {
+    if (course || !sp.inside() || e.target.closest('input, textarea, select')) return;
+    const i = current();
+    const next = ['ArrowDown', 'PageDown', 'ArrowRight'].includes(e.key) || (e.key === ' ' && !e.shiftKey);
+    const prev = ['ArrowUp', 'PageUp', 'ArrowLeft'].includes(e.key) || (e.key === ' ' && e.shiftKey);
+    if (next && i < sp.n - 1) { e.preventDefault(); go(i + 1); }
+    else if (prev && i > 0) { e.preventDefault(); go(i - 1); }
+  };
+  document.addEventListener('keydown', onKey);
+
+  // táctil u otros: al soltar, se acomoda en el curso más cercano
+  const onScroll = () => {
+    clearTimeout(idle);
+    idle = setTimeout(() => {
+      if (course || moving || !sp.inside()) return;
+      const f = sp.float();
+      if (Math.abs(f - Math.round(f)) > 0.03) go(Math.round(f));
+    }, 160);
+  };
+  window.addEventListener('scroll', onScroll, { passive: true });
+
+  // escala lateral: salta al curso
+  const onIndex = (e) => {
+    const a = e.target.closest('.spine-index a[data-step]');
+    if (!a) return;
+    e.preventDefault();
+    e.stopPropagation();
+    go(+a.dataset.step);
+  };
+  sp.sec.addEventListener('click', onIndex, true);
+
+  pageCleanup.push(() => {
+    window.removeEventListener('wheel', onWheel, { capture: true });
+    document.removeEventListener('keydown', onKey);
+    window.removeEventListener('scroll', onScroll);
+    sp.sec.removeEventListener('click', onIndex, true);
+    clearTimeout(idle);
   });
 }
 
@@ -479,13 +585,18 @@ function openCourse(slug, { push = true, fromLoad = false } = {}) {
   body.append(eyebrow, h, ...parts.childNodes);
   dialog.querySelector('.cd-label').textContent = BADGE_LABEL[slug] || '';
 
-  if (fromLoad && card) {
-    // como en la web original: la tarjeta queda a la vista antes de abrir
-    const y = card.getBoundingClientRect().top + window.scrollY - window.innerHeight / 2 + card.offsetHeight / 2;
+  const spine = spineOf();
+  const step = spine ? spine.steps.indexOf(slug) : -1;
+  if (fromLoad && spine && step >= 0) {
+    // entrada directa: la espina queda en ese curso antes de entrar en su tarjeta
+    const y = spine.stepY(step);
     if (lenis) lenis.scrollTo(y, { immediate: true, force: true }); else window.scrollTo(0, y);
   }
-  const frame = card?.querySelector('.frame');
-  if (frame) world?.expand(frame);
+  if (spine && step >= 0) {
+    // la cámara va a la tarjeta de ese curso (aunque estés en otra parte de la página) y entra
+    spine.frame.dataset.force = String(step);
+    world?.expand(spine.frame);
+  }
   const lastFocus = document.activeElement;
   lenis?.stop();
   document.body.classList.add('course-open');
@@ -508,7 +619,13 @@ function closeCourse({ fromPop = false, silent = false } = {}) {
   const dialog = main.querySelector('#courseDialog');
   dialog?.classList.remove('open');
   world?.collapse();
-  const back = main.querySelector(`.course-link[data-curso="${c.slug}"]`) || c.lastFocus;
+  const spine = spineOf();
+  if (spine) setTimeout(() => { if (!course) delete spine.frame.dataset.force; }, reduced ? 0 : 700);
+  // el foco vuelve a donde estaba (si sigue visible) o a la escala de la espina
+  const visible = (el) => el && el !== document.body && el.isConnected && el.getClientRects().length && getComputedStyle(el).visibility !== 'hidden';
+  const fromList = main.querySelector(`.course.on .course-link[data-curso="${c.slug}"]`);
+  const fromIndex = spine ? main.querySelector(`.spine-index a[data-step="${spine.steps.indexOf(c.slug)}"]`) : null;
+  const back = [c.lastFocus, fromList, fromIndex].find(visible);
   setTimeout(() => {
     if (dialog?.open) dialog.close();
     back?.focus?.({ preventScroll: true });   // después de close(), que devuelve el foco por su cuenta

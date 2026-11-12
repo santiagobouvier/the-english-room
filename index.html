@@ -12,7 +12,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter+Tight:wght@400;500;600&family=Lobster+Two:wght@700&display=swap" rel="stylesheet">
     <link href="css/room.css" rel="stylesheet">
-    <script>document.documentElement.className = 'js';</script>
+    <script>try { document.documentElement.className = 'js' + (sessionStorage.getItem('ter-visto') ? ' returning' : ''); } catch (e) { document.documentElement.className = 'js'; }</script>
     <script type="importmap">
     {
       "imports": {
@@ -29,14 +29,15 @@
 
     <a class="skip" href="#main">Saltar al contenido</a>
     <div class="loader" id="loader" aria-hidden="true">
-        <div class="loader-bubble">
+        <div class="loader-mark">
             <svg viewBox="0 0 120 90" aria-hidden="true">
-                <path d="M6 10 L114 4 L110 66 L52 66 L38 86 L36 66 L10 64 Z" fill="none" stroke="rgba(255,245,243,.25)" stroke-width="3" stroke-linejoin="round"/>
-                <path class="fill" d="M6 10 L114 4 L110 66 L52 66 L38 86 L36 66 L10 64 Z" fill="#26ccc8" style="clip-path: inset(0 100% 0 0)"/>
+                <path class="ld-fill" d="M6 10 L114 4 L110 66 L52 66 L38 86 L36 66 L10 64 Z"/>
+                <path class="ld-stroke" pathLength="1" d="M6 10 L114 4 L110 66 L52 66 L38 86 L36 66 L10 64 Z"/>
+                <text class="ld-ter" x="58" y="44" text-anchor="middle">TER</text>
             </svg>
+            <p class="loader-word"><span>The English Room</span></p>
         </div>
-        <div class="loader-count" id="loaderCount">000</div>
-        <div class="loader-word">The English Room<br>Entrando a la clase</div>
+        <div class="loader-line"><i></i></div>
     </div>
     <canvas id="bg" aria-hidden="true"></canvas>
     <canvas id="gl" aria-hidden="true"></canvas>

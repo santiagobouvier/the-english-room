@@ -6,7 +6,7 @@
 // sitio, la cámara "entra" en una pantalla y aparece la próxima
 // escena; el contenido nuevo se monta sin recargar.
 // =============================================================
-import { PAGE_HERO, BADGE_LABEL, font } from './scenes.js';
+import { PAGE_HERO, BADGE_LABEL } from './scenes.js';
 import { startBackdrop } from './backdrop.js';
 
 const doc = document.documentElement;
@@ -93,40 +93,26 @@ async function boot() {
 // ---------- loader estilo "000 → 100" ----------
 async function runLoader() {
   const loader = $('#loader');
-  const count = $('#loaderCount');
-  const fill = loader?.querySelector('.fill');
   if (!loader) return;
-  let target = 0, shown = 0;
-  const THREE = world ? await import('three') : null;
-  let done = !world;
-  if (THREE) {
-    const m = THREE.DefaultLoadingManager;
-    m.onProgress = (_, loaded, total) => { target = Math.max(target, loaded / total); };
-    m.onLoad = () => { target = 1; done = true; };
-    font().then(() => { target = Math.max(target, 0.4); });
-  }
-  const t0 = performance.now();
-  await new Promise((resolve) => {
-    const step = () => {
-      const elapsed = performance.now() - t0;
-      // si algo tarda demasiado, igual entramos
-      if (elapsed > 6000) { target = 1; done = true; }
-      const goal = done ? 1 : Math.min(target, 0.92);
-      shown += (goal - shown) * (reduced ? 1 : 0.08);
-      if (goal === 1 && 1 - shown < 0.004) shown = 1;
-      const n = Math.round(shown * 100);
-      count.textContent = String(n).padStart(3, '0');
-      if (fill) fill.style.clipPath = `inset(0 ${100 - n}% 0 0)`;
-      if (shown >= 1 && elapsed > (reduced ? 0 : 1100)) resolve();
-      else requestAnimationFrame(step);
-    };
-    step();
-  });
+  // Rápido: no se esperan las texturas (cargan de fondo mientras entra la portada).
+  // Se espera la tipografía, con un mínimo para que la animación del logo se vea
+  // entera y un tope duro para que nunca demore. performance.now() cuenta desde
+  // que empezó a cargar la página, así que el tiempo de descarga ya está incluido.
+  const returning = doc.classList.contains('returning');
+  const minAt = reduced ? 0 : returning ? 150 : 950;
+  const maxAt = reduced ? 300 : returning ? 600 : 1600;
+  const until = (ms) => new Promise((r) => setTimeout(r, Math.max(0, ms - performance.now())));
+  const fontsOk = (document.fonts ? document.fonts.ready : Promise.resolve()).catch(() => {});
+  await Promise.race([Promise.all([fontsOk, until(minAt)]), until(maxAt)]);
+  loader.classList.add('ready');
+  await until(performance.now() + (returning || reduced ? 0 : 140));
+  try { sessionStorage.setItem('ter-visto', '1'); } catch (e) { /* sin almacenamiento */ }
   loader.classList.add('done');
+  try { performance.mark('ter-loader-done'); } catch (e) { /* navegadores viejos */ }
   // el hero arranca a pantalla completa y se acomoda en su marco
   world?.heroIntro();
   revealHero();
-  setTimeout(() => loader.remove(), 1200);
+  setTimeout(() => loader.remove(), 900);
 }
 
 // =============================================================

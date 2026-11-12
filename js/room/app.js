@@ -425,6 +425,7 @@ function updateStages() {
   if (sp) {
     const f = sp.float();
     sp.frame.dataset.s = f.toFixed(4);
+    sp.sec.style.setProperty('--sp', (f / Math.max(1, sp.n - 1)).toFixed(4));
     const i = Math.round(f);
     if (sp.sec.dataset.active !== String(i)) {
       sp.sec.dataset.active = String(i);
@@ -491,29 +492,15 @@ function spineOf() {
 function initSpine() {
   const sp = spineOf();
   if (!sp) return;
-  let moving = false, acc = 0, idle = null;
+  // El scroll es continuo, como en el resto del sitio: bajar la página es bajar por la espina.
+  // Las flechas y la escala lateral deslizan hasta un curso (sin bloquear el scroll).
   const go = (i) => {
     i = Math.max(0, Math.min(sp.n - 1, i));
-    moving = true;
     const y = sp.stepY(i);
-    if (lenis) lenis.scrollTo(y, { duration: 1.0, lock: true, force: true, onComplete: () => { moving = false; } });
+    if (lenis) lenis.scrollTo(y, { duration: 1.2, force: true });
     else window.scrollTo({ top: y, behavior: reduced ? 'auto' : 'smooth' });
-    setTimeout(() => { moving = false; }, reduced ? 50 : 1050);
   };
   const current = () => Math.round(sp.float());
-
-  // rueda: un curso por gesto mientras estás dentro de la espina
-  const onWheel = (e) => {
-    if (course || !sp.inside() || Math.abs(e.deltaY) < Math.abs(e.deltaX)) return;
-    const dir = Math.sign(e.deltaY), i = current();
-    if ((dir < 0 && i === 0 && sp.float() < 0.05) || (dir > 0 && i === sp.n - 1 && sp.float() > sp.n - 1.05)) return; // salir de la espina
-    e.preventDefault();
-    e.stopImmediatePropagation();
-    if (moving) return;
-    acc += e.deltaY;
-    if (Math.abs(acc) > 24) { acc = 0; go(i + dir); }
-  };
-  window.addEventListener('wheel', onWheel, { passive: false, capture: true });
 
   // flechas / avance de página
   const onKey = (e) => {
@@ -526,17 +513,6 @@ function initSpine() {
   };
   document.addEventListener('keydown', onKey);
 
-  // táctil u otros: al soltar, se acomoda en el curso más cercano
-  const onScroll = () => {
-    clearTimeout(idle);
-    idle = setTimeout(() => {
-      if (course || moving || !sp.inside()) return;
-      const f = sp.float();
-      if (Math.abs(f - Math.round(f)) > 0.03) go(Math.round(f));
-    }, 160);
-  };
-  window.addEventListener('scroll', onScroll, { passive: true });
-
   // escala lateral: salta al curso
   const onIndex = (e) => {
     const a = e.target.closest('.spine-index a[data-step]');
@@ -548,11 +524,8 @@ function initSpine() {
   sp.sec.addEventListener('click', onIndex, true);
 
   pageCleanup.push(() => {
-    window.removeEventListener('wheel', onWheel, { capture: true });
     document.removeEventListener('keydown', onKey);
-    window.removeEventListener('scroll', onScroll);
     sp.sec.removeEventListener('click', onIndex, true);
-    clearTimeout(idle);
   });
 }
 

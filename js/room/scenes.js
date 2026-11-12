@@ -1327,10 +1327,10 @@ class Classroom extends Base {
 // del A1 (abajo) al Legal English (arriba). El scroll sube por la
 // espina curso por curso; al abrir uno, la cámara entra en su tarjeta.
 // =============================================================
-const SPINE_STEP = 2.7;   // altura entre cursos
-const SPINE_ANG = 1.18;   // giro entre cursos (rad)
-const SPINE_R = 3.3;      // radio de la órbita de tarjetas
-const CARD_W = 3.4, CARD_H = 2.12;
+const SPINE_STEP = 3.1;   // distancia vertical entre cursos (se baja: A1 arriba, Legal abajo)
+const SPINE_ANG = 1.05;   // giro de la espiral entre cursos (rad)
+const SPINE_R = 3.0;      // radio de la órbita de tarjetas
+const CARD_W = 3.6, CARD_H = 2.25;
 
 function wrapText(ctx, text, maxW, maxLines) {
   const words = text.split(' ');
@@ -1344,42 +1344,33 @@ function wrapText(ctx, text, maxW, maxLines) {
   return lines.slice(0, maxLines);
 }
 
-function drawCourseCard(canvas, image, { level, title, teacher, num }) {
+/** Capa de texto transparente sobre la foto (la foto va aparte, nítida y animada). */
+function drawCardOverlay(canvas, { level, title, teacher, num }) {
   const ctx = canvas.getContext('2d');
   const w = canvas.width, h = canvas.height;
-  ctx.fillStyle = '#0f3039';
-  ctx.fillRect(0, 0, w, h);
-  if (image) {
-    const sc = Math.max(w / image.width, h / image.height);
-    ctx.imageSmoothingQuality = 'high';
-    ctx.drawImage(image, (w - image.width * sc) / 2, (h - image.height * sc) * 0.3, image.width * sc, image.height * sc);
-  }
-  let g = ctx.createLinearGradient(0, 0, w * 0.75, 0);
-  g.addColorStop(0, 'rgba(6,19,23,.88)'); g.addColorStop(0.55, 'rgba(6,19,23,.45)'); g.addColorStop(1, 'rgba(6,19,23,0)');
+  ctx.clearRect(0, 0, w, h);
+  let g = ctx.createLinearGradient(0, h * 0.45, 0, h);
+  g.addColorStop(0, 'rgba(6,19,23,0)'); g.addColorStop(1, 'rgba(6,19,23,.78)');
   ctx.fillStyle = g; ctx.fillRect(0, 0, w, h);
-  g = ctx.createLinearGradient(0, h * 0.5, 0, h);
-  g.addColorStop(0, 'rgba(6,19,23,0)'); g.addColorStop(1, 'rgba(6,19,23,.7)');
-  ctx.fillStyle = g; ctx.fillRect(0, 0, w, h);
+  g = ctx.createLinearGradient(0, 0, w * 0.5, 0);
+  g.addColorStop(0, 'rgba(6,19,23,.45)'); g.addColorStop(1, 'rgba(6,19,23,0)');
+  ctx.fillStyle = g; ctx.fillRect(0, 0, w, h * 0.55);
   ctx.textBaseline = 'alphabetic';
-  ctx.fillStyle = 'rgba(255,255,255,.72)';
-  ctx.font = '600 22px "Inter Tight", sans-serif';
-  if ('letterSpacing' in ctx) ctx.letterSpacing = '4px';
-  ctx.fillText(num, 52, 70);
+  ctx.fillStyle = 'rgba(255,255,255,.8)';
+  ctx.font = '600 30px "Inter Tight", sans-serif';
+  if ('letterSpacing' in ctx) ctx.letterSpacing = '5px';
+  ctx.fillText(num, 70, 96);
   if ('letterSpacing' in ctx) ctx.letterSpacing = '0px';
   ctx.fillStyle = '#26ccc8';
-  ctx.font = '400 ' + (level.length > 3 ? 170 : 240) + 'px "Instrument Serif", Georgia, serif';
-  ctx.fillText(level, 44, 290);
+  ctx.font = '400 ' + (level.length > 3 ? 220 : 300) + 'px "Instrument Serif", Georgia, serif';
+  ctx.fillText(level, 58, 370);
   ctx.fillStyle = '#ffffff';
-  ctx.font = '400 56px "Instrument Serif", Georgia, serif';
-  const lines = wrapText(ctx, title, 640, 2);
-  lines.forEach((ln, i) => ctx.fillText(ln, 52, h - 112 - (lines.length - 1 - i) * 58));
-  ctx.fillStyle = 'rgba(255,255,255,.75)';
-  ctx.font = '600 24px "Inter Tight", sans-serif';
-  ctx.fillText(teacher, 52, h - 52);
-  // borde fino
-  ctx.strokeStyle = 'rgba(255,255,255,.18)';
-  ctx.lineWidth = 3;
-  ctx.strokeRect(1.5, 1.5, w - 3, h - 3);
+  ctx.font = '400 78px "Instrument Serif", Georgia, serif';
+  const lines = wrapText(ctx, title, 1100, 2);
+  lines.forEach((ln, i) => ctx.fillText(ln, 70, h - 150 - (lines.length - 1 - i) * 80));
+  ctx.fillStyle = 'rgba(255,255,255,.8)';
+  ctx.font = '600 32px "Inter Tight", sans-serif';
+  ctx.fillText(teacher, 72, h - 74);
 }
 
 class Spine extends Base {
@@ -1390,8 +1381,7 @@ class Spine extends Base {
     this.root = new THREE.Group();
     this.scene.add(this.root);
     this.items = [];
-    this.s = 0;
-    this.e = 0;
+    this.s = 0; this.vel = 0; this.e = 0;
   }
 
   build(el) {
@@ -1400,76 +1390,91 @@ class Spine extends Base {
     const N = Math.max(1, courses.length);
     const H = (N - 1) * SPINE_STEP;
     const rand = rng(31);
+    this.H = H;
 
-    // vértebras: globos de diálogo apilados que giran como una columna
+    // vértebras: globos de diálogo de vidrio apilados, que bajan girando
     const vMat = new THREE.MeshPhysicalMaterial({
       color: 0x2b6f7a, roughness: 0.16, metalness: 0.55, clearcoat: 1, clearcoatRoughness: 0.05, transparent: true, opacity: 0.92,
       iridescence: 1, iridescenceIOR: 1.6, iridescenceThicknessRange: [260, 900], envMapIntensity: 2.2,
     });
-    const count = Math.ceil((H + 7) / 0.22);
-    const vert = new THREE.InstancedMesh(bubbleGeo(0), vMat, count);
-    const d = new THREE.Object3D();
-    for (let k = 0; k < count; k++) {
-      const y = -3.5 + k * 0.22;
-      const sc = 0.34 + 0.08 * Math.sin(k * 0.9) + 0.04 * Math.sin(k * 0.23);
-      d.position.set(Math.sin(k * 0.21) * 0.06, y, Math.cos(k * 0.17) * 0.06);
-      d.rotation.set(-Math.PI / 2 + Math.sin(k * 0.7) * 0.14, k * 0.62, Math.sin(k * 0.4) * 0.1);
-      d.scale.set(sc * 1.15, sc * 0.9, sc * 0.9);
-      d.updateMatrix();
-      vert.setMatrixAt(k, d.matrix);
-    }
-    this.root.add(vert);
+    this.vCount = Math.ceil((H + 9) / 0.22);
+    this.vert = new THREE.InstancedMesh(bubbleGeo(0), vMat, this.vCount);
+    this.vert.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+    this.root.add(this.vert);
+    this.dummy = new THREE.Object3D();
 
-    // eje de luz
-    const cord = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.07, 0.07, H + 8, 16, 1),
-      new THREE.MeshBasicMaterial({ color: C.turq, transparent: true, opacity: 0.55, toneMapped: false }),
+    // eje de luz con un pulso que baja
+    this.cord = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.06, 0.06, H + 10, 16, 1),
+      new THREE.ShaderMaterial({
+        transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
+        uniforms: { uT: { value: 0 }, uC: { value: new THREE.Color(C.turq) } },
+        vertexShader: 'varying float vY; void main(){ vY = position.y; gl_Position = projectionMatrix*modelViewMatrix*vec4(position,1.); }',
+        fragmentShader: 'uniform float uT; uniform vec3 uC; varying float vY; void main(){ float p = fract(vY*0.08 + uT*0.35); float glow = 0.35 + pow(p, 18.0)*2.5; gl_FragColor = vec4(uC*glow, glow*0.6); }',
+      }),
     );
-    cord.position.y = H / 2;
-    this.root.add(cord);
+    this.cord.position.y = -H / 2;
+    this.root.add(this.cord);
 
-    // partículas en espiral alrededor de la espina
-    const P = this.world.mobile ? 1400 : 2800;
+    // partículas en espiral que suben despacio (y se aceleran con el scroll)
+    const P = this.world.mobile ? 1600 : 3200;
     const pos = new Float32Array(P * 3), col = new Float32Array(P * 3);
     const pal = [new THREE.Color(C.turq), new THREE.Color(C.pink), new THREE.Color(C.cream), new THREE.Color(0x7fd6ff)];
+    this.pData = [];
     for (let i = 0; i < P; i++) {
-      const y = -3.5 + rand() * (H + 7);
+      const y = 4.5 - rand() * (H + 9);
       const band = Math.floor(rand() * 2);
-      const a = y * 1.4 + band * Math.PI + (rand() - 0.5) * 1.4;
-      const r = 1.2 + Math.pow(rand(), 1.6) * 3.6;
-      pos.set([Math.cos(a) * r, y, Math.sin(a) * r], i * 3);
+      const r = 1.1 + Math.pow(rand(), 1.6) * 3.8;
+      this.pData.push({ y, a: y * 1.4 + band * Math.PI + (rand() - 0.5) * 1.4, r, sp: 0.2 + rand() * 0.5 });
       const c = pal[Math.floor(rand() * pal.length)];
       col.set([c.r, c.g, c.b], i * 3);
     }
     const pg = new THREE.BufferGeometry();
     pg.setAttribute('position', new THREE.BufferAttribute(pos, 3));
     pg.setAttribute('color', new THREE.BufferAttribute(col, 3));
-    this.dust = new THREE.Points(pg, new THREE.PointsMaterial({ size: 0.045, vertexColors: true, transparent: true, opacity: 0.8, depthWrite: false, blending: THREE.AdditiveBlending, toneMapped: false }));
+    this.dust = new THREE.Points(pg, new THREE.PointsMaterial({ size: 0.05, vertexColors: true, transparent: true, opacity: 0.85, depthWrite: false, blending: THREE.AdditiveBlending, toneMapped: false }));
     this.root.add(this.dust);
 
-    // tarjetas de los cursos
-    const cardGeo = new RoundedBoxGeometry(CARD_W, CARD_H, 0.06, 4, 0.12);
-    const glassGeo = new RoundedBoxGeometry(CARD_W + 0.22, CARD_H + 0.22, 0.04, 4, 0.2);
-    const glassMat = new THREE.MeshPhysicalMaterial({ color: 0x7fe0dc, transparent: true, opacity: 0.12, roughness: 0.1, metalness: 0.2, iridescence: 1, iridescenceIOR: 1.3, envMapIntensity: 1.6, depthWrite: false });
-    const ringGeo = new THREE.TorusGeometry(1.0, 0.018, 8, 96);
+    // tarjetas: foto (nítida, con movimiento lento) + capa de texto + vidrio
+    const photoGeo = new RoundedBoxGeometry(CARD_W, CARD_H, 0.05, 4, 0.12);
+    const overGeo = new THREE.PlaneGeometry(CARD_W, CARD_H);
+    const glassGeo = new RoundedBoxGeometry(CARD_W + 0.2, CARD_H + 0.2, 0.04, 4, 0.2);
+    const glassMat = new THREE.MeshPhysicalMaterial({ color: 0x7fe0dc, transparent: true, opacity: 0.14, roughness: 0.1, metalness: 0.2, iridescence: 1, iridescenceIOR: 1.3, envMapIntensity: 1.6, depthWrite: false });
+    const ringGeo = new THREE.TorusGeometry(0.95, 0.018, 8, 96);
+    const haloTex = (() => {
+      const c = document.createElement('canvas'); c.width = c.height = 256;
+      const x = c.getContext('2d'); const gr = x.createRadialGradient(128, 128, 0, 128, 128, 128);
+      gr.addColorStop(0, 'rgba(38,204,200,.28)'); gr.addColorStop(0.45, 'rgba(38,204,200,.06)'); gr.addColorStop(1, 'rgba(38,204,200,0)');
+      x.fillStyle = gr; x.fillRect(0, 0, 256, 256); const t = new THREE.CanvasTexture(c); return t;
+    })();
     this.items = courses.map((li, i) => {
-      const canvas = document.createElement('canvas');
-      canvas.width = 1024; canvas.height = 640;
-      const map = new THREE.CanvasTexture(canvas);
+      const map = texLoader.load(li.dataset.img); // propia: cada tarjeta encuadra su foto
       map.colorSpace = THREE.SRGBColorSpace;
       map.anisotropy = 12;
-      const g = new THREE.Group();
-      const card = new THREE.Mesh(cardGeo, new THREE.MeshBasicMaterial({ map }));
+      map.wrapS = map.wrapT = THREE.ClampToEdgeWrapping;
+      const photo = new THREE.Mesh(photoGeo, new THREE.MeshBasicMaterial({ map, color: 0xffffff }));
+      const canvas = document.createElement('canvas');
+      canvas.width = 1600; canvas.height = 1000;
+      const omap = new THREE.CanvasTexture(canvas);
+      omap.colorSpace = THREE.SRGBColorSpace;
+      omap.anisotropy = 12;
+      const over = new THREE.Mesh(overGeo, new THREE.MeshBasicMaterial({ map: omap, transparent: true, depthWrite: false }));
+      over.position.z = 0.03;
       const glass = new THREE.Mesh(glassGeo, glassMat);
       glass.position.z = -0.05;
-      g.add(glass, card);
-      const a = i * SPINE_ANG;
-      g.position.set(Math.sin(a) * SPINE_R, i * SPINE_STEP, Math.cos(a) * SPINE_R);
-      g.rotation.y = a;
+      const halo = new THREE.Mesh(new THREE.PlaneGeometry(CARD_W * 2.2, CARD_H * 2.6), new THREE.MeshBasicMaterial({ map: haloTex, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, opacity: 0, toneMapped: false }));
+      halo.position.z = -0.3;
+      const card = new THREE.Group();
+      card.add(halo, glass, photo, over);
+      const g = new THREE.Group();
+      g.add(card);
+      const ang = i * SPINE_ANG;
+      g.position.set(Math.sin(ang) * SPINE_R, -i * SPINE_STEP, Math.cos(ang) * SPINE_R);
+      g.rotation.y = ang;
       this.root.add(g);
-      const ring = new THREE.Mesh(ringGeo, new THREE.MeshBasicMaterial({ color: i % 2 ? C.pink : C.turq, transparent: true, opacity: 0.25, toneMapped: false }));
+      const ring = new THREE.Mesh(ringGeo, new THREE.MeshBasicMaterial({ color: i % 2 ? C.pink : C.turq, transparent: true, opacity: 0.2, toneMapped: false }));
       ring.rotation.x = Math.PI / 2;
-      ring.position.y = i * SPINE_STEP;
+      ring.position.y = -i * SPINE_STEP;
       this.root.add(ring);
       const info = {
         level: li.querySelector('.course-level')?.textContent.trim() || '',
@@ -1477,13 +1482,25 @@ class Spine extends Base {
         teacher: li.dataset.teacher || '',
         num: li.querySelector('.course-count')?.textContent.trim() || '',
       };
-      const item = { g, card, ring, map, canvas, info, base: g.position.clone(), a };
-      const fontP = document.fonts ? Promise.all([document.fonts.load('400 240px "Instrument Serif"'), document.fonts.load('600 24px "Inter Tight"')]) : Promise.resolve();
-      Promise.all([img(li.dataset.img), fontP]).then(([im]) => { drawCourseCard(canvas, im, info); map.needsUpdate = true; });
-      drawCourseCard(canvas, null, info);
-      return item;
+      const fontP = document.fonts ? Promise.all([document.fonts.load('400 300px "Instrument Serif"'), document.fonts.load('600 32px "Inter Tight"')]) : Promise.resolve();
+      fontP.then(() => { drawCardOverlay(canvas, info); omap.needsUpdate = true; });
+      drawCardOverlay(canvas, info);
+      return { g, card, photo, over, halo, ring, map, ph: rand() * 6.28, on: 0 };
     });
     this.ready = true;
+  }
+
+  /** encuadre "cover" de la foto, con un zoom lento tipo Ken Burns */
+  fitPhoto(it, t, zoom) {
+    const im = it.map.image;
+    if (!im || !im.width) return;
+    const ca = CARD_W / CARD_H, ia = im.width / im.height;
+    let rx = 1, ry = 1;
+    if (ia > ca) rx = ca / ia; else ry = ia / ca;
+    rx /= zoom; ry /= zoom;
+    const dx = Math.sin(t * 0.13 + it.ph) * 0.5 + 0.5, dy = Math.cos(t * 0.11 + it.ph) * 0.5 + 0.5;
+    it.map.repeat.set(rx, ry);
+    it.map.offset.set((1 - rx) * dx, (1 - ry) * (0.35 + 0.3 * dy));
   }
 
   update(t, dt, view) {
@@ -1492,40 +1509,79 @@ class Spine extends Base {
     const el = view.el;
     const force = el?.dataset.force;
     const target = force != null && force !== '' ? +force : parseFloat(el?.dataset.s || 0);
-    this.s = this.world.reduced ? target : lerp(this.s, target, 0.075);
+    const prev = this.s;
+    this.s = this.world.reduced ? target : lerp(this.s, target, 0.09);
+    this.vel = lerp(this.vel, (this.s - prev) / Math.max(dt, 1e-3), 0.15);
     this.e = ease(clamp(view.expandT || 0));
-    const active = Math.round(this.s);
-    this.items.forEach((it, i) => {
-      const on = i === active;
-      it.g.position.y = it.base.y + Math.sin(t * 0.8 + i) * 0.04;
-      const sc = lerp(it.g.scale.x, on ? 1.06 : 0.94, 0.08);
-      it.g.scale.setScalar(sc);
-      it.ring.material.opacity = lerp(it.ring.material.opacity, on ? 0.9 : 0.18, 0.08);
-      it.ring.scale.setScalar(on ? 1 + Math.sin(t * 2) * 0.04 : 1);
+    const v = clamp(this.vel, -3, 3);
+
+    // vértebras: la columna gira lento y "respira" una onda que baja
+    const d = this.dummy;
+    for (let k = 0; k < this.vCount; k++) {
+      const y = 4.5 - k * 0.22;
+      const wave = Math.sin(y * 0.9 + t * 2.2) * 0.5 + 0.5;
+      const sc = (0.32 + 0.07 * Math.sin(k * 0.9) + 0.04 * Math.sin(k * 0.23)) * (1 + wave * 0.12);
+      d.position.set(Math.sin(k * 0.21 + t * 0.4) * 0.07, y, Math.cos(k * 0.17 + t * 0.4) * 0.07);
+      d.rotation.set(-Math.PI / 2 + Math.sin(k * 0.7) * 0.14, k * 0.62 + t * 0.25 + v * 0.15, Math.sin(k * 0.4 + t) * 0.08);
+      d.scale.set(sc * 1.15, sc * 0.9, sc * 0.9);
+      d.updateMatrix();
+      this.vert.setMatrixAt(k, d.matrix);
+    }
+    this.vert.instanceMatrix.needsUpdate = true;
+    this.cord.material.uniforms.uT.value = t;
+
+    // partículas: suben en espiral; al bajar rápido se estiran hacia arriba
+    const pa = this.dust.geometry.attributes.position.array;
+    this.pData.forEach((p, i) => {
+      p.y += dt * (p.sp + Math.max(0, v) * 3.5);
+      if (p.y > 4.5) p.y -= this.H + 9;
+      const ang = p.a + t * 0.12 + p.y * 0.05;
+      pa[i * 3] = Math.cos(ang) * p.r; pa[i * 3 + 1] = p.y; pa[i * 3 + 2] = Math.sin(ang) * p.r;
     });
-    this.dust.rotation.y = t * 0.04;
+    this.dust.geometry.attributes.position.needsUpdate = true;
+
+    // tarjetas: la activa gira al frente, se ilumina y su foto respira; el resto queda atenuado
+    this.items.forEach((it, i) => {
+      const dist = Math.abs(i - this.s);
+      const on = clamp(1 - dist);
+      it.on = lerp(it.on, on, 0.12);
+      const c = it.card;
+      c.position.y = Math.sin(t * 0.8 + it.ph) * 0.05;
+      c.rotation.y = (i - this.s) * -0.35 + Math.sin(t * 0.5 + it.ph) * 0.03 * it.on;
+      c.rotation.x = clamp(v * 0.08, -0.25, 0.25) * (1 - it.on * 0.5);
+      c.scale.setScalar(0.9 + it.on * 0.14);
+      const dim = 0.42 + it.on * 0.58;
+      it.photo.material.color.setScalar(dim);
+      it.over.material.opacity = 0.35 + it.on * 0.65;
+      it.halo.material.opacity = it.on * 0.6;
+      it.ring.material.opacity = 0.15 + it.on * 0.75;
+      it.ring.scale.setScalar(1 + it.on * (0.08 + Math.sin(t * 2.4) * 0.04));
+      this.fitPhoto(it, t, 1.04 + it.on * 0.06);
+    });
   }
 
   beforeRender(view) {
     if (!this.ready) return;
     const s = this.s, e = this.e;
-    const a = s * SPINE_ANG, y = s * SPINE_STEP;
-    const out = new THREE.Vector3(Math.sin(a), 0, Math.cos(a));
-    const right = new THREE.Vector3(Math.cos(a), 0, -Math.sin(a));
+    const ang = s * SPINE_ANG, y = -s * SPINE_STEP;
+    const out = new THREE.Vector3(Math.sin(ang), 0, Math.cos(ang));
+    const right = new THREE.Vector3(Math.cos(ang), 0, -Math.sin(ang));
     const C0 = out.clone().multiplyScalar(SPINE_R).setY(y);
     const wide = this.aspect > 1.15;
     const t2 = Math.tan(THREE.MathUtils.degToRad(this.camera.fov / 2));
-    const D0 = wide ? this.fit(8.4, 5.2) : this.fit(4.4, 6.4);
+    // centrado: la tarjeta activa ocupa el medio de la pantalla
+    const D0 = wide ? this.fit(CARD_W / 0.4, CARD_H / 0.56) : this.fit(CARD_W / 0.9, CARD_H / 0.36);
     // al abrir un curso: la tarjeta llena la pantalla
     const dFill = Math.min((CARD_H / 2) / t2, (CARD_W / 2) / (t2 * this.aspect)) * 0.97;
     const dist = lerp(D0, dFill, e);
     const free = 1 - e;
-    const sh = (wide ? 1.7 : 0) * free + view.local.x * 0.35 * free;
-    const shy = (wide ? 0 : -1.6) * free;
+    const sh = view.local.x * 0.35 * free;
+    const shy = (wide ? 0 : -1.25) * free;
+    // la cámara mira desde un poco más arriba: se siente que bajás por la espina
     const cam = C0.clone().addScaledVector(out, dist).addScaledVector(right, sh);
-    cam.y += 0.45 * free + shy + view.local.y * 0.25 * free;
-    const look = C0.clone().addScaledVector(right, sh);
-    look.y += shy;
+    cam.y += (0.9 + clamp(this.vel, -2, 2) * 0.25) * free + shy + view.local.y * 0.25 * free;
+    const look = C0.clone().addScaledVector(right, sh * 0.4);
+    look.y += shy - 0.05 * free;
     this.camera.position.copy(cam);
     this.camera.lookAt(look);
   }

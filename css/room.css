@@ -510,3 +510,33 @@ body.course-open #gl { z-index: 60; }
   .spine-head { clip: rect(0 0 0 0); clip-path: inset(50%); width: 1px; height: 1px; overflow: hidden; white-space: nowrap; }
   .spine-sec .courses { left: 0; right: 0; bottom: 0; padding: 60px var(--gutter) 22px; background: linear-gradient(180deg, rgba(6,19,23,0), rgba(6,19,23,.88) 34%, rgba(6,19,23,.96)); }
 }
+
+/* ---------- Espina v2: descenso continuo, tarjeta centrada, ficha animada ---------- */
+.spine-sec { height: calc(100vh + 9 * 58vh); }
+.spine-hit { left: 28%; right: 28%; top: 20%; bottom: 20%; }
+.spine-sec .courses { width: min(340px, 24vw); transform: translateY(-50%); }
+.course-level { font-size: clamp(72px, 7vw, 124px); }
+.spine-sec .course h3 { font-size: clamp(26px, 2.1vw, 36px); }
+.spine-sec .course > * { opacity: 0; transform: translateY(18px); transition: opacity .5s var(--ease), transform .7s var(--ease); }
+.spine-sec .course.on > * { opacity: 1; transform: none; }
+.spine-sec .course.on > :nth-child(1) { transition-delay: .05s; }
+.spine-sec .course.on > :nth-child(2) { transition-delay: .1s; }
+.spine-sec .course.on > :nth-child(3) { transition-delay: .17s; }
+.spine-sec .course.on > :nth-child(4) { transition-delay: .24s; }
+.spine-sec .course.on > :nth-child(5) { transition-delay: .3s; }
+.spine-sec .course.on > :nth-child(6) { transition-delay: .36s; }
+.spine-sec .course.on .course-level { animation: levelIn 1s var(--ease) both; }
+@keyframes levelIn { from { letter-spacing: .12em; filter: blur(8px); } to { letter-spacing: 0; filter: none; } }
+/* progreso del descenso, en el borde derecho */
+.spine-progress { position: absolute; right: calc(var(--gutter) - 14px); top: 50%; height: 34vh; width: 2px; transform: translateY(-50%); background: var(--line); z-index: 11; }
+.spine-progress i { position: absolute; left: -2px; width: 6px; height: 22px; border-radius: 3px; background: var(--turq); top: calc(var(--sp, 0) * (100% - 22px)); }
+.no-js .spine-progress { display: none; }
+@media (max-width: 900px) {
+  .spine-sec { height: calc(100vh + 9 * 46vh); }
+  .spine-sec .courses { width: auto; transform: none; }
+  .spine-hit { left: 6%; right: 6%; top: 12%; bottom: 50%; }
+  .spine-progress { display: none; }
+}
+.reduced .spine-sec .course > * { opacity: 1; transform: none; }
+.spine-sec .course .teacher { display: flex; }
+.spine-sec .course a.course-link { margin-top: 2px; }

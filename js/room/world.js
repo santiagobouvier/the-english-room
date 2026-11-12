@@ -57,7 +57,7 @@ class View {
     this.revealEl = el?.closest('[data-reveal]') || null;
     this.isHero = !!el?.hasAttribute('data-hero-frame');
     this.intro = null;
-    this.rt = new THREE.WebGLRenderTarget(4, 4, { samples: world.mobile ? 2 : 4, type: THREE.HalfFloatType });
+    this.rt = new THREE.WebGLRenderTarget(4, 4, world.mobile ? { samples: 0, type: THREE.UnsignedByteType } : { samples: 4, type: THREE.HalfFloatType });
     this.mat = new THREE.ShaderMaterial({
       vertexShader: COMP_VERT, fragmentShader: COMP_FRAG, transparent: true, premultipliedAlpha: true,
       depthWrite: true, depthTest: true,
@@ -247,12 +247,15 @@ export class World {
     this.canvas = canvas;
     this.reduced = reduced;
     this.mobile = mobile;
-    this.renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true, powerPreference: 'high-performance' });
+    this.renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: !mobile, powerPreference: 'high-performance' });
     this.renderer.setClearColor(0x000000, 0);
     this.renderer.outputColorSpace = THREE.SRGBColorSpace;
     // sin tone mapping: las fotos de Carla y de los alumnos conservan su color real
     this.renderer.toneMapping = THREE.NoToneMapping;
-    this.dpr = Math.min(window.devicePixelRatio || 1, mobile ? 1.5 : 1.75);
+    this.dpr = Math.min(window.devicePixelRatio || 1, mobile ? 1.3 : 1.75);
+    this.dprMax = this.dpr;
+    this.dprMin = mobile ? 0.8 : 1;
+    this.perf = { avg: 1 / 60, slow: 0, fast: 0, last: 0 };
     this.renderer.setPixelRatio(this.dpr);
 
     const pmrem = new THREE.PMREMGenerator(this.renderer);
@@ -274,7 +277,7 @@ export class World {
     this.clock = new THREE.Clock();
     this.time = 0;
     this.transition = null;   // vista de pantalla completa para el "viaje" entre páginas
-    this.destRT = new THREE.WebGLRenderTarget(4, 4, { samples: 2, type: THREE.HalfFloatType });
+    this.destRT = new THREE.WebGLRenderTarget(4, 4, mobile ? { samples: 0, type: THREE.UnsignedByteType } : { samples: 2, type: THREE.HalfFloatType });
     this.destPreview = {};
 
     window.addEventListener('pointermove', (e) => { this.pointer.x = e.clientX; this.pointer.y = e.clientY; this.pointer.active = true; }, { passive: true });
@@ -381,11 +384,30 @@ export class World {
   start(onFrame) {
     this.onFrame = onFrame;
     this.frameId = 0;
-    const loop = () => {
+    const loop = (now) => {
       this.raf = requestAnimationFrame(loop);
+      this.adapt(now);
       this.render();
     };
     loop();
+  }
+
+  adapt(now) {
+    const p = this.perf;
+    if (!now || document.hidden) { p.last = 0; return; }
+    const d = p.last ? (now - p.last) / 1000 : 1 / 60;
+    p.last = now;
+    if (d > 0.25) return;                        // pestaña volviendo de segundo plano: no cuenta
+    p.avg += (d - p.avg) * 0.08;
+    if (p.avg > 1 / 45) { p.slow++; p.fast = 0; } else if (p.avg < 1 / 57) { p.fast++; p.slow = 0; } else { p.slow = 0; p.fast = 0; }
+    let next = this.dpr;
+    if (p.slow > 40 && this.dpr > this.dprMin) next = Math.max(this.dprMin, this.dpr - 0.15);
+    else if (p.fast > 240 && this.dpr < this.dprMax) next = Math.min(this.dprMax, this.dpr + 0.1);
+    if (next !== this.dpr) {
+      this.dpr = next; p.slow = 0; p.fast = 0;
+      this.renderer.setPixelRatio(next);
+      this.renderer.setSize(this.W, this.H, false);
+    }
   }
 
   render() {

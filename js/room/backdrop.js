@@ -16,7 +16,7 @@ float noise(vec2 p){
   vec2 i = floor(p), f = fract(p); vec2 u = f*f*(3.0-2.0*f);
   return mix(mix(hash(i), hash(i+vec2(1,0)), u.x), mix(hash(i+vec2(0,1)), hash(i+vec2(1,1)), u.x), u.y);
 }
-float fbm(vec2 p){ float v = 0.0, a = 0.5; for (int i = 0; i < 5; i++){ v += a*noise(p); p *= 2.02; a *= 0.5; } return v; }
+float fbm(vec2 p){ float v = 0.0, a = 0.5; for (int i = 0; i < OCT; i++){ v += a*noise(p); p *= 2.02; a *= 0.5; } return v; }
 
 void main(){
   vec2 uv = gl_FragCoord.xy / uRes;
@@ -64,10 +64,12 @@ const PALETTES = {
   contacto: [[0.16, 0.44, 0.55], [0.96, 0.65, 0.71], [0.15, 0.8, 0.78]],
 };
 
+const LITE = matchMedia('(max-width: 900px), (pointer: coarse)').matches;
+
 export function startBackdrop(canvas, { reduced = false } = {}) {
   const gl = canvas.getContext('webgl', { antialias: false, alpha: false, powerPreference: 'low-power' });
   if (!gl) return null;
-  const sh = (type, src) => { const s = gl.createShader(type); gl.shaderSource(s, src); gl.compileShader(s); return s; };
+  const sh = (type, src) => { const s = gl.createShader(type); gl.shaderSource(s, type === gl.FRAGMENT_SHADER ? src.replace(/^(precision[^\n]*\n)/m, `$1#define OCT ${LITE ? 3 : 5}\n`) : src); gl.compileShader(s); return s; };
   const prog = gl.createProgram();
   gl.attachShader(prog, sh(gl.VERTEX_SHADER, VERT));
   gl.attachShader(prog, sh(gl.FRAGMENT_SHADER, FRAG));
@@ -83,7 +85,7 @@ export function startBackdrop(canvas, { reduced = false } = {}) {
   const U = (n) => gl.getUniformLocation(prog, n);
   const u = { res: U('uRes'), time: U('uTime'), scroll: U('uScroll'), mouse: U('uMouse'), a: U('uA'), b: U('uB'), c: U('uC'), calm: U('uCalm') };
 
-  const dpr = Math.min(window.devicePixelRatio || 1, 1.25);
+  const dpr = LITE ? 0.5 : Math.min(window.devicePixelRatio || 1, 1.25);
   let W = 0, H = 0;
   const resize = () => {
     W = Math.round(innerWidth * dpr); H = Math.round(innerHeight * dpr);
@@ -98,8 +100,10 @@ export function startBackdrop(canvas, { reduced = false } = {}) {
 
   const cur = PALETTES.inicio.map((c) => c.slice());
   const t0 = performance.now();
+  let tick = 0;
   return {
     frame() {
+      if (LITE && (tick++ & 1)) return;
       const key = document.body.dataset.page || 'inicio';
       const target = PALETTES[key] || PALETTES.inicio;
       cur.forEach((c, i) => c.forEach((v, k) => { c[k] = v + (target[i][k] - v) * 0.03; }));

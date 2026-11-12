@@ -785,3 +785,18 @@ body.entering main { opacity: 0; transition: none; }
   .nc-title { font-size: clamp(64px, 19vw, 104px); } .next-card.is-long .nc-title { font-size: clamp(50px, 13.5vw, 76px); white-space: normal; }
 }
 
+
+/* =========================================================
+   Celular fluido: sin desenfoques de vidrio (son muy caros en
+   GPU móvil) y sombras más simples.
+   ========================================================= */
+@media (max-width: 900px), (pointer: coarse) {
+  .msg, .cd-shell, .cd-top, .cd-panel, .channels a, .story-step, .portrait figcaption, .hd-round, .call-bar span, .contact-card, .menu, .menu-card {
+    -webkit-backdrop-filter: none !important; backdrop-filter: none !important;
+  }
+  .msg { background: rgba(8, 26, 31, .94); }
+  .story-step { background: rgba(6, 19, 23, .9); }
+  .cd-top, .cd-panel { background: rgba(6, 19, 23, .97); }
+  .dev-lid { box-shadow: 0 0 0 1.5px #3d454a, 0 30px 60px -30px rgba(0,0,0,.9); }
+  .dev-shadow { filter: none; }
+}

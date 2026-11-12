@@ -426,6 +426,11 @@ function updateStages() {
     const f = sp.float();
     sp.frame.dataset.s = f.toFixed(4);
     sp.sec.style.setProperty('--sp', (f / Math.max(1, sp.n - 1)).toFixed(4));
+    const tail = sp.tail();
+    const ease = tail * tail * (3 - 2 * tail);
+    sp.sec.style.setProperty('--tail', ease.toFixed(4));
+    sp.frame.dataset.tail = ease.toFixed(4);
+    sp.frame.dataset.fade = (1 - ease).toFixed(4);
     const i = Math.round(f);
     if (sp.sec.dataset.active !== String(i)) {
       sp.sec.dataset.active = String(i);
@@ -476,7 +481,9 @@ function spineOf() {
   const sec = main.querySelector('[data-spine]');
   if (!sec) return null;
   const items = [...sec.querySelectorAll('.course')];
-  const span = () => Math.max(1, sec.offsetHeight - window.innerHeight);
+  // el último tramo (tail) es la salida: la escena se desvanece y entra la sección siguiente
+  const tailH = () => window.innerHeight * 0.7;
+  const span = () => Math.max(1, sec.offsetHeight - window.innerHeight - tailH());
   const top = () => sec.getBoundingClientRect().top + window.scrollY;
   return {
     sec, items,
@@ -485,6 +492,7 @@ function spineOf() {
     n: items.length,
     stepY: (i) => top() + (span() * i) / Math.max(1, items.length - 1),
     float: () => clamp(-sec.getBoundingClientRect().top / span()) * (items.length - 1),
+    tail: () => clamp((-sec.getBoundingClientRect().top - span()) / tailH()),
     inside: () => { const r = sec.getBoundingClientRect(); return r.top <= 2 && r.bottom >= window.innerHeight - 2; },
   };
 }

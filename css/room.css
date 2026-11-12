@@ -540,3 +540,10 @@ body.course-open #gl { z-index: 60; }
 .reduced .spine-sec .course > * { opacity: 1; transform: none; }
 .spine-sec .course .teacher { display: flex; }
 .spine-sec .course a.course-link { margin-top: 2px; }
+
+/* ---------- Salida de la espina: se funde con la sección siguiente ---------- */
+.spine-sec { height: calc(100vh + 9 * 58vh + 70vh); }
+.spine-sec .courses, .spine-index, .spine-head, .spine-progress, .spine-hint { opacity: calc(1 - var(--tail, 0) * 1.6); }
+.spine-sticky::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 60%; z-index: 9; pointer-events: none; background: linear-gradient(180deg, rgba(6,19,23,0), rgba(6,19,23,.9)); opacity: var(--tail, 0); }
+.spine-sec + .sec { margin-top: -42vh; padding-top: 90px; }
+@media (max-width: 900px) { .spine-sec { height: calc(100vh + 9 * 46vh + 70vh); } }

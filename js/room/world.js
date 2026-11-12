@@ -332,7 +332,9 @@ export class World {
       const visible = r.w > 2 && r.h > 2 && r.y + r.h > -40 && r.y < H + 40;
       // opacidad: sigue al revelado del DOM
       const shown = !v.revealEl || v.revealEl.classList.contains('in');
-      v.opacity = lerp(v.opacity, shown ? 1 : 0, this.reduced ? 1 : 0.06);
+      // data-fade permite que una escena se desvanezca al terminar su sección
+      const fade = v.el && v.el.dataset.fade != null ? parseFloat(v.el.dataset.fade) : 1;
+      v.opacity = lerp(v.opacity, (shown ? 1 : 0) * (v.expandT > 0.01 ? 1 : fade), this.reduced ? 1 : 0.12);
       v.mesh.visible = visible && v.opacity > 0.01;
       if (!v.mesh.visible) continue;
       // puntero local

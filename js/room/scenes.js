@@ -1373,6 +1373,214 @@ function drawCardOverlay(canvas, { level, title, teacher, num }) {
   ctx.fillText(teacher, 72, h - 74);
 }
 
+
+// ---------- objetos del campus para el recorrido de cursos ----------
+function canvasTex(w, h, draw) {
+  const c = document.createElement('canvas'); c.width = w; c.height = h;
+  draw(c.getContext('2d'), w, h);
+  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8;
+  return t;
+}
+const basic = (opts) => new THREE.MeshStandardMaterial({ roughness: 0.55, ...opts });
+
+const CAMPUS = {
+  // pizarrón con frase en tiza
+  board(text) {
+    const g = new THREE.Group();
+    const map = canvasTex(1024, 640, (x, w, h) => {
+      x.fillStyle = '#163f3a'; x.fillRect(0, 0, w, h);
+      for (let i = 0; i < 900; i++) { x.fillStyle = 'rgba(255,255,255,' + (Math.random() * 0.05) + ')'; x.fillRect(Math.random() * w, Math.random() * h, 3, 3); }
+      x.fillStyle = 'rgba(255,255,255,.92)'; x.textAlign = 'center';
+      x.font = '700 120px "Lobster Two", Georgia, serif';
+      const lines = text.split('\n');
+      lines.forEach((l, i) => x.fillText(l, w / 2, h / 2 + 40 + (i - (lines.length - 1) / 2) * 140));
+      x.strokeStyle = 'rgba(255,255,255,.5)'; x.lineWidth = 6; x.beginPath(); x.moveTo(w * 0.2, h - 90); x.lineTo(w * 0.8, h - 90); x.stroke();
+    });
+    const frame = new THREE.Mesh(new RoundedBoxGeometry(1.75, 1.15, 0.08, 3, 0.04), glossy(0xb07a4a, { clearcoat: 0.3 }));
+    const face = new THREE.Mesh(new THREE.PlaneGeometry(1.6, 1.0), new THREE.MeshStandardMaterial({ map, roughness: 0.9 }));
+    face.position.z = 0.045;
+    const tray = new THREE.Mesh(new THREE.BoxGeometry(1.5, 0.05, 0.12), glossy(0xb07a4a));
+    tray.position.set(0, -0.6, 0.06);
+    const chalk = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.02, 0.16, 8), basic({ color: 0xffffff }));
+    chalk.rotation.z = Math.PI / 2; chalk.position.set(0.4, -0.56, 0.08);
+    g.add(frame, face, tray, chalk);
+    return g;
+  },
+  // pila de libros
+  books() {
+    const g = new THREE.Group();
+    [[C.turq, 0.9, 0], [C.pink, 0.8, 0.22], [C.blue, 0.86, 0.44]].forEach(([c, w, y], i) => {
+      const b = new THREE.Mesh(new RoundedBoxGeometry(w, 0.2, 0.62, 3, 0.03), glossy(c));
+      b.position.set((i - 1) * 0.04, y, 0); b.rotation.y = (i - 1) * 0.18;
+      const pages = new THREE.Mesh(new THREE.BoxGeometry(w * 0.94, 0.15, 0.58), basic({ color: C.cream }));
+      pages.position.copy(b.position); pages.position.x += 0.04; pages.rotation.y = b.rotation.y;
+      g.add(pages, b);
+    });
+    return g;
+  },
+  // lápiz
+  pencil() {
+    const g = new THREE.Group();
+    const body = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.07, 1.1, 6), glossy(0xf2c14e));
+    const tip = new THREE.Mesh(new THREE.ConeGeometry(0.07, 0.22, 6), basic({ color: 0xf1d6b0 }));
+    tip.position.y = -0.66;
+    const lead = new THREE.Mesh(new THREE.ConeGeometry(0.025, 0.08, 6), basic({ color: 0x222222 }));
+    lead.position.y = -0.75;
+    const eraser = new THREE.Mesh(new THREE.CylinderGeometry(0.072, 0.072, 0.14, 12), glossy(C.pink));
+    eraser.position.y = 0.62;
+    g.add(body, tip, lead, eraser);
+    g.rotation.z = 0.8;
+    return g;
+  },
+  // cuaderno con renglones
+  notebook() {
+    const map = canvasTex(512, 640, (x, w, h) => {
+      x.fillStyle = '#fffaf2'; x.fillRect(0, 0, w, h);
+      x.strokeStyle = 'rgba(41,111,141,.35)'; x.lineWidth = 3;
+      for (let y = 110; y < h; y += 52) { x.beginPath(); x.moveTo(40, y); x.lineTo(w - 30, y); x.stroke(); }
+      x.strokeStyle = 'rgba(245,167,181,.9)'; x.beginPath(); x.moveTo(80, 0); x.lineTo(80, h); x.stroke();
+      x.fillStyle = '#103741'; x.font = '700 54px "Lobster Two", Georgia, serif'; x.fillText('Writing', 110, 92);
+      x.font = '400 34px "Instrument Serif", Georgia, serif'; x.fillText('I have been learning...', 100, 200); x.fillText('My favourite spot is', 100, 252);
+    });
+    const g = new THREE.Group();
+    const cover = new THREE.Mesh(new RoundedBoxGeometry(0.85, 1.05, 0.06, 3, 0.04), glossy(C.blue));
+    const page = new THREE.Mesh(new THREE.PlaneGeometry(0.76, 0.96), new THREE.MeshStandardMaterial({ map, roughness: 0.8 }));
+    page.position.z = 0.035;
+    g.add(cover, page);
+    for (let i = 0; i < 6; i++) { const r = new THREE.Mesh(new THREE.TorusGeometry(0.035, 0.01, 6, 16), glossy(0xdddddd, { metalness: 0.8 })); r.position.set(-0.43, 0.4 - i * 0.16, 0.03); r.rotation.y = Math.PI / 2; g.add(r); }
+    return g;
+  },
+  // micrófono (speaking)
+  mic() {
+    const g = new THREE.Group();
+    const head = new THREE.Mesh(new THREE.SphereGeometry(0.22, 24, 16), glossy(0xcfd8da, { metalness: 0.7, roughness: 0.25 }));
+    head.position.y = 0.42;
+    const ring = new THREE.Mesh(new THREE.TorusGeometry(0.2, 0.025, 8, 32), glossy(C.turq));
+    ring.position.y = 0.3; ring.rotation.x = Math.PI / 2;
+    const body = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.07, 0.6, 16), glossy(C.dark));
+    body.position.y = 0.0;
+    g.add(head, ring, body);
+    return g;
+  },
+  // auriculares (listening)
+  headphones() {
+    const g = new THREE.Group();
+    const band = new THREE.Mesh(new THREE.TorusGeometry(0.42, 0.05, 10, 40, Math.PI), glossy(C.dark));
+    const cupGeo = new THREE.CylinderGeometry(0.17, 0.17, 0.14, 24);
+    [-1, 1].forEach((sx) => { const c = new THREE.Mesh(cupGeo, glossy(C.pink)); c.rotation.z = Math.PI / 2; c.position.set(sx * 0.42, -0.06, 0); g.add(c); });
+    g.add(band);
+    return g;
+  },
+  // dado (juegos)
+  dice() {
+    const faces = [1, 2, 3, 4, 5, 6].map((n) => canvasTex(256, 256, (x, w) => {
+      x.fillStyle = '#ffffff'; x.fillRect(0, 0, w, w);
+      const P = { 1: [[.5, .5]], 2: [[.28, .28], [.72, .72]], 3: [[.25, .25], [.5, .5], [.75, .75]], 4: [[.28, .28], [.72, .28], [.28, .72], [.72, .72]], 5: [[.25, .25], [.75, .25], [.5, .5], [.25, .75], [.75, .75]], 6: [[.28, .22], [.72, .22], [.28, .5], [.72, .5], [.28, .78], [.72, .78]] }[n];
+      x.fillStyle = n === 1 ? '#F5A7B5' : '#103741';
+      P.forEach(([a, b]) => { x.beginPath(); x.arc(a * w, b * w, w * 0.09, 0, Math.PI * 2); x.fill(); });
+    }));
+    return new THREE.Mesh(new RoundedBoxGeometry(0.55, 0.55, 0.55, 4, 0.09), faces.map((map) => new THREE.MeshPhysicalMaterial({ map, roughness: 0.3, clearcoat: 1 })));
+  },
+  // pieza de rompecabezas (juegos)
+  puzzle(color) {
+    const sh = new THREE.Shape();
+    const k = 0.5;
+    sh.moveTo(-k, -k); sh.lineTo(-0.12, -k); sh.absarc(0, -k, 0.12, Math.PI, 0, true); sh.lineTo(k, -k);
+    sh.lineTo(k, -0.12); sh.absarc(k, 0, 0.12, -Math.PI / 2, Math.PI / 2, false); sh.lineTo(k, k);
+    sh.lineTo(0.12, k); sh.absarc(0, k, 0.12, 0, Math.PI, false); sh.lineTo(-k, k);
+    sh.lineTo(-k, 0.12); sh.absarc(-k, 0, 0.12, Math.PI / 2, -Math.PI / 2, true); sh.lineTo(-k, -k);
+    const geo = new THREE.ExtrudeGeometry(sh, { depth: 0.16, bevelEnabled: true, bevelThickness: 0.04, bevelSize: 0.04, bevelSegments: 3 });
+    geo.center();
+    return new THREE.Mesh(geo, glossy(color));
+  },
+  // estrella / trofeo (logros)
+  star(color) {
+    const sh = new THREE.Shape();
+    for (let i = 0; i < 10; i++) { const r = i % 2 ? 0.22 : 0.5; const a = Math.PI / 2 + (i * Math.PI) / 5; const x = Math.cos(a) * r, y = Math.sin(a) * r; if (i) sh.lineTo(x, y); else sh.moveTo(x, y); }
+    const geo = new THREE.ExtrudeGeometry(sh, { depth: 0.14, bevelEnabled: true, bevelThickness: 0.05, bevelSize: 0.04, bevelSegments: 3 });
+    geo.center();
+    return new THREE.Mesh(geo, glossy(color, { metalness: 0.3 }));
+  },
+  trophy() {
+    const g = new THREE.Group();
+    const gold = glossy(0xf2c14e, { metalness: 0.8, roughness: 0.25 });
+    const cup = new THREE.Mesh(new THREE.CylinderGeometry(0.32, 0.14, 0.5, 24, 1, true), gold);
+    cup.material.side = THREE.DoubleSide; cup.position.y = 0.3;
+    const stem = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, 0.25, 12), gold);
+    const base = new THREE.Mesh(new RoundedBoxGeometry(0.42, 0.12, 0.3, 3, 0.03), glossy(C.dark));
+    base.position.y = -0.18;
+    [-1, 1].forEach((sx) => { const h = new THREE.Mesh(new THREE.TorusGeometry(0.12, 0.03, 8, 20), gold); h.position.set(sx * 0.33, 0.33, 0); h.rotation.y = Math.PI / 2; g.add(h); });
+    g.add(cup, stem, base);
+    return g;
+  },
+  // tilde de actividad completada
+  check() {
+    const sh = new THREE.Shape();
+    sh.moveTo(-0.45, 0.02); sh.lineTo(-0.28, 0.18); sh.lineTo(-0.1, 0.0); sh.lineTo(0.32, 0.42); sh.lineTo(0.48, 0.26); sh.lineTo(-0.1, -0.32); sh.closePath();
+    const geo = new THREE.ExtrudeGeometry(sh, { depth: 0.14, bevelEnabled: true, bevelThickness: 0.04, bevelSize: 0.03, bevelSegments: 3 });
+    geo.center();
+    const g = new THREE.Group();
+    const disc = new THREE.Mesh(new THREE.CylinderGeometry(0.55, 0.55, 0.1, 40), glossy(C.turq));
+    disc.rotation.x = Math.PI / 2;
+    const m = new THREE.Mesh(geo, glossy(C.cream));
+    m.position.z = 0.1;
+    g.add(disc, m);
+    return g;
+  },
+  // tarjeta de multiple choice (actividad)
+  quiz() {
+    const map = canvasTex(640, 800, (x, w, h) => {
+      x.fillStyle = '#ffffff'; x.fillRect(0, 0, w, h);
+      x.fillStyle = '#103741'; x.font = '400 64px "Instrument Serif", Georgia, serif'; x.fillText('She ___ English.', 50, 130);
+      [['A', 'speak', false], ['B', 'speaks', true], ['C', 'speaking', false]].forEach(([l, t, ok], i) => {
+        const y = 250 + i * 160;
+        x.fillStyle = ok ? '#26ccc8' : '#eef4f5'; x.beginPath(); x.roundRect(50, y - 70, w - 100, 120, 26); x.fill();
+        x.fillStyle = '#103741'; x.font = '600 46px "Inter Tight", sans-serif'; x.fillText(l + '   ' + t, 90, y + 8);
+        if (ok) { x.fillText('✓', w - 120, y + 8); }
+      });
+    });
+    const g = new THREE.Group();
+    const card = new THREE.Mesh(new RoundedBoxGeometry(0.8, 1.0, 0.04, 3, 0.06), glossy(0xffffff));
+    const face = new THREE.Mesh(new THREE.PlaneGeometry(0.74, 0.93), new THREE.MeshBasicMaterial({ map }));
+    face.position.z = 0.025;
+    g.add(card, face);
+    return g;
+  },
+  // cubo con letra
+  block(letter, color) {
+    const faces = [0, 1, 2, 3, 4, 5].map(() => canvasTex(256, 256, (x, w) => {
+      x.fillStyle = color; x.fillRect(0, 0, w, w);
+      x.strokeStyle = 'rgba(255,255,255,.6)'; x.lineWidth = 14; x.strokeRect(16, 16, w - 32, w - 32);
+      x.fillStyle = '#ffffff'; x.font = '400 180px "Instrument Serif", Georgia, serif'; x.textAlign = 'center'; x.fillText(letter, w / 2, w * 0.74);
+    }));
+    return new THREE.Mesh(new RoundedBoxGeometry(0.55, 0.55, 0.55, 3, 0.06), faces.map((map) => new THREE.MeshPhysicalMaterial({ map, roughness: 0.4, clearcoat: 0.6 })));
+  },
+  // botón de video
+  play() {
+    const g = new THREE.Group();
+    const bg = new THREE.Mesh(new RoundedBoxGeometry(0.9, 0.62, 0.12, 4, 0.16), glossy(C.pink));
+    const tri = new THREE.Shape(); tri.moveTo(-0.11, -0.15); tri.lineTo(0.18, 0); tri.lineTo(-0.11, 0.15); tri.closePath();
+    const t = new THREE.Mesh(new THREE.ExtrudeGeometry(tri, { depth: 0.06, bevelEnabled: false }), glossy(0xffffff));
+    t.position.z = 0.06;
+    g.add(bg, t);
+    return g;
+  },
+  // birrete de graduación
+  cap() {
+    const g = new THREE.Group();
+    const top = new THREE.Mesh(new RoundedBoxGeometry(1.1, 0.06, 1.1, 2, 0.02), glossy(C.dark));
+    top.rotation.y = Math.PI / 4;
+    const crown = new THREE.Mesh(new THREE.CylinderGeometry(0.34, 0.38, 0.32, 24), glossy(C.dark));
+    crown.position.y = -0.18;
+    const tassel = new THREE.Mesh(new THREE.CylinderGeometry(0.015, 0.015, 0.45, 6), glossy(0xf2c14e, { metalness: 0.6 }));
+    tassel.position.set(0.42, -0.2, 0.1);
+    const knot = new THREE.Mesh(new THREE.SphereGeometry(0.05, 10, 8), glossy(0xf2c14e, { metalness: 0.6 }));
+    knot.position.y = 0.05;
+    g.add(top, crown, tassel, knot);
+    return g;
+  },
+};
+
 class Spine extends Base {
   constructor(world) {
     super(world, 34);
@@ -1392,29 +1600,76 @@ class Spine extends Base {
     const rand = rng(31);
     this.H = H;
 
-    // vértebras: globos de diálogo de vidrio apilados, que bajan girando
-    const vMat = new THREE.MeshPhysicalMaterial({
-      color: 0x2b6f7a, roughness: 0.16, metalness: 0.55, clearcoat: 1, clearcoatRoughness: 0.05, transparent: true, opacity: 0.92,
-      iridescence: 1, iridescenceIOR: 1.6, iridescenceThicknessRange: [260, 900], envMapIntensity: 2.2,
-    });
-    this.vCount = Math.ceil((H + 9) / 0.22);
-    this.vert = new THREE.InstancedMesh(bubbleGeo(0), vMat, this.vCount);
-    this.vert.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
-    this.root.add(this.vert);
-    this.dummy = new THREE.Object3D();
-
-    // eje de luz con un pulso que baja
-    this.cord = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.06, 0.06, H + 10, 16, 1),
+    // el recorrido: un camino de casilleros de juego que baja en espiral
+    const TILE_DY = 0.42, PATH_R = 1.05, TURN = 0.95; // ángulo por unidad de altura
+    this.PATH_R = PATH_R; this.TURN = TURN;
+    const tileCount = Math.ceil((H + 10) / TILE_DY);
+    const tileGeo = new RoundedBoxGeometry(0.78, 0.12, 0.62, 3, 0.05);
+    const tileMats = [C.turq, C.cream, C.pink, C.blue].map((c) => glossy(c, { clearcoat: 0.8 }));
+    this.tiles = [];
+    for (let k = 0; k < tileCount; k++) {
+      const y = 4.5 - k * TILE_DY;
+      const a = y * TURN;
+      const m = new THREE.Mesh(tileGeo, tileMats[k % 4]);
+      m.position.set(Math.sin(a) * PATH_R, y, Math.cos(a) * PATH_R);
+      m.rotation.set(0, a, -0.22);
+      this.root.add(m);
+      this.tiles.push({ m, y, base: y });
+    }
+    // baranda de luz que acompaña el camino
+    const railPts = [];
+    for (let y = 4.5; y > -H - 5.5; y -= 0.1) { const a = y * TURN; railPts.push(new THREE.Vector3(Math.sin(a) * (PATH_R + 0.48), y - 0.04, Math.cos(a) * (PATH_R + 0.48))); }
+    this.rail = new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(railPts), Math.floor(railPts.length * 1.5), 0.022, 6, false),
       new THREE.ShaderMaterial({
         transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
         uniforms: { uT: { value: 0 }, uC: { value: new THREE.Color(C.turq) } },
         vertexShader: 'varying float vY; void main(){ vY = position.y; gl_Position = projectionMatrix*modelViewMatrix*vec4(position,1.); }',
-        fragmentShader: 'uniform float uT; uniform vec3 uC; varying float vY; void main(){ float p = fract(vY*0.08 + uT*0.35); float glow = 0.35 + pow(p, 18.0)*2.5; gl_FragColor = vec4(uC*glow, glow*0.6); }',
-      }),
-    );
-    this.cord.position.y = -H / 2;
-    this.root.add(this.cord);
+        fragmentShader: 'uniform float uT; uniform vec3 uC; varying float vY; void main(){ float p = fract(vY*0.12 + uT*0.4); float glow = 0.4 + pow(p, 14.0)*2.4; gl_FragColor = vec4(uC*glow, glow*0.7); }',
+      }));
+    this.root.add(this.rail);
+    this.cord = this.rail;
+
+    // objetos del campus a lo largo del recorrido
+    const B = ['Hello!', 'I am\nYou are', "Let's\nplay!", 'A1 → C2', 'Speak\nup!', 'Well\ndone!'];
+    const make = [
+      () => CAMPUS.board(B[0]), () => CAMPUS.dice(), () => CAMPUS.books(), () => CAMPUS.mic(), () => CAMPUS.puzzle(C.pink),
+      () => CAMPUS.quiz(), () => CAMPUS.star(0xf2c14e), () => CAMPUS.pencil(), () => CAMPUS.headphones(), () => CAMPUS.block('A', '#26ccc8'),
+      () => CAMPUS.board(B[1]), () => CAMPUS.check(), () => CAMPUS.notebook(), () => CAMPUS.play(), () => CAMPUS.puzzle(C.turq),
+      () => CAMPUS.trophy(), () => CAMPUS.block('B', '#F5A7B5'), () => CAMPUS.board(B[2]), () => CAMPUS.dice(), () => CAMPUS.star(C.turq),
+      () => CAMPUS.mic(), () => CAMPUS.quiz(), () => CAMPUS.block('C', '#296f8d'), () => CAMPUS.board(B[3]), () => CAMPUS.check(),
+      () => CAMPUS.books(), () => CAMPUS.headphones(), () => CAMPUS.puzzle(C.cream), () => CAMPUS.board(B[4]), () => CAMPUS.play(),
+      () => CAMPUS.star(C.pink), () => CAMPUS.pencil(), () => CAMPUS.board(B[5]), () => CAMPUS.trophy(),
+    ];
+    this.props = make.map((fn, k) => {
+      const o = fn();
+      const y = 3.5 - (k + 0.5) * ((H + 6) / make.length);
+      // a los costados de la tarjeta de esa altura: así se ven alrededor del curso
+      const side = k % 2 ? 1 : -1;
+      const cardA = (-y / SPINE_STEP) * SPINE_ANG;
+      const a = cardA + side * (side > 0 ? 0.5 + rand() * 0.14 : 0.62 + rand() * 0.28);
+      const r = 3.7 + rand() * 0.9;
+      // los del lado derecho van más arriba o más abajo, para no tapar la ficha del curso
+      const yOff = side > 0 ? (k % 4 < 2 ? 1.15 : -1.15) : 0;
+      o.position.set(Math.sin(a) * r, y + yOff, Math.cos(a) * r);
+      o.rotation.y = a + (rand() - 0.5) * 0.8;
+      o.scale.setScalar(0.62 + rand() * 0.25);
+      this.root.add(o);
+      return { o, y: y + yOff, ph: rand() * 6.28, spin: (rand() - 0.5) * 0.5 };
+    });
+    // birrete: la meta, al final del recorrido
+    this.goal = CAMPUS.cap();
+    this.goal.position.set(0, -H - 2.4, 0);
+    this.goal.scale.setScalar(1.4);
+    this.root.add(this.goal);
+
+    // la ficha del juego (vos) que baja por el camino
+    this.pawn = new THREE.Group();
+    const pm = glossy(C.pink, { clearcoat: 1 });
+    const pb = new THREE.Mesh(new THREE.ConeGeometry(0.2, 0.42, 24), pm); pb.position.y = 0.2;
+    const ph = new THREE.Mesh(new THREE.SphereGeometry(0.14, 20, 16), pm); ph.position.y = 0.48;
+    const pbase = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.24, 0.07, 24), pm);
+    this.pawn.add(pb, ph, pbase);
+    this.root.add(this.pawn);
 
     // partículas en espiral que suben despacio (y se aceleran con el scroll)
     const P = this.world.mobile ? 1600 : 3200;
@@ -1508,28 +1763,37 @@ class Spine extends Base {
     if (!this.ready) return;
     const el = view.el;
     const force = el?.dataset.force;
-    const target = force != null && force !== '' ? +force : parseFloat(el?.dataset.s || 0);
+    const tail = parseFloat(el?.dataset.tail || 0);
+    const target = (force != null && force !== '' ? +force : parseFloat(el?.dataset.s || 0)) + tail * 1.1;
     const prev = this.s;
     this.s = this.world.reduced ? target : lerp(this.s, target, 0.09);
     this.vel = lerp(this.vel, (this.s - prev) / Math.max(dt, 1e-3), 0.15);
     this.e = ease(clamp(view.expandT || 0));
     const v = clamp(this.vel, -3, 3);
 
-    // vértebras: la columna gira lento y "respira" una onda que baja
-    const d = this.dummy;
-    for (let k = 0; k < this.vCount; k++) {
-      const y = 4.5 - k * 0.22;
-      const wave = Math.sin(y * 0.9 + t * 2.2) * 0.5 + 0.5;
-      const sc = (0.32 + 0.07 * Math.sin(k * 0.9) + 0.04 * Math.sin(k * 0.23)) * (1 + wave * 0.12);
-      d.position.set(Math.sin(k * 0.21 + t * 0.4) * 0.07, y, Math.cos(k * 0.17 + t * 0.4) * 0.07);
-      d.rotation.set(-Math.PI / 2 + Math.sin(k * 0.7) * 0.14, k * 0.62 + t * 0.25 + v * 0.15, Math.sin(k * 0.4 + t) * 0.08);
-      d.scale.set(sc * 1.15, sc * 0.9, sc * 0.9);
-      d.updateMatrix();
-      this.vert.setMatrixAt(k, d.matrix);
-    }
-    this.vert.instanceMatrix.needsUpdate = true;
-    this.cord.material.uniforms.uT.value = t;
-
+    // casilleros: una ola de luz recorre el camino hacia abajo
+    const camY = -this.s * SPINE_STEP;
+    this.tiles.forEach((tl, k) => {
+      const near = clamp(1 - Math.abs(tl.y - camY) / 6);
+      tl.m.position.y = tl.base + Math.sin(t * 2 - tl.y * 0.9) * 0.03 * near;
+      tl.m.scale.setScalar(0.92 + near * 0.12);
+    });
+    this.rail.material.uniforms.uT.value = t;
+    // objetos: flotan, giran y se acercan cuando pasás
+    this.props.forEach((p) => {
+      const near = clamp(1 - Math.abs(p.y - camY) / 5);
+      p.o.position.y = p.y + Math.sin(t * 0.9 + p.ph) * 0.12;
+      p.o.rotation.y += dt * (p.spin + v * 0.4);
+      p.o.rotation.x = Math.sin(t * 0.6 + p.ph) * 0.15;
+      const sc = p.o.userData.base || (p.o.userData.base = p.o.scale.x);
+      p.o.scale.setScalar(sc * (0.8 + near * 0.3));
+    });
+    this.goal.rotation.y = t * 0.5;
+    // la ficha baja por el camino siguiendo tu scroll, con saltitos
+    const py = camY - 0.35 + Math.abs(Math.sin(t * 3.2)) * 0.18 * (1 - Math.min(1, Math.abs(v)));
+    const pawnA = py * this.TURN;
+    this.pawn.position.set(Math.sin(pawnA) * this.PATH_R, py + 0.08, Math.cos(pawnA) * this.PATH_R);
+    this.pawn.rotation.y = pawnA;
     // partículas: suben en espiral; al bajar rápido se estiran hacia arriba
     const pa = this.dust.geometry.attributes.position.array;
     this.pData.forEach((p, i) => {
@@ -1570,7 +1834,7 @@ class Spine extends Base {
     const wide = this.aspect > 1.15;
     const t2 = Math.tan(THREE.MathUtils.degToRad(this.camera.fov / 2));
     // centrado: la tarjeta activa ocupa el medio de la pantalla
-    const D0 = wide ? this.fit(CARD_W / 0.4, CARD_H / 0.56) : this.fit(CARD_W / 0.9, CARD_H / 0.36);
+    const D0 = wide ? this.fit(CARD_W / 0.36, CARD_H / 0.5) : this.fit(CARD_W / 0.9, CARD_H / 0.36);
     // al abrir un curso: la tarjeta llena la pantalla
     const dFill = Math.min((CARD_H / 2) / t2, (CARD_W / 2) / (t2 * this.aspect)) * 0.97;
     const dist = lerp(D0, dFill, e);
@@ -1584,6 +1848,20 @@ class Spine extends Base {
     look.y += shy - 0.05 * free;
     this.camera.position.copy(cam);
     this.camera.lookAt(look);
+    // ningún objeto del recorrido tapa la tarjeta activa: si queda delante, se achica y desaparece
+    this.camera.updateMatrixWorld();
+    const cardDist = cam.distanceTo(C0);
+    const hw = (CARD_W / 2) / (Math.tan(THREE.MathUtils.degToRad(this.camera.fov / 2)) * this.aspect * cardDist) + 0.12;
+    const hh = (CARD_H / 2) / (Math.tan(THREE.MathUtils.degToRad(this.camera.fov / 2)) * cardDist) + 0.12;
+    const cNdc = C0.clone().project(this.camera);
+    const tmp = new THREE.Vector3();
+    this.props.forEach((p) => {
+      tmp.copy(p.o.position).project(this.camera);
+      const blocking = p.o.position.distanceTo(cam) < cardDist && Math.abs(tmp.x - cNdc.x) < hw && Math.abs(tmp.y - cNdc.y) < hh;
+      p.hide = lerp(p.hide || 0, blocking ? 1 : 0, 0.2);
+      p.o.visible = p.hide < 0.97;
+      if (p.hide > 0.01) p.o.scale.multiplyScalar(1 - p.hide);
+    });
   }
 }
 

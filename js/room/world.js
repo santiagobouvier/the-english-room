@@ -119,15 +119,82 @@ class Ribbon {
       color: this.preset.color, roughness: 0.22, metalness: 0.0, clearcoat: 1, clearcoatRoughness: 0.12,
       emissive: this.preset.color, emissiveIntensity: 0.12,
     });
+    // La cinta nunca cruza letras: una máscara con las líneas de texto
+    // (con un margen suave) la desvanece justo antes de llegar a ellas,
+    // así parece que pasa por detrás y bordea el texto.
+    this.maskCanvas = document.createElement('canvas');
+    this.maskCanvas.width = this.maskCanvas.height = 4;
+    this.maskTex = new THREE.CanvasTexture(this.maskCanvas);
+    this.maskTex.minFilter = this.maskTex.magFilter = THREE.LinearFilter;
+    this.maskTex.generateMipmaps = false;
+    this.maskU = { value: this.maskTex };
+    this.boxU = { value: new THREE.Vector4(0, 0, 1, 1) };
+    this.radiusU = { value: 10 };
+    this.mat.transparent = true;
+    this.mat.onBeforeCompile = (sh) => {
+      sh.uniforms.uMask = this.maskU;
+      sh.uniforms.uMaskBox = this.boxU;
+      sh.uniforms.uRadius = this.radiusU;
+      // cerca del texto el tubo se afina hasta desaparecer: se "mete" detrás de las letras
+      sh.vertexShader = sh.vertexShader
+        .replace('#include <common>', '#include <common>\nuniform sampler2D uMask;\nuniform vec4 uMaskBox;\nuniform float uRadius;\nvarying vec2 vSec;')
+        .replace('#include <begin_vertex>', '#include <begin_vertex>\nvSec = position.xy;\n{ vec2 mu = vec2((position.x - uMaskBox.x) / uMaskBox.z, 1.0 - (-position.y - uMaskBox.y) / uMaskBox.w);\n  float km = texture2D(uMask, clamp(mu, 0.0, 1.0)).r;\n  transformed = position - normal * uRadius * smoothstep(0.0, 0.9, km); }');
+      sh.fragmentShader = sh.fragmentShader
+        .replace('#include <common>', '#include <common>\nuniform sampler2D uMask;\nuniform vec4 uMaskBox;\nvarying vec2 vSec;')
+        .replace('#include <dithering_fragment>', '#include <dithering_fragment>\n{ vec2 mu = vec2((vSec.x - uMaskBox.x) / uMaskBox.z, 1.0 - (-vSec.y - uMaskBox.y) / uMaskBox.w);\n  float k = 1.0 - smoothstep(0.75, 0.98, texture2D(uMask, clamp(mu, 0.0, 1.0)).r);\n  gl_FragColor.a *= k; if (gl_FragColor.a < 0.02) discard; }');
+    };
     this.mesh = new THREE.Mesh(new THREE.BufferGeometry(), this.mat);
     this.mesh.frustumCulled = false;
     this.mesh.renderOrder = 2;
     world.comp.add(this.mesh);
     this.progress = 0;
+    this.maskAt = 0;
     this.build();
   }
 
+  /** Dibuja en la máscara cada línea de texto cercana a la cinta (coordenadas de la sección). */
+  buildMask() {
+    const W = this.world.W;
+    const sr = this.el.getBoundingClientRect();
+    const h = sr.height || 1;
+    const x0 = -0.2 * W, y0 = -320, mw = W * 1.4, mh = h + 640;
+    const S = 0.25; // resolución de la máscara (1 px cada 4)
+    const c = this.maskCanvas;
+    const cw = Math.max(4, Math.ceil(mw * S)), ch = Math.max(4, Math.min(4096, Math.ceil(mh * S)));
+    if (c.width !== cw || c.height !== ch) { c.width = cw; c.height = ch; this.maskTex.dispose(); this.maskTex = new THREE.CanvasTexture(c); this.maskTex.minFilter = this.maskTex.magFilter = THREE.LinearFilter; this.maskTex.generateMipmaps = false; this.maskU.value = this.maskTex; }
+    const sy = ch / (mh * S); // por si la sección es muy alta y se limitó el alto
+    const x = c.getContext('2d');
+    x.clearRect(0, 0, cw, ch);
+    x.fillStyle = '#fff';
+    x.filter = 'blur(6px)'; // ~24 px reales: el afinado es gradual
+    const pad = W < 700 ? 10 : 18;
+    const top = sr.top + y0, bottom = sr.top + y0 + mh;
+    const root = this.el.closest('main') || document.body;
+    const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
+      acceptNode: (n) => (n.nodeValue.trim() ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT),
+    });
+    const range = document.createRange();
+    let n;
+    while ((n = walker.nextNode())) {
+      const pe = n.parentElement;
+      if (!pe || pe.closest('[aria-hidden="true"], .sr-only, [hidden]')) continue;
+      const pr = pe.getBoundingClientRect();
+      if (pr.bottom < top || pr.top > bottom || pr.width === 0) continue;
+      const cs = getComputedStyle(pe);
+      if (cs.visibility === 'hidden' || +cs.opacity === 0) continue;
+      range.selectNodeContents(n);
+      for (const r of range.getClientRects()) {
+        if (r.width < 1 || r.bottom < top || r.top > bottom) continue;
+        x.fillRect((r.left - pad - x0) * S, (r.top - pad - sr.top - y0) * S * sy, (r.width + pad * 2) * S, (r.height + pad * 2) * S * sy);
+      }
+    }
+    x.filter = 'none';
+    this.boxU.value.set(x0, y0, mw, mh);
+    this.maskTex.needsUpdate = true;
+  }
+
   build() {
+    this.maskAt = 0; // se rehace la máscara con el nuevo tamaño
     const W = this.world.W;
     const h = this.el.offsetHeight || 1;
     const pts = this.preset.pts.map(([x, y, z]) => new THREE.Vector3(x * W, -y * h, z * Math.min(1, W / 1400)));
@@ -136,6 +203,7 @@ class Ribbon {
     this.radial = 14;
     // en celular la cinta es más fina: acompaña sin tapar el texto
     const radius = W < 700 ? 4.5 : clamp(W * 0.012, 9, 22);
+    this.radiusU.value = radius;
     this.mesh.geometry.dispose();
     this.mesh.geometry = new THREE.TubeGeometry(curve, this.segments, radius, this.radial, false);
     this.total = this.mesh.geometry.index.count;
@@ -150,11 +218,16 @@ class Ribbon {
     const segs = Math.floor(this.progress * this.segments);
     this.mesh.geometry.setDrawRange(0, segs * this.radial * 6);
     this.mesh.visible = segs > 0 && r.bottom > -200 && r.top < H + 200;
+    // la máscara de texto se actualiza cada tanto mientras la cinta está a la vista
+    // (los textos que aparecen con animación cambian de lugar)
+    const now = performance.now();
+    if (this.mesh.visible && now - this.maskAt > 300) { this.maskAt = now; this.buildMask(); }
   }
 
   dispose() {
     this.world.comp.remove(this.mesh);
     this.mesh.geometry.dispose();
+    this.maskTex.dispose();
     this.mat.dispose();
   }
 }
@@ -264,8 +337,8 @@ export class World {
     const key = name + ':' + variant;
     const fake = this.destPreview[key] || (this.destPreview[key] = { el: null, variant, state: {}, local: new THREE.Vector2(), hover: 0, expandT: 0, rect: { x: 0, y: 0, w, h }, preview: true });
     fake.rect.w = w; fake.rect.h = h;
-    const pw = Math.max(4, Math.round(w * this.dpr * 0.8));
-    const ph = Math.max(4, Math.round(h * this.dpr * 0.8));
+    const pw = Math.max(4, Math.round(w * this.dpr));
+    const ph = Math.max(4, Math.round(h * this.dpr));
     if (this.destRT.width !== pw || this.destRT.height !== ph) this.destRT.setSize(pw, ph);
     module.frame !== this.frameId && module.update?.(this.time, this.dt, fake);
     module.frame = this.frameId;

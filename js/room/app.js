@@ -200,7 +200,7 @@ function initLinks() {
     const url = new URL(a.href, location.href);
     if (!isPage(url)) return;
     e.preventDefault();
-    navigate(url);
+    navigate(url, { from: a.closest('[data-next-card]') });
   });
 
   window.addEventListener('popstate', () => {
@@ -218,7 +218,7 @@ function scrollToHash(hash, instant = false) {
   else el.scrollIntoView({ behavior: instant || reduced ? 'auto' : 'smooth' });
 }
 
-async function navigate(url, { push = true, viaPortal = false } = {}) {
+async function navigate(url, { push = true, from = null } = {}) {
   url = new URL(url, location.href);
   const key = PAGES[fileOf(url)];
   if (!key) { location.href = url.href; return; }
@@ -240,14 +240,13 @@ async function navigate(url, { push = true, viaPortal = false } = {}) {
   if (course) closeCourse({ silent: true });
 
   const htmlP = getPage(fileOf(url) || 'index.html');
-  const [dest, destVariant] = PAGE_HERO[fileOf(url)] || PAGE_HERO['index.html'];
 
   try {
-    // 1) la página actual se va enseguida y el viaje 3D pasa por encima del contenido
+    // 1) la página actual se va: la tarjeta "Siguiente" se expande a pantalla
+    //    completa, o (desde el menú/footer/atrás) sube una cortina con filo turquesa
     document.body.classList.add('leaving');
-    if (world && !reduced) {
-      if (viaPortal) world.takeOver(dest, destVariant);
-      else await world.dive(dest, destVariant);
+    if (!reduced) {
+      await transitionIn(from, key);
     } else {
       $('#veil').classList.add('on');
       await sleep(reduced ? 200 : 450);
@@ -271,8 +270,8 @@ async function navigate(url, { push = true, viaPortal = false } = {}) {
     window.scrollTo(0, 0);
     setupPage();
     world?.mount(main, { heroIntro: true });
-    world?.endDive();
     $('#veil').classList.remove('on');
+    if (!reduced) transitionOut();
     revealHero();
     main.focus({ preventScroll: true });
     announcer.textContent = (main.querySelector('h1')?.textContent || document.title).trim();
@@ -285,6 +284,189 @@ async function navigate(url, { push = true, viaPortal = false } = {}) {
   } finally {
     busy = false;
   }
+}
+
+// =============================================================
+// Cambio de página v3 (sin 3D): una sola capa fija fuera de <main>.
+//  · desde una tarjeta "Siguiente": la tarjeta crece hasta llenar la
+//    pantalla, el círculo de la foto se abre y el título va al centro.
+//  · desde cualquier otro enlace: sube una cortina con filo turquesa
+//    y aparece el nombre de la página.
+// Al montar la página nueva, la capa se retira hacia arriba.
+// =============================================================
+// Sobre mí: la estampilla de cada párrafo (hechos de la historia de Carla)
+const DEVICE_TAG = {
+  australia: ['01', 'Australia', 'Inglés desde los 4 años', '25.27° S · 133.78° E'],
+  uruguay: ['02', 'Uruguay', 'Profesora de inglés desde 2011', '34.90° S · 56.16° O'],
+  ushuaia: ['03', 'Ushuaia', 'Un año sabático en el fin del mundo', '54.80° S · 68.30° O'],
+  world: ['04', 'Tu lugar favorito', 'Clases online, desde donde estés', 'Online · en vivo'],
+};
+const PAGE_NAME = { inicio: 'Inicio', 'sobre-mi': 'Sobre mí', cursos: 'Cursos', recursos: 'Recursos gratuitos', contacto: 'Contacto' };
+const EASE_IO = 'cubic-bezier(.76, 0, .24, 1)';
+const EASE_OUT = 'cubic-bezier(.22, 1, .36, 1)';
+const noHover = matchMedia('(hover: none), (pointer: coarse)').matches;
+let pt = null;
+function ptLayer() {
+  if (pt) return pt;
+  const el = document.createElement('div');
+  el.className = 'pt';
+  el.setAttribute('aria-hidden', 'true');
+  el.innerHTML = '<div class="pt-panel"><span class="pt-media"></span><i class="pt-edge"></i></div><p class="pt-title"></p>';
+  document.body.appendChild(el);
+  pt = { el, panel: el.querySelector('.pt-panel'), media: el.querySelector('.pt-media'), edge: el.querySelector('.pt-edge'), title: el.querySelector('.pt-title') };
+  return pt;
+}
+function ptReset() {
+  const p = ptLayer();
+  p.el.getAnimations({ subtree: true }).forEach((a) => a.cancel());
+  p.media.removeAttribute('style');
+  p.title.removeAttribute('style');
+  p.title.textContent = '';
+}
+
+async function transitionIn(card, key) {
+  const p = ptLayer();
+  ptReset();
+  const vw = window.innerWidth, vh = window.innerHeight;
+  const anims = [];
+  p.el.classList.add('on');
+
+  if (card) {
+    const r = card.getBoundingClientRect();
+    const np = parseFloat(card.style.getPropertyValue('--np')) || 1;
+    const iy = r.height * (1 - np) * 0.07, ix = r.width * (1 - np) * 0.09;
+    const rad = parseFloat(getComputedStyle(card).borderTopLeftRadius) || 20;
+    const from = `inset(${r.top + iy}px ${vw - r.right + ix}px ${vh - r.bottom + iy}px ${r.left + ix}px round ${rad}px)`;
+    const to = 'inset(0px 0px 0px 0px round 0px)';
+    anims.push(p.panel.animate([{ clipPath: from }, { clipPath: to }], { duration: 950, easing: EASE_IO, fill: 'forwards' }));
+
+    // la foto: el círculo del hover se abre hasta cubrir todo y queda como textura tenue
+    p.media.style.setProperty('--img', card.style.getPropertyValue('--img'));
+    if (noHover) {
+      anims.push(p.media.animate([{ opacity: 0.3 }, { opacity: 0.16 }], { duration: 950, easing: EASE_IO, fill: 'forwards' }));
+    } else {
+      const st = ncState.get(card);
+      const cx = r.left + (st ? st.x : 0.7) * r.width, cy = r.top + (st ? st.y : 0.5) * r.height;
+      const r0 = parseFloat(getComputedStyle(card).getPropertyValue('--r')) || 0;
+      const mask = `radial-gradient(circle at ${cx}px ${cy}px, #000 calc(var(--r) - 1px), transparent var(--r))`;
+      p.media.style.webkitMaskImage = mask;
+      p.media.style.maskImage = mask;
+      const far = Math.hypot(Math.max(cx, vw - cx), Math.max(cy, vh - cy)) + 2;
+      anims.push(p.media.animate([{ '--r': `${r0}px`, opacity: 1 }, { '--r': `${far}px`, opacity: 0.22 }], { duration: 950, easing: EASE_IO, fill: 'forwards' }));
+    }
+
+    // el título sale del mismo lugar y tamaño, y viaja al centro
+    const src = card.querySelector('.nc-title');
+    const tr = src.getBoundingClientRect();
+    p.title.textContent = src.textContent.replace(/\s+/g, ' ').trim();
+    p.title.style.fontSize = getComputedStyle(src).fontSize;
+    p.title.style.whiteSpace = 'normal';
+    p.title.style.maxWidth = `${Math.ceil(tr.width) + 2}px`;
+    const own = p.title.getBoundingClientRect();
+    p.title.style.left = `${tr.left}px`;
+    p.title.style.top = `${tr.top}px`;
+    const s = Math.min(1.12, (vw * 0.88) / own.width);
+    const dx = vw / 2 - (tr.left + (own.width * s) / 2), dy = vh / 2 - (tr.top + (own.height * s) / 2);
+    anims.push(p.title.animate([{ transform: 'translate(0, 0) scale(1)' }, { transform: `translate(${dx}px, ${dy}px) scale(${s})` }], { duration: 950, easing: EASE_IO, fill: 'forwards' }));
+    card.classList.add('is-leaving');
+  } else {
+    anims.push(p.panel.animate([{ clipPath: 'inset(100% 0px 0px 0px round 0px)' }, { clipPath: 'inset(0px 0px 0px 0px round 0px)' }], { duration: 800, easing: EASE_IO, fill: 'forwards' }));
+    anims.push(p.edge.animate([{ transform: `translateY(${vh}px)`, opacity: 1 }, { transform: 'translateY(0px)', opacity: 1, offset: 0.92 }, { transform: 'translateY(0px)', opacity: 0 }], { duration: 800, easing: EASE_IO, fill: 'forwards' }));
+    p.title.textContent = PAGE_NAME[key] || '';
+    p.title.style.fontSize = `${Math.round(Math.min(Math.max(vw * 0.12, 60), 210))}px`;
+    p.title.style.whiteSpace = 'normal';
+    p.title.style.textAlign = 'center';
+    p.title.style.maxWidth = `${vw - 32}px`;
+    const own = p.title.getBoundingClientRect();
+    p.title.style.left = `${(vw - own.width) / 2}px`;
+    p.title.style.top = `${(vh - own.height) / 2}px`;
+    anims.push(p.title.animate([{ transform: 'translateY(60px)', opacity: 0 }, { transform: 'translateY(0)', opacity: 1 }], { duration: 650, delay: 200, easing: EASE_OUT, fill: 'both' }));
+  }
+  await Promise.all(anims.map((a) => a.finished.catch(() => {})));
+}
+
+function transitionOut() {
+  const p = ptLayer();
+  if (!p.el.classList.contains('on')) return;
+  const vh = window.innerHeight;
+  const dur = 1000;
+  const keep = (a) => { const k = a.effect.getKeyframes(); return k[k.length - 1]; };
+  // la capa se retira hacia arriba; el filo turquesa marca el borde que sube
+  const panelNow = p.panel.getAnimations()[0];
+  const fromClip = panelNow ? keep(panelNow).clipPath : 'inset(0px 0px 0px 0px round 0px)';
+  const out = [
+    p.panel.animate([{ clipPath: fromClip }, { clipPath: 'inset(0px 0px 100% 0px round 0px)' }], { duration: dur, easing: EASE_IO, fill: 'forwards' }),
+    p.edge.animate([{ transform: `translateY(${vh - 1}px)`, opacity: 0 }, { opacity: 1, offset: 0.08 }, { opacity: 1, offset: 0.9 }, { transform: 'translateY(-1px)', opacity: 0 }], { duration: dur, easing: EASE_IO, fill: 'forwards' }),
+  ];
+  const titleNow = p.title.getAnimations();
+  const tFrom = titleNow.length ? keep(titleNow[titleNow.length - 1]).transform : 'none';
+  out.push(p.title.animate([{ transform: tFrom, opacity: 1 }, { transform: `${tFrom === 'none' ? '' : tFrom} translateY(${-vh * 0.18}px)`, opacity: 0 }], { duration: dur * 0.8, easing: EASE_IO, fill: 'forwards', composite: 'replace' }));
+  Promise.all(out.map((a) => a.finished)).then(() => { p.el.classList.remove('on'); ptReset(); }).catch(() => {});
+}
+
+// ---------- tarjetas "Siguiente": título letra por letra + foto bajo el cursor ----------
+const ncState = new Map();
+function initNextCards() {
+  main.querySelectorAll('[data-next-card]').forEach((card) => {
+    const t = card.querySelector('[data-chars]');
+    if (t && !t.dataset.charsDone) {
+      t.dataset.charsDone = '1';
+      const text = t.textContent.trim();
+      card.setAttribute('aria-label', `Siguiente: ${text}`);
+      let i = 0;
+      t.textContent = '';
+      text.split(/\s+/).forEach((word, w) => {
+        if (w) t.append(' ');
+        const wd = document.createElement('span');
+        wd.className = 'wd';
+        [...word].forEach((c) => {
+          const ch = document.createElement('span');
+          ch.className = 'ch';
+          ch.textContent = c;
+          ch.style.setProperty('--i', i++);
+          wd.append(ch);
+        });
+        t.append(wd);
+      });
+    }
+    const st = { x: 0.7, y: 0.5, tx: 0.7, ty: 0.5, inside: false };
+    ncState.set(card, st);
+    const move = (e) => {
+      const r = card.getBoundingClientRect();
+      st.tx = (e.clientX - r.left) / r.width; st.ty = (e.clientY - r.top) / r.height;
+      if (!st.inside) { st.x = st.tx; st.y = st.ty; st.inside = true; }
+    };
+    const leave = () => { st.inside = false; };
+    card.addEventListener('pointerenter', move);
+    card.addEventListener('pointermove', move);
+    card.addEventListener('pointerleave', leave);
+    let io = null;
+    if (t) {
+      if (reduced || !('IntersectionObserver' in window)) t.classList.add('in');
+      else {
+        io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { t.classList.add('in'); io.disconnect(); } }), { rootMargin: '0px 0px -18% 0px' });
+        io.observe(t);
+      }
+    }
+    pageCleanup.push(() => {
+      card.removeEventListener('pointerenter', move);
+      card.removeEventListener('pointermove', move);
+      card.removeEventListener('pointerleave', leave);
+      io?.disconnect();
+      ncState.delete(card);
+    });
+  });
+}
+function updateNextCards(vh) {
+  ncState.forEach((st, card) => {
+    const r = card.getBoundingClientRect();
+    if (r.bottom < -50 || r.top > vh + 50) return;
+    const k = reduced ? 1 : clamp((vh - r.top) / (vh * 0.72));
+    card.style.setProperty('--np', (k * k * (3 - 2 * k)).toFixed(4));
+    st.x += (st.tx - st.x) * 0.12; st.y += (st.ty - st.y) * 0.12;
+    card.style.setProperty('--mx', `${(st.x * 100).toFixed(2)}%`);
+    card.style.setProperty('--my', `${(st.y * 100).toFixed(2)}%`);
+  });
 }
 
 // ---------- precarga: el HTML de cada página se baja antes del clic ----------
@@ -330,6 +512,7 @@ function setupPage({ first = false } = {}) {
   initRotate();
   initCourses();
   initSpine();
+  initNextCards();
   if (first && !world) revealHero();
 }
 
@@ -398,6 +581,7 @@ function initRotate() {
 // =============================================================
 function updateStages() {
   const vh = window.innerHeight;
+  updateNextCards(vh);
 
   // Clase en vivo: el marco crece hasta llenar la pantalla y el chat
   // de testimonios pasa; quien "habla" en la llamada es quien escribió.
@@ -441,6 +625,24 @@ function updateStages() {
       if (sr.top < vh * 0.62) focus = s.dataset.focus;
     });
     frame.dataset.focus = focus;
+    // dispositivo: laptop con el panel de Carla; en Ushuaia (las clases online) se vuelve celular
+    const dev = stage.querySelector('[data-device]');
+    const key = sp < 0.06 || !DEVICE_TAG[focus] ? 'intro' : focus;
+    if (dev && dev.dataset.key !== key) {
+      dev.dataset.key = key;
+      dev.dataset.mode = key === 'ushuaia' || key === 'world' ? 'phone' : 'laptop';
+      dev.dataset.pos = key === 'intro' ? 'intro' : 'story';
+      dev.querySelectorAll('[data-shot]').forEach((img) => img.classList.toggle('on', img.dataset.shot === key));
+      const t = DEVICE_TAG[key];
+      if (t) {
+        const tag = dev.querySelector('.dev-tag');
+        tag.querySelector('.dev-tag-n').textContent = t[0];
+        tag.querySelector('.dev-tag-place').textContent = t[1];
+        tag.querySelector('.dev-tag-line').textContent = t[2];
+        tag.querySelector('.dev-tag-coord').textContent = t[3];
+        tag.classList.remove('swap'); void tag.offsetWidth; tag.classList.add('swap');
+      }
+    }
   });
 
   // Espina de cursos: el paso (con decimales) mueve la cámara; el entero elige la ficha

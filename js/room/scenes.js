@@ -1581,6 +1581,68 @@ const CAMPUS = {
   },
 };
 
+// ---------- objetos de la biblioteca (Cursos) ----------
+function pageTex(word, seed = 1) {
+  return canvasTex(512, 680, (x, w, h) => {
+    x.fillStyle = '#fbf6ee'; x.fillRect(0, 0, w, h);
+    const g = x.createLinearGradient(0, 0, w, 0); g.addColorStop(0, 'rgba(0,0,0,.08)'); g.addColorStop(0.12, 'rgba(0,0,0,0)'); x.fillStyle = g; x.fillRect(0, 0, w, h);
+    x.fillStyle = '#103741'; x.font = '400 64px "Instrument Serif", Georgia, serif'; x.fillText(word, 52, 120);
+    x.fillStyle = 'rgba(16,55,65,.22)';
+    const r = rng(seed);
+    for (let y = 180; y < h - 50; y += 34) x.fillRect(52, y, (w - 104) * (0.55 + r() * 0.45), 7);
+    x.fillStyle = '#26ccc8'; x.fillRect(52, 140, 60, 4);
+  });
+}
+const LIB = {
+  // libro abierto: tapas + dos páginas en V
+  openBook(seed) {
+    const g = new THREE.Group();
+    const cols = [C.dark, C.blue, 0x1c5466, C.pink];
+    const cover = glossy(cols[seed % cols.length], { clearcoat: 0.4, roughness: 0.5 });
+    const t1 = pageTex(['Chapter 1', 'Unit 3', 'Reading', 'Story'][seed % 4], seed + 3);
+    const t2 = pageTex(['Once upon', 'Notes', 'Listen', 'Vocab'][seed % 4], seed + 7);
+    [-1, 1].forEach((s, i) => {
+      const half = new THREE.Group();
+      const c = new THREE.Mesh(new RoundedBoxGeometry(0.62, 0.84, 0.03, 2, 0.012), cover);
+      c.position.x = s * 0.31;
+      const pg = new THREE.Mesh(new THREE.BoxGeometry(0.58, 0.8, 0.05), [0, 1, 2, 3, 4, 5].map((f) => (f === 4 ? new THREE.MeshStandardMaterial({ map: i ? t2 : t1, roughness: 0.9 }) : new THREE.MeshStandardMaterial({ color: 0xf3ead9, roughness: 0.95 }))));
+      pg.position.set(s * 0.3, 0, 0.04);
+      half.add(c, pg);
+      half.rotation.y = -s * 0.32;
+      g.add(half);
+    });
+    return g;
+  },
+  // hoja suelta, apenas curvada
+  page(word) {
+    const geo = new THREE.PlaneGeometry(0.75, 1, 12, 1);
+    const p = geo.attributes.position;
+    for (let i = 0; i < p.count; i++) { const x = p.getX(i); p.setZ(i, Math.sin((x / 0.75 + 0.5) * Math.PI) * 0.06); }
+    geo.computeVertexNormals();
+    return new THREE.Mesh(geo, new THREE.MeshStandardMaterial({ map: pageTex(word, word.length), roughness: 0.9, side: THREE.DoubleSide }));
+  },
+  // letra en serif, como tipo de imprenta recortado en papel
+  letter(ch, color) {
+    const map = canvasTex(512, 512, (x, w, h) => {
+      x.clearRect(0, 0, w, h);
+      x.fillStyle = color; x.textAlign = 'center'; x.textBaseline = 'middle';
+      x.font = `400 ${ch.length > 1 ? 300 : 420}px "Instrument Serif", Georgia, serif`;
+      x.fillText(ch, w / 2, h * 0.54);
+    });
+    const m = new THREE.Mesh(new THREE.PlaneGeometry(1.1, 1.1), new THREE.MeshBasicMaterial({ map, transparent: true, side: THREE.DoubleSide, depthWrite: false, toneMapped: false }));
+    // las fuentes web pueden llegar después: se redibuja cuando estén listas
+    fontsReady().then(() => { const c = map.image.getContext('2d'); c.clearRect(0, 0, 512, 512); c.fillStyle = color; c.textAlign = 'center'; c.textBaseline = 'middle'; c.font = `400 ${ch.length > 1 ? 300 : 420}px "Instrument Serif", Georgia, serif`; c.fillText(ch, 256, 276); map.needsUpdate = true; });
+    return m;
+  },
+  // globo de diálogo de vidrio: la forma del logo de The English Room
+  bubble(seed) {
+    const m = new THREE.Mesh(bubbleGeo(seed % 2), new THREE.MeshPhysicalMaterial({ color: seed % 3 ? 0x0f3a43 : C.turq, roughness: 0.12, metalness: 0.1, clearcoat: 1, iridescence: 0.6, iridescenceIOR: 1.3, transparent: true, opacity: 0.75, envMapIntensity: 1.1 }));
+    m.scale.setScalar(0.42);
+    const g = new THREE.Group(); g.add(m);
+    return g;
+  },
+};
+
 class Spine extends Base {
   constructor(world) {
     super(world, 34);
@@ -1600,94 +1662,140 @@ class Spine extends Base {
     const rand = rng(31);
     this.H = H;
 
-    // el recorrido: un camino de casilleros de juego que baja en espiral
-    const TILE_DY = 0.42, PATH_R = 1.05, TURN = 0.95; // ángulo por unidad de altura
-    this.PATH_R = PATH_R; this.TURN = TURN;
-    const tileCount = Math.ceil((H + 10) / TILE_DY);
-    const tileGeo = new RoundedBoxGeometry(0.78, 0.12, 0.62, 3, 0.05);
-    const tileMats = [C.turq, C.cream, C.pink, C.blue].map((c) => glossy(c, { clearcoat: 0.8 }));
-    this.tiles = [];
-    for (let k = 0; k < tileCount; k++) {
-      const y = 4.5 - k * TILE_DY;
-      const a = y * TURN;
-      const m = new THREE.Mesh(tileGeo, tileMats[k % 4]);
-      m.position.set(Math.sin(a) * PATH_R, y, Math.cos(a) * PATH_R);
-      m.rotation.set(0, a, -0.22);
-      this.root.add(m);
-      this.tiles.push({ m, y, base: y });
+    // ===== La biblioteca de The English Room =====
+    // El tronco es una torre de libros (una biblioteca circular); alrededor
+    // baja una escalera de libros apoyados; los cursos orbitan la torre.
+    const TOP = 4.5, BOTTOM = -H - 5.5;
+    this.TURN = 0.95;
+    const PATH_R = 1.6; this.PATH_R = PATH_R;
+    const spineMap = canvasTex(64, 256, (x, w, h) => {
+      x.fillStyle = '#ffffff'; x.fillRect(0, 0, w, h);
+      x.fillStyle = 'rgba(0,0,0,.06)'; for (let i = 0; i < 40; i++) x.fillRect(0, Math.random() * h, w, 1);
+      x.fillStyle = 'rgba(214,190,140,.95)'; [0.12, 0.16, 0.84, 0.88].forEach((p) => x.fillRect(6, p * h, w - 12, 3));
+      x.fillStyle = 'rgba(214,190,140,.8)'; x.fillRect(w * 0.3, h * 0.42, w * 0.4, h * 0.16);
+    });
+    const SHELF_COLS = [0x103741, 0x173f49, 0x296f8d, 0x1c5466, 0x0d2d35, 0xe9e0d2, 0x2b6b7c, 0xF5A7B5, 0x26ccc8, 0x14343d];
+    const W_COLS = [26, 18, 14, 12, 14, 8, 10, 3, 3, 12];
+    const pick = () => { let r = rand() * W_COLS.reduce((a, b) => a + b, 0); for (let i = 0; i < W_COLS.length; i++) { r -= W_COLS[i]; if (r <= 0) return SHELF_COLS[i]; } return SHELF_COLS[0]; };
+
+    // 1) la torre: estantes circulares llenos de libros parados
+    const LAYER = 0.7, TOWER_R = 0.62;
+    const layers = Math.ceil((TOP - BOTTOM) / LAYER);
+    const shelfBooks = [];
+    for (let l = 0; l < layers; l++) {
+      const y0 = TOP - l * LAYER;
+      let a = rand() * 0.2;
+      while (a < Math.PI * 2 - 0.12) {
+        const th = 0.1 + rand() * 0.12;               // grosor del lomo
+        const bh = 0.44 + rand() * 0.16;              // alto del libro
+        const da = th / (TOWER_R + 0.2);
+        shelfBooks.push({ a: a + da / 2, th, bh, y: y0 - LAYER + 0.04 + bh / 2, lean: rand() < 0.06 ? (rand() - 0.5) * 0.35 : 0, c: pick() });
+        a += da + 0.004;
+      }
     }
-    // baranda de luz que acompaña el camino
+    const bookMat = new THREE.MeshStandardMaterial({ map: spineMap, roughness: 0.62, metalness: 0.05, envMapIntensity: 0.6 });
+    this.shelf = new THREE.InstancedMesh(new THREE.BoxGeometry(1, 1, 1), bookMat, shelfBooks.length);
+    const d = new THREE.Object3D(), col = new THREE.Color();
+    shelfBooks.forEach((b, i) => {
+      d.position.set(Math.sin(b.a) * (TOWER_R + 0.18), b.y, Math.cos(b.a) * (TOWER_R + 0.18));
+      d.rotation.set(0, b.a, b.lean);
+      d.scale.set(b.th, b.bh, 0.36);
+      d.updateMatrix();
+      this.shelf.setMatrixAt(i, d.matrix);
+      this.shelf.setColorAt(i, col.set(b.c));
+    });
+    this.root.add(this.shelf);
+    const boardMat = glossy(0x0c252c, { clearcoat: 0.6, roughness: 0.4 });
+    this.boards = new THREE.InstancedMesh(new THREE.CylinderGeometry(1.06, 1.06, 0.045, 64), boardMat, layers + 1);
+    for (let l = 0; l <= layers; l++) { d.position.set(0, TOP - l * LAYER, 0); d.rotation.set(0, 0, 0); d.scale.set(1, 1, 1); d.updateMatrix(); this.boards.setMatrixAt(l, d.matrix); }
+    this.root.add(this.boards);
+    // filo de luz en el borde de cada estante (muy sutil)
+    const edgeGeo = new THREE.TorusGeometry(1.065, 0.006, 6, 96);
+    this.edges = new THREE.InstancedMesh(edgeGeo, new THREE.MeshBasicMaterial({ color: C.turq, transparent: true, opacity: 0.35, toneMapped: false }), layers + 1);
+    for (let l = 0; l <= layers; l++) { d.position.set(0, TOP - l * LAYER + 0.022, 0); d.rotation.set(Math.PI / 2, 0, 0); d.scale.set(1, 1, 1); d.updateMatrix(); this.edges.setMatrixAt(l, d.matrix); }
+    this.root.add(this.edges);
+    const core = new THREE.Mesh(new THREE.CylinderGeometry(0.58, 0.58, TOP - BOTTOM, 32, 1, true), new THREE.MeshStandardMaterial({ color: 0x061a1f, roughness: 1 }));
+    core.position.y = (TOP + BOTTOM) / 2;
+    this.root.add(core);
+
+    // 2) la escalera: libros acostados que bajan en espiral alrededor de la torre
+    const STEP_DY = 0.4;
+    const stepCount = Math.ceil((TOP - BOTTOM) / STEP_DY);
+    const STEP_COLS = [0x103741, 0x296f8d, 0x1c5466, 0xe9e0d2, 0x26ccc8, 0xF5A7B5, 0x173f49];
+    this.steps = [];
+    this.stepCover = new THREE.InstancedMesh(new RoundedBoxGeometry(0.9, 0.13, 0.62, 2, 0.025), new THREE.MeshPhysicalMaterial({ roughness: 0.45, clearcoat: 0.5, clearcoatRoughness: 0.3, envMapIntensity: 0.6 }), stepCount);
+    this.stepPages = new THREE.InstancedMesh(new THREE.BoxGeometry(0.86, 0.1, 0.6), new THREE.MeshStandardMaterial({ color: 0xf6efe4, roughness: 0.9 }), stepCount);
+    for (let k = 0; k < stepCount; k++) {
+      const y = TOP - k * STEP_DY;
+      this.steps.push({ y, base: y, a: y * this.TURN, yaw: (rand() - 0.5) * 0.16, w: 0.9 + rand() * 0.14 });
+      this.stepCover.setColorAt(k, col.set(STEP_COLS[(k * 3 + Math.floor(rand() * 2)) % STEP_COLS.length]));
+    }
+    this.root.add(this.stepPages, this.stepCover);
+    this.dummy = d;
+
+    // pasamanos: una cinta finita de luz (el "señalador" del libro)
     const railPts = [];
-    for (let y = 4.5; y > -H - 5.5; y -= 0.1) { const a = y * TURN; railPts.push(new THREE.Vector3(Math.sin(a) * (PATH_R + 0.48), y - 0.04, Math.cos(a) * (PATH_R + 0.48))); }
-    this.rail = new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(railPts), Math.floor(railPts.length * 1.5), 0.022, 6, false),
+    for (let y = TOP; y > BOTTOM; y -= 0.1) { const a = y * this.TURN; railPts.push(new THREE.Vector3(Math.sin(a) * (PATH_R + 0.52), y + 0.32, Math.cos(a) * (PATH_R + 0.52))); }
+    this.rail = new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(railPts), Math.floor(railPts.length * 1.5), 0.012, 6, false),
       new THREE.ShaderMaterial({
         transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
         uniforms: { uT: { value: 0 }, uC: { value: new THREE.Color(C.turq) } },
         vertexShader: 'varying float vY; void main(){ vY = position.y; gl_Position = projectionMatrix*modelViewMatrix*vec4(position,1.); }',
-        fragmentShader: 'uniform float uT; uniform vec3 uC; varying float vY; void main(){ float p = fract(vY*0.12 + uT*0.4); float glow = 0.4 + pow(p, 14.0)*2.4; gl_FragColor = vec4(uC*glow, glow*0.7); }',
+        fragmentShader: 'uniform float uT; uniform vec3 uC; varying float vY; void main(){ float p = fract(vY*0.08 + uT*0.25); float glow = 0.35 + pow(p, 18.0)*1.8; gl_FragColor = vec4(uC*glow, glow*0.6); }',
       }));
     this.root.add(this.rail);
     this.cord = this.rail;
 
-    // objetos del campus a lo largo del recorrido
-    const B = ['Hello!', 'I am\nYou are', "Let's\nplay!", 'A1 → C2', 'Speak\nup!', 'Well\ndone!'];
-    const make = [
-      () => CAMPUS.board(B[0]), () => CAMPUS.dice(), () => CAMPUS.books(), () => CAMPUS.mic(), () => CAMPUS.puzzle(C.pink),
-      () => CAMPUS.quiz(), () => CAMPUS.star(0xf2c14e), () => CAMPUS.pencil(), () => CAMPUS.headphones(), () => CAMPUS.block('A', '#26ccc8'),
-      () => CAMPUS.board(B[1]), () => CAMPUS.check(), () => CAMPUS.notebook(), () => CAMPUS.play(), () => CAMPUS.puzzle(C.turq),
-      () => CAMPUS.trophy(), () => CAMPUS.block('B', '#F5A7B5'), () => CAMPUS.board(B[2]), () => CAMPUS.dice(), () => CAMPUS.star(C.turq),
-      () => CAMPUS.mic(), () => CAMPUS.quiz(), () => CAMPUS.block('C', '#296f8d'), () => CAMPUS.board(B[3]), () => CAMPUS.check(),
-      () => CAMPUS.books(), () => CAMPUS.headphones(), () => CAMPUS.puzzle(C.cream), () => CAMPUS.board(B[4]), () => CAMPUS.play(),
-      () => CAMPUS.star(C.pink), () => CAMPUS.pencil(), () => CAMPUS.board(B[5]), () => CAMPUS.trophy(),
-    ];
+    // 3) objetos que flotan alrededor: libros abiertos, hojas sueltas, letras en serif, globos del logo
+    const WORDS = ['Hello!', 'travel', 'Cheers', 'vocabulary', 'I wonder', 'Well done', 'grammar', 'Let’s talk'];
+    const LETTERS = ['A', 'B', 'C', 'Aa', '&', '?', 'é', 'Ñ'];
+    const make = [];
+    for (let k = 0; k < 18; k++) {
+      const kind = k % 6;
+      if (kind === 0) make.push(() => LIB.openBook(k));
+      else if (kind === 1) make.push(() => LIB.page(WORDS[k % WORDS.length]));
+      else if (kind === 2) make.push(() => LIB.letter(LETTERS[k % LETTERS.length], k % 4 === 2 ? '#26ccc8' : '#FFF5F3'));
+      else if (kind === 3) make.push(() => LIB.bubble(k));
+      else if (kind === 4) make.push(() => (k % 12 === 4 ? CAMPUS.notebook() : CAMPUS.headphones()));
+      else make.push(() => LIB.page(WORDS[(k + 3) % WORDS.length]));
+    }
     this.props = make.map((fn, k) => {
       const o = fn();
       const y = 3.5 - (k + 0.5) * ((H + 6) / make.length);
-      // a los costados de la tarjeta de esa altura: así se ven alrededor del curso
       const side = k % 2 ? 1 : -1;
       const cardA = (-y / SPINE_STEP) * SPINE_ANG;
-      const a = cardA + side * (side > 0 ? 0.5 + rand() * 0.14 : 0.62 + rand() * 0.28);
-      const r = 3.7 + rand() * 0.9;
-      // los del lado derecho van más arriba o más abajo, para no tapar la ficha del curso
-      const yOff = side > 0 ? (k % 4 < 2 ? 1.15 : -1.15) : 0;
+      const a = cardA + side * (side > 0 ? 0.55 + rand() * 0.14 : 0.68 + rand() * 0.28);
+      const r = 3.9 + rand() * 1.1;
+      const yOff = side > 0 ? (k % 4 < 2 ? 1.25 : -1.25) : 0;
       o.position.set(Math.sin(a) * r, y + yOff, Math.cos(a) * r);
       o.rotation.y = a + (rand() - 0.5) * 0.8;
-      o.scale.setScalar(0.62 + rand() * 0.25);
+      o.scale.setScalar(0.6 + rand() * 0.25);
       this.root.add(o);
-      return { o, y: y + yOff, ph: rand() * 6.28, spin: (rand() - 0.5) * 0.5 };
+      return { o, y: y + yOff, ph: rand() * 6.28, spin: (rand() - 0.5) * 0.25 };
     });
-    // birrete: la meta, al final del recorrido
+    // birrete: la meta, al final de la biblioteca
     this.goal = CAMPUS.cap();
-    this.goal.position.set(0, -H - 2.4, 0);
-    this.goal.scale.setScalar(1.4);
+    this.goal.position.set(0, -H - 2.4, 2.2);
+    this.goal.scale.setScalar(1.3);
     this.root.add(this.goal);
 
-    // la ficha del juego (vos) que baja por el camino
-    this.pawn = new THREE.Group();
-    const pm = glossy(C.pink, { clearcoat: 1 });
-    const pb = new THREE.Mesh(new THREE.ConeGeometry(0.2, 0.42, 24), pm); pb.position.y = 0.2;
-    const ph = new THREE.Mesh(new THREE.SphereGeometry(0.14, 20, 16), pm); ph.position.y = 0.48;
-    const pbase = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.24, 0.07, 24), pm);
-    this.pawn.add(pb, ph, pbase);
-    this.root.add(this.pawn);
-
-    // partículas en espiral que suben despacio (y se aceleran con el scroll)
-    const P = this.world.mobile ? 1600 : 3200;
-    const pos = new Float32Array(P * 3), col = new Float32Array(P * 3);
-    const pal = [new THREE.Color(C.turq), new THREE.Color(C.pink), new THREE.Color(C.cream), new THREE.Color(0x7fd6ff)];
+    // polvo de biblioteca: motas de luz que flotan despacio (sin estelas)
+    const P = this.world.mobile ? 700 : 1400;
+    const pos = new Float32Array(P * 3), pcol = new Float32Array(P * 3);
+    const pal = [new THREE.Color(C.cream), new THREE.Color(C.cream), new THREE.Color(C.turq), new THREE.Color(0xffe2b8)];
     this.pData = [];
     for (let i = 0; i < P; i++) {
-      const y = 4.5 - rand() * (H + 9);
-      const band = Math.floor(rand() * 2);
-      const r = 1.1 + Math.pow(rand(), 1.6) * 3.8;
-      this.pData.push({ y, a: y * 1.4 + band * Math.PI + (rand() - 0.5) * 1.4, r, sp: 0.2 + rand() * 0.5 });
+      const y = TOP - rand() * (TOP - BOTTOM);
+      const r = 1.3 + Math.pow(rand(), 1.4) * 4.5;
+      this.pData.push({ y, a: rand() * Math.PI * 2, r, sp: 0.03 + rand() * 0.08 });
       const c = pal[Math.floor(rand() * pal.length)];
-      col.set([c.r, c.g, c.b], i * 3);
+      pcol.set([c.r, c.g, c.b], i * 3);
     }
+    this.H9 = TOP - BOTTOM;
     const pg = new THREE.BufferGeometry();
     pg.setAttribute('position', new THREE.BufferAttribute(pos, 3));
-    pg.setAttribute('color', new THREE.BufferAttribute(col, 3));
-    this.dust = new THREE.Points(pg, new THREE.PointsMaterial({ size: 0.05, vertexColors: true, transparent: true, opacity: 0.85, depthWrite: false, blending: THREE.AdditiveBlending, toneMapped: false }));
+    pg.setAttribute('color', new THREE.BufferAttribute(pcol, 3));
+    this.dust = new THREE.Points(pg, new THREE.PointsMaterial({ size: 0.035, vertexColors: true, transparent: true, opacity: 0.55, depthWrite: false, blending: THREE.AdditiveBlending, toneMapped: false }));
     this.root.add(this.dust);
 
     // tarjetas: foto (nítida, con movimiento lento) + capa de texto + vidrio
@@ -1771,35 +1879,42 @@ class Spine extends Base {
     this.e = ease(clamp(view.expandT || 0));
     const v = clamp(this.vel, -3, 3);
 
-    // casilleros: una ola de luz recorre el camino hacia abajo
+    // escalera: los libros cerca de tu posición se levantan apenas, como si los pisaras
     const camY = -this.s * SPINE_STEP;
-    this.tiles.forEach((tl, k) => {
-      const near = clamp(1 - Math.abs(tl.y - camY) / 6);
-      tl.m.position.y = tl.base + Math.sin(t * 2 - tl.y * 0.9) * 0.03 * near;
-      tl.m.scale.setScalar(0.92 + near * 0.12);
+    const d = this.dummy;
+    this.steps.forEach((st, k) => {
+      const near = clamp(1 - Math.abs(st.y - camY) / 5);
+      const y = st.base + Math.sin(t * 1.4 - st.y * 0.7) * 0.02 * near;
+      d.position.set(Math.sin(st.a) * this.PATH_R, y, Math.cos(st.a) * this.PATH_R);
+      d.rotation.set(0, st.a + st.yaw, -0.04);
+      d.scale.set(st.w, 1, 1);
+      d.updateMatrix();
+      this.stepCover.setMatrixAt(k, d.matrix);
+      d.position.x += Math.cos(st.a + st.yaw) * 0.03; d.position.z -= Math.sin(st.a + st.yaw) * 0.03;
+      d.updateMatrix();
+      this.stepPages.setMatrixAt(k, d.matrix);
     });
+    this.stepCover.instanceMatrix.needsUpdate = true;
+    this.stepPages.instanceMatrix.needsUpdate = true;
     this.rail.material.uniforms.uT.value = t;
-    // objetos: flotan, giran y se acercan cuando pasás
+    // la torre gira lentísimo: se siente viva sin distraer
+    this.shelf.rotation.y = t * 0.02; this.edges.rotation.y = 0;
+    // objetos: flotan y giran despacio
     this.props.forEach((p) => {
       const near = clamp(1 - Math.abs(p.y - camY) / 5);
-      p.o.position.y = p.y + Math.sin(t * 0.9 + p.ph) * 0.12;
-      p.o.rotation.y += dt * (p.spin + v * 0.4);
-      p.o.rotation.x = Math.sin(t * 0.6 + p.ph) * 0.15;
+      p.o.position.y = p.y + Math.sin(t * 0.7 + p.ph) * 0.14;
+      p.o.rotation.y += dt * (p.spin + v * 0.15);
+      p.o.rotation.x = Math.sin(t * 0.5 + p.ph) * 0.12;
       const sc = p.o.userData.base || (p.o.userData.base = p.o.scale.x);
-      p.o.scale.setScalar(sc * (0.8 + near * 0.3));
+      p.o.scale.setScalar(sc * (0.82 + near * 0.25));
     });
-    this.goal.rotation.y = t * 0.5;
-    // la ficha baja por el camino siguiendo tu scroll, con saltitos
-    const py = camY - 0.35 + Math.abs(Math.sin(t * 3.2)) * 0.18 * (1 - Math.min(1, Math.abs(v)));
-    const pawnA = py * this.TURN;
-    this.pawn.position.set(Math.sin(pawnA) * this.PATH_R, py + 0.08, Math.cos(pawnA) * this.PATH_R);
-    this.pawn.rotation.y = pawnA;
-    // partículas: suben en espiral; al bajar rápido se estiran hacia arriba
+    this.goal.rotation.y = t * 0.4;
+    // polvo: sube despacio en espiral, sin estirarse
     const pa = this.dust.geometry.attributes.position.array;
     this.pData.forEach((p, i) => {
-      p.y += dt * (p.sp + Math.max(0, v) * 3.5);
-      if (p.y > 4.5) p.y -= this.H + 9;
-      const ang = p.a + t * 0.12 + p.y * 0.05;
+      p.y += dt * p.sp;
+      if (p.y > 4.5) p.y -= this.H9;
+      const ang = p.a + t * 0.04;
       pa[i * 3] = Math.cos(ang) * p.r; pa[i * 3 + 1] = p.y; pa[i * 3 + 2] = Math.sin(ang) * p.r;
     });
     this.dust.geometry.attributes.position.needsUpdate = true;
@@ -1910,40 +2025,7 @@ class AboutBg extends Base {
     this.tone = new THREE.Color(C.turq);
     this.camX = 0; this.camY = 0; this.camZ = 12;
 
-    // ---- el campus en un celular: acompaña la historia a un costado ----
-    this.SCREENS = { intro: 'img/room/campus-home.jpg', australia: 'img/room/campus-home.jpg', uruguay: 'img/room/campus-teacher.jpg', ushuaia: 'img/room/campus-week.jpg', world: 'img/room/campus-progress.jpg' };
-    this.screenTex = {};
-    Object.values(this.SCREENS).forEach((src) => { if (!this.screenTex[src]) { const t = tex(src); t.anisotropy = 12; this.screenTex[src] = t; } });
-    this.phone = new THREE.Group();
-    this.scene.add(this.phone);
-    const body = new THREE.Mesh(new RoundedBoxGeometry(2.24, 4.32, 0.24, 8, 0.34), glossy(0x0b1f24, { metalness: 0.5, roughness: 0.22 }));
-    const rimGeo = new RoundedBoxGeometry(2.3, 4.38, 0.2, 8, 0.36);
-    const rim = new THREE.Mesh(rimGeo, glossy(C.turq, { metalness: 0.7, roughness: 0.25 }));
-    rim.position.z = -0.03;
-    this.phone.add(rim, body);
-    const SW = 2.02, SH = 2.02 / (468 / 850);
-    const screenGeo = new THREE.PlaneGeometry(SW, Math.min(SH, 4.08));
-    this.screenA = new THREE.Mesh(screenGeo, new THREE.MeshBasicMaterial({ map: this.screenTex[this.SCREENS.intro], toneMapped: false, transparent: true }));
-    this.screenB = new THREE.Mesh(screenGeo, new THREE.MeshBasicMaterial({ toneMapped: false, transparent: true, opacity: 0 }));
-    this.screenA.position.z = 0.125; this.screenB.position.z = 0.127;
-    this.phone.add(this.screenA, this.screenB);
-    const notch = new THREE.Mesh(new RoundedBoxGeometry(0.4, 0.08, 0.02, 2, 0.035), new THREE.MeshBasicMaterial({ color: 0x000000 }));
-    notch.position.set(0, 1.98, 0.13);
-    this.phone.add(notch);
-    // reflejo de vidrio sobre la pantalla
-    const glare = new THREE.Mesh(screenGeo, new THREE.MeshBasicMaterial({ map: canvasTex(64, 256, (x, w, h) => { const g = x.createLinearGradient(0, 0, w, h); g.addColorStop(0, 'rgba(255,255,255,.16)'); g.addColorStop(0.35, 'rgba(255,255,255,0)'); x.fillStyle = g; x.fillRect(0, 0, w, h); }), transparent: true, depthWrite: false }));
-    glare.position.z = 0.129;
-    this.phone.add(glare);
-    // objetos del campus que orbitan el celular
-    this.orbiters = [CAMPUS.check(), CAMPUS.star(0xf2c14e), CAMPUS.quiz(), CAMPUS.play()].map((o, i) => {
-      o.scale.setScalar(i === 2 ? 0.55 : 0.5);
-      this.phone.add(o);
-      return { o, ph: i * (Math.PI / 2), r: 1.85 + (i % 2) * 0.25, y: [1.3, -0.4, 0.6, -1.5][i] };
-    });
-    this.curScreen = this.SCREENS.intro;
-    this.fade = 1;
-    this.spin = 0;
-    this.phoneX = 2.6; this.phoneY = -0.2;
+    // (v3) el dispositivo ahora es HTML/CSS: laptop que se transforma en celular, ver .dev en sobre-mi.html
   }
 
   update(t, dt, view) {
@@ -1962,31 +2044,6 @@ class AboutBg extends Base {
     });
     this.dust.rotation.y = t * 0.01;
 
-    // celular: cambia de pantalla con cada párrafo (fundido + medio giro corto)
-    const want = this.SCREENS[key] || this.SCREENS.intro;
-    if (want !== this.curScreen && this.fade >= 1) {
-      this.screenB.material.map = this.screenTex[want];
-      this.screenB.material.needsUpdate = true;
-      this.screenB.material.opacity = 0;
-      this.fade = 0; this.curScreen = want; this.spin = 1;
-    }
-    if (this.fade < 1) {
-      this.fade = Math.min(1, this.fade + dt * (this.world.reduced ? 99 : 2.2));
-      this.screenB.material.opacity = this.fade;
-      if (this.fade >= 1) {
-        this.screenA.material.map = this.screenB.material.map;
-        this.screenA.material.needsUpdate = true;
-        this.screenB.material.opacity = 0;
-      }
-    }
-    this.spin = lerp(this.spin, 0, 0.05);
-    this.orbiters.forEach((ob, i) => {
-      const a = t * 0.45 + ob.ph;
-      ob.o.position.set(Math.cos(a) * ob.r, ob.y + Math.sin(t * 0.9 + i) * 0.12, Math.sin(a) * 0.7 + 0.4);
-      ob.o.rotation.set(Math.sin(t * 0.6 + i) * 0.25, -a * 0.5, Math.sin(t * 0.4 + i) * 0.15);
-    });
-    this.phoneT = t;
-    this.phoneKey = key;
     // cámara: deriva lenta con el scroll y el cursor
     const wide = this.aspect > 1.15;
     this.camX = lerp(this.camX, (wide ? 1.2 : 0) * Math.min(1, sp * 8) + view.local.x * 0.5, 0.04);
@@ -1997,28 +2054,6 @@ class AboutBg extends Base {
   beforeRender(view) {
     this.camera.position.set(this.camX, this.camY, this.camZ);
     this.camera.lookAt(this.camX * 0.6, this.camY * 0.6, -2);
-    // el celular vive en el espacio de la cámara: a la derecha en la portada,
-    // a la izquierda (al lado de los párrafos) durante la historia
-    const wide = this.aspect > 1.15;
-    const D = 7.2;
-    const halfH = Math.tan(THREE.MathUtils.degToRad(this.camera.fov / 2)) * D;
-    const halfW = halfH * this.aspect;
-    const intro = this.phoneKey === 'intro' || view.preview;
-    const tx = wide ? (intro ? halfW * 0.5 : -halfW * 0.5) : 0;
-    const ty = wide ? -0.15 : (intro ? halfH * 0.18 : halfH * 0.28);
-    this.phoneX = lerp(this.phoneX, tx, this.world.reduced ? 1 : 0.05);
-    this.phoneY = lerp(this.phoneY, ty, this.world.reduced ? 1 : 0.05);
-    const scale = Math.min((halfH * 2 * (wide ? 0.68 : 0.5)) / 4.32, (halfW * 2 * (wide ? 0.3 : 0.62)) / 2.24);
-    this.camera.updateMatrixWorld();
-    const p = new THREE.Vector3(this.phoneX, this.phoneY, -D);
-    this.camera.localToWorld(p);
-    this.phone.position.copy(p);
-    this.phone.quaternion.copy(this.camera.quaternion);
-    const t = this.phoneT || 0;
-    this.phone.rotateY((wide ? (this.phoneX < 0 ? 0.32 : -0.32) : 0) + Math.sin(t * 0.5) * 0.06 + view.local.x * 0.18 + this.spin * Math.PI * 0.18);
-    this.phone.rotateX(-0.05 + Math.sin(t * 0.4) * 0.04 - view.local.y * 0.12);
-    this.phone.position.y += Math.sin(t * 0.8) * 0.06 * scale;
-    this.phone.scale.setScalar(scale);
   }
 }
 

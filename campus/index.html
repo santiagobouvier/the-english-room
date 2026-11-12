@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="es" class="no-js">
+<head>
+    <meta charset="utf-8">
+    <title>Campus · The English Room</title>
+    <meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport">
+    <meta content="El campus de The English Room: clases en vivo y, entre clase y clase, actividades, speaking, juegos y tu progreso." name="description">
+    <meta name="theme-color" content="#061317">
+    <link href="img/logo.jpeg" rel="icon">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter+Tight:wght@400;500;600&family=Lobster+Two:wght@700&display=swap" rel="stylesheet">
+    <link href="css/room.css" rel="stylesheet">
+    <link href="css/campus.css" rel="stylesheet">
+    <script>try { document.documentElement.className = 'js' + (sessionStorage.getItem('ter-visto') ? ' returning' : ''); } catch (e) { document.documentElement.className = 'js'; }</script>
+    <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+      }
+    }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js" defer></script>
+    <script type="module" src="js/room/app.js"></script>
+</head>
+
+<body data-page="inicio" data-theme="dark">
+
+    <a class="skip" href="#main">Saltar al contenido</a>
+    <div class="loader" id="loader" aria-hidden="true">
+        <div class="loader-mark">
+            <svg viewBox="0 0 120 90" aria-hidden="true">
+                <path class="ld-fill" d="M6 10 L114 4 L110 66 L52 66 L38 86 L36 66 L10 64 Z"/>
+                <path class="ld-stroke" pathLength="1" d="M6 10 L114 4 L110 66 L52 66 L38 86 L36 66 L10 64 Z"/>
+                <text class="ld-ter" x="58" y="44" text-anchor="middle">TER</text>
+            </svg>
+            <p class="loader-word"><span>Campus</span></p>
+        </div>
+        <div class="loader-line"><i></i></div>
+    </div>
+    <canvas id="bg" aria-hidden="true"></canvas>
+    <canvas id="gl" aria-hidden="true"></canvas>
+    <header class="hd" id="hd">
+        <a class="hd-logo" href="index.html" aria-label="Campus The English Room, inicio">
+            <img src="img/logo-transparente.png" alt="">
+            <span>THE ENGLISH ROOM<br><em class="hd-campus">campus</em></span>
+        </a>
+        <p class="hd-tag">Small steps,<br><em>real progress.</em></p>
+        <div class="hd-right">
+            <a class="hd-talk" href="https://santiagobouvier.github.io/campus-theenglishroom/"><span class="roll"><span>Iniciar sesión</span><span aria-hidden="true">Iniciar sesión</span></span><i class="dot" aria-hidden="true"></i></a>
+            <button class="hd-menu" id="menuBtn" type="button" aria-expanded="false" aria-controls="menu"><span class="roll"><span>Menú</span><span aria-hidden="true">Menú</span></span><i class="dots" aria-hidden="true"></i></button>
+        </div>
+        <nav class="menu" id="menu" aria-label="Principal" hidden>
+            <div class="menu-card menu-links">
+                <a href="index.html" data-nav="inicio" aria-current="page"><span class="roll"><span>Inicio</span><span aria-hidden="true">Inicio</span></span></a>
+                <a href="alumnos.html" data-nav="alumnos"><span class="roll"><span>Alumnos</span><span aria-hidden="true">Alumnos</span></span></a>
+                <a href="profes.html" data-nav="profes"><span class="roll"><span>Profes</span><span aria-hidden="true">Profes</span></span></a>
+                <a href="ingresar.html" data-nav="ingresar"><span class="roll"><span>Cómo ingresar</span><span aria-hidden="true">Cómo ingresar</span></span></a>
+            </div>
+            <a class="menu-card menu-level" href="https://santiagobouvier.github.io/campus-theenglishroom/">
+                <strong>Iniciar<br>sesión</strong>
+                <span>Google · Microsoft · mail →</span>
+            </a>
+            <a class="menu-card menu-ig" href="https://theenglishroom.edu.uy/"><span>The English Room</span><b>theenglishroom.edu.uy ↗</b></a>
+        </nav>
+    </header>
+
+    <main id="main" class="page page-inicio" data-page="inicio" data-theme="dark" data-hero="classroom" tabindex="-1">
+
+        <section class="cover" data-cover aria-labelledby="h-hero">
+            <div class="cover-sticky">
+                <div class="frame" data-gl="classroom" data-hero-frame>
+                    <img class="frame-fallback" src="img/room/foto2.jpg" alt="">
+                </div>
+                <div class="shade" aria-hidden="true"></div>
+                <div class="hero-copy">
+                    <h1 id="h-hero" class="hero-title" data-split><span class="sm">The English Room</span> Campus</h1>
+                    <div class="hero-side">
+                        <p class="hero-sub" data-rotate>
+                            <span class="on"><b class="script-in">Small steps, real progress.</b> Las clases son en vivo; entre clase y clase, tu semana sigue en el campus.</span>
+                            <span>Actividades de la semana, speaking con tu voz, juegos y tu progreso, en el celular o en la compu.</span>
+                        </p>
+                        <div class="hero-cta">
+                            <a href="https://santiagobouvier.github.io/campus-theenglishroom/" class="pill pill-turq pill-arrow">Iniciar sesión</a>
+                            <a href="#como" class="pill">Cómo funciona</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="crosses" aria-hidden="true"><i>+</i><i>+</i><span>Deslizá para entrar al campus</span><i>+</i><i>+</i></div>
+            </div>
+        </section>
+
+        <section id="como" class="sec over" data-ribbon="intro" aria-labelledby="h-intro">
+            <div class="sec-head">
+                <span class="eyebrow"><span class="n">01</span>Cómo funciona</span>
+                <h2 id="h-intro" class="mega" data-split>Tu clase, <em>toda la semana</em></h2>
+            </div>
+            <div class="intro-grid">
+                <p class="lead" data-reveal>Las clases son 100% online y en tiempo real. Después de cada clase, en el campus te esperan las actividades de la semana que preparó tu profe: las hacés desde donde estés, ves tu resultado y seguís tu progreso.</p>
+            </div>
+            <ul class="facilities">
+                <li data-reveal><span class="n">i.</span><h3>Actividades de la semana</h3></li>
+                <li data-reveal style="--d:100"><span class="n">ii.</span><h3>Speaking con tu propia voz</h3></li>
+                <li data-reveal style="--d:200"><span class="n">iii.</span><h3>Juegos para practicar</h3></li>
+                <li data-reveal style="--d:300"><span class="n">iv.</span><h3>Tu progreso, mes a mes</h3></li>
+            </ul>
+        </section>
+
+        <section class="room over" aria-labelledby="h-room">
+            <div class="sec" style="padding-bottom:0">
+                <div class="sec-head" style="margin-bottom:0">
+                    <span class="eyebrow"><span class="n">02</span>En vivo</span>
+                    <h2 id="h-room" class="mega" data-split>La clase, <em>en vivo</em></h2>
+                    <p class="lead" data-reveal>Carla y sus alumnos, cara a cara en cada clase. Esto dicen los roommates.</p>
+                </div>
+            </div>
+            <div class="room-stage" data-room>
+                <div class="room-sticky">
+                    <div class="frame frame-call" data-gl="call" data-variant="grid" data-speaker="0">
+                        <img class="frame-fallback" src="img/room/foto-21.jpg" alt="" loading="lazy">
+                        <div class="call-ui">
+                            <div class="call-top"><i class="rec" aria-hidden="true"></i><span>The English Room · en vivo</span></div>
+                            <p class="call-title" aria-hidden="true"><span>Entrá</span><i class="join"></i><em>a clase</em></p>
+                            <span class="chat-label" aria-hidden="true">Chat de la clase</span>
+                            <div class="chat">
+                                <ol>
+                                    <li class="msg" data-speaker="1"><img src="img/student-1.png" alt="" loading="lazy"><div><b>Mica</b><p>"Las clases son superdinámicas y variadas. Carli hace que sea una experiencia distinta aprender inglés, dónde además de aprender un montón sobre el idioma podés divertirte"</p></div></li>
+                                    <li class="msg" data-speaker="2"><img src="img/student-2.png" alt="" loading="lazy"><div><b>Seba</b><p>"Carla es una excelente y dedicada profesora. Sus clases personalizadas hacen que me sienta motivado y enganchado. Retomé inglés después de 10 años cuando pensaba que era algo imposible."</p></div></li>
+                                    <li class="msg" data-speaker="3"><img src="img/student-3.png" alt="" loading="lazy"><div><b>Bruna</b><p>"Aprender inglés hoy en día es un *debe* porque te abre las puertas al mundo y es posible aprenderlo de una manera personalizada, dinámica y divertida. Destaco la dedicación de Carla que hace que te guste el idioma, por lo tanto, lo estudiarás con más motivación."</p></div></li>
+                                    <li class="msg" data-speaker="4"><img src="img/room/caro.jpg" alt="" loading="lazy"><div><b>Caro</b><p>"¡Aprender divirtiéndome y de forma ligera fue la mejor forma de volver a conectar con esta cultura increíble y enamorarme nuevamente de su idioma. Superagradecida de haber dado con The English Room y sus clases dinámicas!"</p></div></li>
+                                    <li class="msg" data-speaker="5"><img src="img/room/mika.jpg" alt="" loading="lazy"><div><b>Mika</b><p>"Las clases con Carla son superdinámicas! La modalidad que utiliza para enseñar permite que aprendas y ejercites el inglés diariamente, de forma muy práctica."</p></div></li>
+                                </ol>
+                            </div>
+                            <div class="call-bar" aria-hidden="true"><span>🎙</span><span>▣</span><span>☺</span><span class="leave">✕</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="spine-sec over" data-spine aria-labelledby="h-acts">
+            <div class="spine-sticky">
+                <div class="frame spine-frame" data-gl="spine"></div>
+                <a class="spine-hit" href="alumnos.html" tabindex="-1" aria-hidden="true"></a>
+                <div class="spine-head">
+                    <span class="eyebrow"><span class="n">03</span>Actividades</span>
+                    <h2 id="h-acts" class="big">Seis formas de <em>practicar</em></h2>
+                    <p class="muted">Las prepara tu profe, cada semana.</p>
+                </div>
+                <nav class="spine-index" aria-label="Tipos de actividad">
+                    <ol>
+                        <li><a href="alumnos.html" data-step="0"><span>Quiz</span></a></li>
+                        <li><a href="alumnos.html" data-step="1"><span>Gaps</span></a></li>
+                        <li><a href="alumnos.html" data-step="2"><span>Match</span></a></li>
+                        <li><a href="alumnos.html" data-step="3"><span>Write</span></a></li>
+                        <li><a href="alumnos.html" data-step="4"><span>Speak</span></a></li>
+                        <li><a href="alumnos.html" data-step="5"><span>Play</span></a></li>
+                    </ol>
+                </nav>
+                <ul class="courses">
+                    <li class="course" data-step="0" data-slug="quiz" data-img="img/room/foto-21.jpg" data-teacher="Resultado al instante">
+                        <span class="course-count">01 / 6</span>
+                        <span class="course-level" aria-hidden="true">Quiz</span>
+                        <h3>Multiple choice</h3>
+                        <div class="course-tags"><span>Corrección: <b>automática</b></span><span>Reintentos: <b>2 o más</b></span></div>
+                        <span class="chip teacher"><span><b>Resultado al instante</b><small>Campus · The English Room</small></span></span>
+                        <a class="pill pill-turq pill-arrow course-link" href="alumnos.html">Ver cómo es</a>
+                    </li>
+                    <li class="course" data-step="1" data-slug="gaps" data-img="img/room/foto-22.jpg" data-teacher="Resultado al instante">
+                        <span class="course-count">02 / 6</span>
+                        <span class="course-level" aria-hidden="true">Gaps</span>
+                        <h3>Completar espacios</h3>
+                        <div class="course-tags"><span>Corrección: <b>automática</b></span><span>Adjuntos: <b>audio, imagen o YouTube</b></span></div>
+                        <span class="chip teacher"><span><b>Resultado al instante</b><small>Campus · The English Room</small></span></span>
+                        <a class="pill pill-turq pill-arrow course-link" href="alumnos.html">Ver cómo es</a>
+                    </li>
+                    <li class="course" data-step="2" data-slug="match" data-img="img/room/foto-31.jpg" data-teacher="Resultado al instante">
+                        <span class="course-count">03 / 6</span>
+                        <span class="course-level" aria-hidden="true">Match</span>
+                        <h3>Unir</h3>
+                        <div class="course-tags"><span>Corrección: <b>automática</b></span><span>Reintentos: <b>2 o más</b></span></div>
+                        <span class="chip teacher"><span><b>Resultado al instante</b><small>Campus · The English Room</small></span></span>
+                        <a class="pill pill-turq pill-arrow course-link" href="alumnos.html">Ver cómo es</a>
+                    </li>
+                    <li class="course" data-step="3" data-slug="write" data-img="img/room/foto-17.jpg" data-teacher="La profe te devuelve feedback">
+                        <span class="course-count">04 / 6</span>
+                        <span class="course-level" aria-hidden="true">Write</span>
+                        <h3>Writing</h3>
+                        <div class="course-tags"><span>Entrega: <b>cuenta como hecha</b></span><span>Corrección: <b>con feedback</b></span></div>
+                        <span class="chip teacher"><span><b>La profe te devuelve feedback</b><small>Campus · The English Room</small></span></span>
+                        <a class="pill pill-turq pill-arrow course-link" href="alumnos.html">Ver cómo es</a>
+                    </li>
+                    <li class="course" data-step="4" data-slug="speak" data-img="img/room/foto-6.jpg" data-teacher="Tu voz, con devolución">
+                        <span class="course-count">05 / 6</span>
+                        <span class="course-level" aria-hidden="true">Speak</span>
+                        <h3>Speaking</h3>
+                        <div class="course-tags"><span>Audio: <b>grabás en el campus</b></span><span>Corrección: <b>con feedback</b></span></div>
+                        <span class="chip teacher"><span><b>Tu voz, con devolución</b><small>Campus · The English Room</small></span></span>
+                        <a class="pill pill-turq pill-arrow course-link" href="alumnos.html">Ver cómo es</a>
+                    </li>
+                    <li class="course" data-step="5" data-slug="play" data-img="img/room/foto-4.jpg" data-teacher="Practicar jugando">
+                        <span class="course-count">06 / 6</span>
+                        <span class="course-level" aria-hidden="true">Play</span>
+                        <h3>Juego externo</h3>
+                        <div class="course-tags"><span>Juegos: <b>Wordwall o puzzel.org</b></span><span>Al terminar: <b>casilla "terminé"</b></span></div>
+                        <span class="chip teacher"><span><b>Practicar jugando</b><small>Campus · The English Room</small></span></span>
+                        <a class="pill pill-turq pill-arrow course-link" href="alumnos.html">Ver cómo es</a>
+                    </li>
+                </ul>
+                <div class="spine-progress" aria-hidden="true"><i></i></div>
+                <p class="spine-hint" aria-hidden="true">Deslizá para recorrer las actividades</p>
+            </div>
+        </section>
+
+        <section class="sec over" aria-labelledby="h-doors">
+            <div class="sec-head">
+                <span class="eyebrow"><span class="n">04</span>Dos vistas</span>
+                <h2 id="h-doors" class="mega" data-split>Para alumnos <em>y para profes</em></h2>
+            </div>
+            <div class="doors">
+                <a class="next-card door" href="alumnos.html" data-next-card style="--img: url('../img/room/foto-22.jpg')">
+                <span class="nc-media" aria-hidden="true"></span>
+                <div class="nc-top"><span class="eyebrow">Entrá</span><span class="nc-count">02 <i>/ 04</i></span></div>
+                <strong class="nc-title" data-chars>Alumnos</strong>
+                <div class="nc-foot"><p class="nc-desc">Tu semana, tus actividades y tu progreso.</p><span class="pill pill-arrow">Entrar</span></div>
+            </a>
+                <a class="next-card door" href="profes.html" data-next-card style="--img: url('../img/room/foto-30.jpg')">
+                <span class="nc-media" aria-hidden="true"></span>
+                <div class="nc-top"><span class="eyebrow">Entrá</span><span class="nc-count">03 <i>/ 04</i></span></div>
+                <strong class="nc-title" data-chars>Profes</strong>
+                <div class="nc-foot"><p class="nc-desc">Grupos, actividades, corrección y seguimiento.</p><span class="pill pill-arrow">Entrar</span></div>
+            </a>
+            </div>
+        </section>
+
+        <nav class="next over" aria-label="Siguiente página">
+            <a class="next-card is-long" href="ingresar.html" data-next-card style="--img: url('../img/room/foto-perfil.jpg')">
+                <span class="nc-media" aria-hidden="true"></span>
+                <div class="nc-top"><span class="eyebrow">Siguiente</span><span class="nc-count">04 <i>/ 04</i></span></div>
+                <strong class="nc-title" data-chars>Cómo ingresar</strong>
+                <div class="nc-foot"><p class="nc-desc">Una sola puerta: Google, Microsoft o mail.</p><span class="pill pill-arrow">Entrar</span></div>
+            </a>
+        </nav>
+
+        <footer class="ft over" aria-labelledby="ft-campus">
+            <div class="ft-top">
+                <p class="ft-quote" data-reveal>Small steps, <em>real progress.</em></p>
+                <div data-reveal style="--d:100">
+                    <h3 id="ft-campus">Campus</h3>
+                    <ul>
+                        <li><a href="https://santiagobouvier.github.io/campus-theenglishroom/">Iniciar sesión</a></li>
+                        <li><a href="index.html">Inicio</a></li>
+                        <li><a href="alumnos.html">Alumnos</a></li>
+                        <li><a href="profes.html">Profes</a></li>
+                        <li><a href="ingresar.html">Cómo ingresar</a></li>
+                    </ul>
+                </div>
+                <div data-reveal style="--d:200">
+                    <h3>The English Room</h3>
+                    <ul>
+                        <li><a href="https://theenglishroom.edu.uy/">theenglishroom.edu.uy ↗</a></li>
+                        <li><a href="https://wa.me/+59892354225?text=¡Que bueno que estás acá! En breve nos vamos a estar comunicando con vos. ¡Saludos! Carla Migliarini" target="_blank" rel="noopener">Hablemos por Whatsapp ↗</a></li>
+                        <li><a href="mailto:info@theenglishroom.edu.uy">info@theenglishroom.edu.uy</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="ft-bottom">
+                <img src="img/logo-transparente.png" alt="The English Room">
+                <p>&copy; The English Room · Campus.<br><br>Sitio Desarrollado Por | <a href="https://digitalbuilders.uy" target="_blank" rel="noopener">Digital Builders</a></p>
+            </div>
+        </footer>
+
+    </main>
+    <div class="veil" id="veil" aria-hidden="true"></div>
+    <div class="sr-only" id="announcer" aria-live="polite"></div>
+</body>
+</html>

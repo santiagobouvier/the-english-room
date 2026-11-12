@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="es" class="no-js">
+<head>
+    <meta charset="utf-8">
+    <title>Ingresar · Campus The English Room</title>
+    <meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport">
+    <meta content="Cómo ingresar al campus de The English Room: Google, Microsoft o link por mail. Solo entran los mails invitados." name="description">
+    <meta name="theme-color" content="#061317">
+    <link href="img/logo.jpeg" rel="icon">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter+Tight:wght@400;500;600&family=Lobster+Two:wght@700&display=swap" rel="stylesheet">
+    <link href="css/room.css" rel="stylesheet">
+    <link href="css/campus.css" rel="stylesheet">
+    <script>try { document.documentElement.className = 'js' + (sessionStorage.getItem('ter-visto') ? ' returning' : ''); } catch (e) { document.documentElement.className = 'js'; }</script>
+    <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+      }
+    }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js" defer></script>
+    <script type="module" src="js/room/app.js"></script>
+</head>
+
+<body data-page="ingresar" data-theme="dark">
+
+    <a class="skip" href="#main">Saltar al contenido</a>
+    <div class="loader" id="loader" aria-hidden="true">
+        <div class="loader-mark">
+            <svg viewBox="0 0 120 90" aria-hidden="true">
+                <path class="ld-fill" d="M6 10 L114 4 L110 66 L52 66 L38 86 L36 66 L10 64 Z"/>
+                <path class="ld-stroke" pathLength="1" d="M6 10 L114 4 L110 66 L52 66 L38 86 L36 66 L10 64 Z"/>
+                <text class="ld-ter" x="58" y="44" text-anchor="middle">TER</text>
+            </svg>
+            <p class="loader-word"><span>Campus</span></p>
+        </div>
+        <div class="loader-line"><i></i></div>
+    </div>
+    <canvas id="bg" aria-hidden="true"></canvas>
+    <canvas id="gl" aria-hidden="true"></canvas>
+    <header class="hd" id="hd">
+        <a class="hd-logo" href="index.html" aria-label="Campus The English Room, inicio">
+            <img src="img/logo-transparente.png" alt="">
+            <span>THE ENGLISH ROOM<br><em class="hd-campus">campus</em></span>
+        </a>
+        <p class="hd-tag">Small steps,<br><em>real progress.</em></p>
+        <div class="hd-right">
+            <a class="hd-talk" href="https://santiagobouvier.github.io/campus-theenglishroom/"><span class="roll"><span>Iniciar sesión</span><span aria-hidden="true">Iniciar sesión</span></span><i class="dot" aria-hidden="true"></i></a>
+            <button class="hd-menu" id="menuBtn" type="button" aria-expanded="false" aria-controls="menu"><span class="roll"><span>Menú</span><span aria-hidden="true">Menú</span></span><i class="dots" aria-hidden="true"></i></button>
+        </div>
+        <nav class="menu" id="menu" aria-label="Principal" hidden>
+            <div class="menu-card menu-links">
+                <a href="index.html" data-nav="inicio"><span class="roll"><span>Inicio</span><span aria-hidden="true">Inicio</span></span></a>
+                <a href="alumnos.html" data-nav="alumnos"><span class="roll"><span>Alumnos</span><span aria-hidden="true">Alumnos</span></span></a>
+                <a href="profes.html" data-nav="profes"><span class="roll"><span>Profes</span><span aria-hidden="true">Profes</span></span></a>
+                <a href="ingresar.html" data-nav="ingresar" aria-current="page"><span class="roll"><span>Cómo ingresar</span><span aria-hidden="true">Cómo ingresar</span></span></a>
+            </div>
+            <a class="menu-card menu-level" href="https://santiagobouvier.github.io/campus-theenglishroom/">
+                <strong>Iniciar<br>sesión</strong>
+                <span>Google · Microsoft · mail →</span>
+            </a>
+            <a class="menu-card menu-ig" href="https://theenglishroom.edu.uy/"><span>The English Room</span><b>theenglishroom.edu.uy ↗</b></a>
+        </nav>
+    </header>
+
+    <main id="main" class="page page-ingresar" data-page="ingresar" data-theme="dark" data-hero="lobby" tabindex="-1">
+
+        <section class="hero" aria-labelledby="h-in">
+            <div class="frame frame-hero" data-gl="lobby" data-hero-frame>
+                <img class="frame-fallback" src="img/room/foto-perfil.jpg" alt="">
+            </div>
+            <div class="shade" aria-hidden="true"></div>
+            <div class="hero-top"><ol class="crumbs"><li><a href="index.html">Campus</a></li><li aria-current="page">Cómo ingresar</li></ol></div>
+            <div class="hero-copy">
+                <h1 id="h-in" class="hero-title" data-split><span class="sm">Sign in</span> Una sola puerta</h1>
+                <div class="hero-side">
+                    <p class="hero-sub">Alumnos y profes entran por el mismo lugar. Solo entran los mails invitados.</p>
+                    <div class="hero-cta"><a href="https://santiagobouvier.github.io/campus-theenglishroom/" class="pill pill-turq pill-arrow">Iniciar sesión</a></div>
+                </div>
+            </div>
+            <div class="crosses" aria-hidden="true"><i>+</i><i>+</i><span>Deslizá para ver cómo</span><i>+</i><i>+</i></div>
+        </section>
+
+        <section class="sec over" data-ribbon="contact" aria-labelledby="h-ways">
+            <div class="signin">
+                <div>
+                    <span class="eyebrow"><span class="n">01</span>Tres formas</span>
+                    <h2 id="h-ways" class="mega" data-split>Entrá <em>como prefieras</em></h2>
+                    <ol class="ways">
+                        <li data-reveal><span class="w-ic g" aria-hidden="true">G</span><div><b>Con Google</b><p>Tu cuenta de Gmail. Entrás directo, sin elegir entre cuentas.</p></div></li>
+                        <li data-reveal style="--d:100"><span class="w-ic m" aria-hidden="true"><i></i><i></i><i></i><i></i></span><div><b>Con Microsoft</b><p>Outlook, Hotmail o Live.</p></div></li>
+                        <li data-reveal style="--d:200"><span class="w-ic e" aria-hidden="true">@</span><div><b>Con tu mail</b><p>Yahoo, iCloud o cualquier otro: escribís tu mail, te llega un código de 6 dígitos y entrás. El código evita que alguien entre con el mail de otra persona.</p></div></li>
+                    </ol>
+                    <div class="rules" data-reveal>
+                        <p><b>Solo mails invitados.</b> Tu profe carga la lista de mails de cada grupo. Si tu mail no está, podés mandar una solicitud y la profe la acepta o la rechaza.</p>
+                        <p><b>¿Tenés un link de invitación o un código de grupo?</b> También sirve para unirte.</p>
+                    </div>
+                    <p data-reveal style="margin-top:28px"><a class="pill pill-turq pill-arrow" href="https://santiagobouvier.github.io/campus-theenglishroom/">Iniciar sesión</a></p>
+                </div>
+                <figure class="phone-shot" data-reveal style="--d:150">
+                    <img src="img/room/campus-signin.jpg" alt="Pantalla de ingreso del campus: continuar con Google, con Microsoft o con email">
+                </figure>
+            </div>
+        </section>
+
+        <nav class="next over" aria-label="Siguiente página">
+            <a class="next-card" href="index.html" data-next-card style="--img: url('../img/room/foto2.jpg')">
+                <span class="nc-media" aria-hidden="true"></span>
+                <div class="nc-top"><span class="eyebrow">Siguiente</span><span class="nc-count">01 <i>/ 04</i></span></div>
+                <strong class="nc-title" data-chars>Campus</strong>
+                <div class="nc-foot"><p class="nc-desc">Clases en vivo y, entre clase y clase, el campus.</p><span class="pill pill-arrow">Entrar</span></div>
+            </a>
+        </nav>
+
+        <footer class="ft over" aria-labelledby="ft-campus">
+            <div class="ft-top">
+                <p class="ft-quote" data-reveal>Small steps, <em>real progress.</em></p>
+                <div data-reveal style="--d:100">
+                    <h3 id="ft-campus">Campus</h3>
+                    <ul>
+                        <li><a href="https://santiagobouvier.github.io/campus-theenglishroom/">Iniciar sesión</a></li>
+                        <li><a href="index.html">Inicio</a></li>
+                        <li><a href="alumnos.html">Alumnos</a></li>
+                        <li><a href="profes.html">Profes</a></li>
+                        <li><a href="ingresar.html">Cómo ingresar</a></li>
+                    </ul>
+                </div>
+                <div data-reveal style="--d:200">
+                    <h3>The English Room</h3>
+                    <ul>
+                        <li><a href="https://theenglishroom.edu.uy/">theenglishroom.edu.uy ↗</a></li>
+                        <li><a href="https://wa.me/+59892354225?text=¡Que bueno que estás acá! En breve nos vamos a estar comunicando con vos. ¡Saludos! Carla Migliarini" target="_blank" rel="noopener">Hablemos por Whatsapp ↗</a></li>
+                        <li><a href="mailto:info@theenglishroom.edu.uy">info@theenglishroom.edu.uy</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="ft-bottom">
+                <img src="img/logo-transparente.png" alt="The English Room">
+                <p>&copy; The English Room · Campus.<br><br>Sitio Desarrollado Por | <a href="https://digitalbuilders.uy" target="_blank" rel="noopener">Digital Builders</a></p>
+            </div>
+        </footer>
+
+    </main>
+    <div class="veil" id="veil" aria-hidden="true"></div>
+    <div class="sr-only" id="announcer" aria-live="polite"></div>
+</body>
+</html>

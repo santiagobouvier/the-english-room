@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="es" class="no-js">
+<head>
+    <meta charset="utf-8">
+    <title>Alumnos · Campus The English Room</title>
+    <meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport">
+    <meta content="Cómo es el campus para los alumnos: actividades de la semana, speaking, resultados al instante y progreso." name="description">
+    <meta name="theme-color" content="#061317">
+    <link href="img/logo.jpeg" rel="icon">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter+Tight:wght@400;500;600&family=Lobster+Two:wght@700&display=swap" rel="stylesheet">
+    <link href="css/room.css" rel="stylesheet">
+    <link href="css/campus.css" rel="stylesheet">
+    <script>try { document.documentElement.className = 'js' + (sessionStorage.getItem('ter-visto') ? ' returning' : ''); } catch (e) { document.documentElement.className = 'js'; }</script>
+    <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+      }
+    }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js" defer></script>
+    <script type="module" src="js/room/app.js"></script>
+</head>
+
+<body data-page="alumnos" data-theme="dark">
+
+    <a class="skip" href="#main">Saltar al contenido</a>
+    <div class="loader" id="loader" aria-hidden="true">
+        <div class="loader-mark">
+            <svg viewBox="0 0 120 90" aria-hidden="true">
+                <path class="ld-fill" d="M6 10 L114 4 L110 66 L52 66 L38 86 L36 66 L10 64 Z"/>
+                <path class="ld-stroke" pathLength="1" d="M6 10 L114 4 L110 66 L52 66 L38 86 L36 66 L10 64 Z"/>
+                <text class="ld-ter" x="58" y="44" text-anchor="middle">TER</text>
+            </svg>
+            <p class="loader-word"><span>Campus</span></p>
+        </div>
+        <div class="loader-line"><i></i></div>
+    </div>
+    <canvas id="bg" aria-hidden="true"></canvas>
+    <canvas id="gl" aria-hidden="true"></canvas>
+    <header class="hd" id="hd">
+        <a class="hd-logo" href="index.html" aria-label="Campus The English Room, inicio">
+            <img src="img/logo-transparente.png" alt="">
+            <span>THE ENGLISH ROOM<br><em class="hd-campus">campus</em></span>
+        </a>
+        <p class="hd-tag">Small steps,<br><em>real progress.</em></p>
+        <div class="hd-right">
+            <a class="hd-talk" href="https://santiagobouvier.github.io/campus-theenglishroom/"><span class="roll"><span>Iniciar sesión</span><span aria-hidden="true">Iniciar sesión</span></span><i class="dot" aria-hidden="true"></i></a>
+            <button class="hd-menu" id="menuBtn" type="button" aria-expanded="false" aria-controls="menu"><span class="roll"><span>Menú</span><span aria-hidden="true">Menú</span></span><i class="dots" aria-hidden="true"></i></button>
+        </div>
+        <nav class="menu" id="menu" aria-label="Principal" hidden>
+            <div class="menu-card menu-links">
+                <a href="index.html" data-nav="inicio"><span class="roll"><span>Inicio</span><span aria-hidden="true">Inicio</span></span></a>
+                <a href="alumnos.html" data-nav="alumnos" aria-current="page"><span class="roll"><span>Alumnos</span><span aria-hidden="true">Alumnos</span></span></a>
+                <a href="profes.html" data-nav="profes"><span class="roll"><span>Profes</span><span aria-hidden="true">Profes</span></span></a>
+                <a href="ingresar.html" data-nav="ingresar"><span class="roll"><span>Cómo ingresar</span><span aria-hidden="true">Cómo ingresar</span></span></a>
+            </div>
+            <a class="menu-card menu-level" href="https://santiagobouvier.github.io/campus-theenglishroom/">
+                <strong>Iniciar<br>sesión</strong>
+                <span>Google · Microsoft · mail →</span>
+            </a>
+            <a class="menu-card menu-ig" href="https://theenglishroom.edu.uy/"><span>The English Room</span><b>theenglishroom.edu.uy ↗</b></a>
+        </nav>
+    </header>
+
+    <main id="main" class="page page-alumnos" data-page="alumnos" data-theme="dark" data-hero="about" tabindex="-1">
+
+        <section class="about-stage" data-about aria-labelledby="h-about">
+            <div class="about-sticky">
+                <div class="frame" data-gl="about" data-hero-frame data-focus="intro"></div>
+                <div class="about-top over">
+                    <ol class="crumbs"><li><a href="index.html">Campus</a></li><li aria-current="page">Alumnos</li></ol>
+                </div>
+                <h1 id="h-about" class="about-giant over" data-split>Para <em>alumnos</em></h1>
+                <div class="dev" data-device data-mode="phone" data-intro-mode="phone" data-pos="intro" aria-hidden="true">
+                    <div class="dev-body">
+                        <div class="dev-lid">
+                            <i class="dev-cam"></i>
+                            <div class="dev-screen">
+                                <img data-shot="intro" class="on" src="img/room/campus-welcome.jpg" alt="">
+                                <img data-shot="semana" src="img/room/campus-home.jpg" alt="" loading="lazy">
+                                <img data-shot="speaking" src="img/room/campus-speaking.jpg" alt="" loading="lazy">
+                                <img data-shot="resultados" src="img/room/campus-week.jpg" alt="" loading="lazy">
+                                <img data-shot="progreso" src="img/room/campus-progress.jpg" alt="" loading="lazy">
+                                <span class="dev-glare"></span>
+                            </div>
+                        </div>
+                        <div class="dev-base"><i></i></div>
+                        <span class="dev-btn"></span>
+                        <span class="dev-shadow"></span>
+                        <div class="dev-tag"><span class="dev-tag-n"></span><strong class="dev-tag-place"></strong><span class="dev-tag-line"></span><em class="dev-tag-coord"></em></div>
+                    </div>
+                </div>
+            </div>
+            <div class="about-scroll">
+                <div class="story">
+                    <article class="story-step" data-focus="semana" data-device="phone">
+                        <span class="num">01 / 04</span>
+                        <h3>Tu semana, <em>clara</em></h3>
+                        <p>Al entrar ves las actividades de la semana y en qué estado está cada una: pending, in progress, submitted o completed.</p>
+                        <p>Si estás en dos grupos (por ejemplo, tu nivel y pronunciación), ves las actividades de los dos.</p>
+                    </article>
+                    <article class="story-step" data-focus="speaking" data-device="phone">
+                        <span class="num">02 / 04</span>
+                        <h3>Speaking, <em>con tu voz</em></h3>
+                        <p>Grabás tu audio dentro del campus. Writing y speaking cuentan como hechos al entregarlos, y tu profe te devuelve la corrección con feedback.</p>
+                    </article>
+                    <article class="story-step" data-focus="resultados" data-device="phone">
+                        <span class="num">03 / 04</span>
+                        <h3>Resultados <em>al instante</em></h3>
+                        <p>En multiple choice, completar espacios y unir ves tu resultado apenas terminás, con al menos dos reintentos.</p>
+                        <p>Los juegos (Wordwall o puzzel.org) se abren con un link y se marcan con la casilla "terminé".</p>
+                    </article>
+                    <article class="story-step" data-focus="progreso" data-device="phone">
+                        <span class="num">04 / 04</span>
+                        <h3>Tu progreso, <em>mes a mes</em></h3>
+                        <p>Cada mes por semanas, con los meses anteriores a la vista, cuánto llevás del curso y el historial de todo lo que hiciste.</p>
+                        <p>Y cuando completás la semana: ¡felicitaciones, con confetti!</p>
+                        <div class="ready"><a class="pill pill-turq pill-arrow" href="https://santiagobouvier.github.io/campus-theenglishroom/">Iniciar sesión</a></div>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <section class="sec over" data-ribbon="about" aria-labelledby="h-app">
+            <div class="sec-head">
+                <span class="eyebrow"><span class="n">§</span>App</span>
+                <h2 id="h-app" class="mega" data-split>Instalalo <em>como app</em></h2>
+                <p class="lead" data-reveal>Se instala en el celular y en la compu, gratis y sin pasar por tiendas.</p>
+            </div>
+            <ul class="facilities">
+                <li data-reveal><span class="n">i.</span><h3>Android, Chrome o Edge: con un toque</h3></li>
+                <li data-reveal style="--d:100"><span class="n">ii.</span><h3>iPhone y Safari de Mac: con una guía paso a paso</h3></li>
+                <li data-reveal style="--d:200"><span class="n">iii.</span><h3>En la compu abre en su propia ventana</h3></li>
+                <li data-reveal style="--d:300"><span class="n">iv.</span><h3>Avisos de actividades nuevas y feedback</h3></li>
+            </ul>
+        </section>
+
+        <nav class="next over" aria-label="Siguiente página">
+            <a class="next-card" href="profes.html" data-next-card style="--img: url('../img/room/foto-30.jpg')">
+                <span class="nc-media" aria-hidden="true"></span>
+                <div class="nc-top"><span class="eyebrow">Siguiente</span><span class="nc-count">03 <i>/ 04</i></span></div>
+                <strong class="nc-title" data-chars>Profes</strong>
+                <div class="nc-foot"><p class="nc-desc">Grupos, actividades, corrección y seguimiento.</p><span class="pill pill-arrow">Entrar</span></div>
+            </a>
+        </nav>
+
+        <footer class="ft over" aria-labelledby="ft-campus">
+            <div class="ft-top">
+                <p class="ft-quote" data-reveal>Small steps, <em>real progress.</em></p>
+                <div data-reveal style="--d:100">
+                    <h3 id="ft-campus">Campus</h3>
+                    <ul>
+                        <li><a href="https://santiagobouvier.github.io/campus-theenglishroom/">Iniciar sesión</a></li>
+                        <li><a href="index.html">Inicio</a></li>
+                        <li><a href="alumnos.html">Alumnos</a></li>
+                        <li><a href="profes.html">Profes</a></li>
+                        <li><a href="ingresar.html">Cómo ingresar</a></li>
+                    </ul>
+                </div>
+                <div data-reveal style="--d:200">
+                    <h3>The English Room</h3>
+                    <ul>
+                        <li><a href="https://theenglishroom.edu.uy/">theenglishroom.edu.uy ↗</a></li>
+                        <li><a href="https://wa.me/+59892354225?text=¡Que bueno que estás acá! En breve nos vamos a estar comunicando con vos. ¡Saludos! Carla Migliarini" target="_blank" rel="noopener">Hablemos por Whatsapp ↗</a></li>
+                        <li><a href="mailto:info@theenglishroom.edu.uy">info@theenglishroom.edu.uy</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="ft-bottom">
+                <img src="img/logo-transparente.png" alt="The English Room">
+                <p>&copy; The English Room · Campus.<br><br>Sitio Desarrollado Por | <a href="https://digitalbuilders.uy" target="_blank" rel="noopener">Digital Builders</a></p>
+            </div>
+        </footer>
+
+    </main>
+    <div class="veil" id="veil" aria-hidden="true"></div>
+    <div class="sr-only" id="announcer" aria-live="polite"></div>
+</body>
+</html>

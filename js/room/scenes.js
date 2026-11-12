@@ -1879,7 +1879,7 @@ class AboutBg extends Base {
     this.scene.background = null; // se ve el fondo animado del sitio
     this.scene.add(new THREE.AmbientLight(0xffffff, 0.25));
     const key = new THREE.DirectionalLight(0xffffff, 0.8); key.position.set(-3, 5, 6); this.scene.add(key);
-    this.accent = new THREE.PointLight(C.turq, 22, 40, 1.4); this.accent.position.set(-6, 4, 12); this.scene.add(this.accent);
+    this.accent = new THREE.PointLight(C.turq, 22, 40, 1.4); this.accent.position.set(-9, 10, 6); this.scene.add(this.accent);
     this.fill = new THREE.PointLight(C.blue, 12, 40, 1.4); this.fill.position.set(7, -4, 10); this.scene.add(this.fill);
     this.group = new THREE.Group();
     this.scene.add(this.group);
@@ -1896,7 +1896,7 @@ class AboutBg extends Base {
       const sc = big ? 2.2 : 0.35 + rand() * 0.75;
       m.scale.setScalar(sc);
       if (rand() > 0.5) m.scale.x *= -1;
-      const base = big ? new THREE.Vector3(-4.5, 1.2, -7) : new THREE.Vector3(-10 + rand() * 18, -4 + rand() * 8, -12 + rand() * 7);
+      const base = big ? new THREE.Vector3(4.2, 0.6, -10) : new THREE.Vector3(-10 + rand() * 18, -4 + rand() * 8, -12 + rand() * 7);
       m.position.copy(base);
       this.group.add(m);
       return { m, base, ph: rand() * 6.28, sp: 0.15 + rand() * 0.25, rot: (rand() - 0.5) * 0.3 };
@@ -1909,6 +1909,41 @@ class AboutBg extends Base {
     this.scene.add(this.dust);
     this.tone = new THREE.Color(C.turq);
     this.camX = 0; this.camY = 0; this.camZ = 12;
+
+    // ---- el campus en un celular: acompaña la historia a un costado ----
+    this.SCREENS = { intro: 'img/room/campus-home.jpg', australia: 'img/room/campus-home.jpg', uruguay: 'img/room/campus-teacher.jpg', ushuaia: 'img/room/campus-week.jpg', world: 'img/room/campus-progress.jpg' };
+    this.screenTex = {};
+    Object.values(this.SCREENS).forEach((src) => { if (!this.screenTex[src]) { const t = tex(src); t.anisotropy = 12; this.screenTex[src] = t; } });
+    this.phone = new THREE.Group();
+    this.scene.add(this.phone);
+    const body = new THREE.Mesh(new RoundedBoxGeometry(2.24, 4.32, 0.24, 8, 0.34), glossy(0x0b1f24, { metalness: 0.5, roughness: 0.22 }));
+    const rimGeo = new RoundedBoxGeometry(2.3, 4.38, 0.2, 8, 0.36);
+    const rim = new THREE.Mesh(rimGeo, glossy(C.turq, { metalness: 0.7, roughness: 0.25 }));
+    rim.position.z = -0.03;
+    this.phone.add(rim, body);
+    const SW = 2.02, SH = 2.02 / (468 / 850);
+    const screenGeo = new THREE.PlaneGeometry(SW, Math.min(SH, 4.08));
+    this.screenA = new THREE.Mesh(screenGeo, new THREE.MeshBasicMaterial({ map: this.screenTex[this.SCREENS.intro], toneMapped: false, transparent: true }));
+    this.screenB = new THREE.Mesh(screenGeo, new THREE.MeshBasicMaterial({ toneMapped: false, transparent: true, opacity: 0 }));
+    this.screenA.position.z = 0.125; this.screenB.position.z = 0.127;
+    this.phone.add(this.screenA, this.screenB);
+    const notch = new THREE.Mesh(new RoundedBoxGeometry(0.4, 0.08, 0.02, 2, 0.035), new THREE.MeshBasicMaterial({ color: 0x000000 }));
+    notch.position.set(0, 1.98, 0.13);
+    this.phone.add(notch);
+    // reflejo de vidrio sobre la pantalla
+    const glare = new THREE.Mesh(screenGeo, new THREE.MeshBasicMaterial({ map: canvasTex(64, 256, (x, w, h) => { const g = x.createLinearGradient(0, 0, w, h); g.addColorStop(0, 'rgba(255,255,255,.16)'); g.addColorStop(0.35, 'rgba(255,255,255,0)'); x.fillStyle = g; x.fillRect(0, 0, w, h); }), transparent: true, depthWrite: false }));
+    glare.position.z = 0.129;
+    this.phone.add(glare);
+    // objetos del campus que orbitan el celular
+    this.orbiters = [CAMPUS.check(), CAMPUS.star(0xf2c14e), CAMPUS.quiz(), CAMPUS.play()].map((o, i) => {
+      o.scale.setScalar(i === 2 ? 0.55 : 0.5);
+      this.phone.add(o);
+      return { o, ph: i * (Math.PI / 2), r: 1.85 + (i % 2) * 0.25, y: [1.3, -0.4, 0.6, -1.5][i] };
+    });
+    this.curScreen = this.SCREENS.intro;
+    this.fade = 1;
+    this.spin = 0;
+    this.phoneX = 2.6; this.phoneY = -0.2;
   }
 
   update(t, dt, view) {
@@ -1926,6 +1961,32 @@ class AboutBg extends Base {
       it.m.rotation.set(Math.sin(t * 0.3 + it.ph) * 0.12, Math.sin(t * 0.25 + it.ph) * 0.4 + it.rot, Math.sin(t * 0.2 + i) * 0.06);
     });
     this.dust.rotation.y = t * 0.01;
+
+    // celular: cambia de pantalla con cada párrafo (fundido + medio giro corto)
+    const want = this.SCREENS[key] || this.SCREENS.intro;
+    if (want !== this.curScreen && this.fade >= 1) {
+      this.screenB.material.map = this.screenTex[want];
+      this.screenB.material.needsUpdate = true;
+      this.screenB.material.opacity = 0;
+      this.fade = 0; this.curScreen = want; this.spin = 1;
+    }
+    if (this.fade < 1) {
+      this.fade = Math.min(1, this.fade + dt * (this.world.reduced ? 99 : 2.2));
+      this.screenB.material.opacity = this.fade;
+      if (this.fade >= 1) {
+        this.screenA.material.map = this.screenB.material.map;
+        this.screenA.material.needsUpdate = true;
+        this.screenB.material.opacity = 0;
+      }
+    }
+    this.spin = lerp(this.spin, 0, 0.05);
+    this.orbiters.forEach((ob, i) => {
+      const a = t * 0.45 + ob.ph;
+      ob.o.position.set(Math.cos(a) * ob.r, ob.y + Math.sin(t * 0.9 + i) * 0.12, Math.sin(a) * 0.7 + 0.4);
+      ob.o.rotation.set(Math.sin(t * 0.6 + i) * 0.25, -a * 0.5, Math.sin(t * 0.4 + i) * 0.15);
+    });
+    this.phoneT = t;
+    this.phoneKey = key;
     // cámara: deriva lenta con el scroll y el cursor
     const wide = this.aspect > 1.15;
     this.camX = lerp(this.camX, (wide ? 1.2 : 0) * Math.min(1, sp * 8) + view.local.x * 0.5, 0.04);
@@ -1933,9 +1994,31 @@ class AboutBg extends Base {
     this.camZ = lerp(this.camZ, 12 - sp * 2.5, 0.04);
   }
 
-  beforeRender() {
+  beforeRender(view) {
     this.camera.position.set(this.camX, this.camY, this.camZ);
     this.camera.lookAt(this.camX * 0.6, this.camY * 0.6, -2);
+    // el celular vive en el espacio de la cámara: a la derecha en la portada,
+    // a la izquierda (al lado de los párrafos) durante la historia
+    const wide = this.aspect > 1.15;
+    const D = 7.2;
+    const halfH = Math.tan(THREE.MathUtils.degToRad(this.camera.fov / 2)) * D;
+    const halfW = halfH * this.aspect;
+    const intro = this.phoneKey === 'intro' || view.preview;
+    const tx = wide ? (intro ? halfW * 0.5 : -halfW * 0.5) : 0;
+    const ty = wide ? -0.15 : (intro ? halfH * 0.18 : halfH * 0.28);
+    this.phoneX = lerp(this.phoneX, tx, this.world.reduced ? 1 : 0.05);
+    this.phoneY = lerp(this.phoneY, ty, this.world.reduced ? 1 : 0.05);
+    const scale = Math.min((halfH * 2 * (wide ? 0.68 : 0.5)) / 4.32, (halfW * 2 * (wide ? 0.3 : 0.62)) / 2.24);
+    this.camera.updateMatrixWorld();
+    const p = new THREE.Vector3(this.phoneX, this.phoneY, -D);
+    this.camera.localToWorld(p);
+    this.phone.position.copy(p);
+    this.phone.quaternion.copy(this.camera.quaternion);
+    const t = this.phoneT || 0;
+    this.phone.rotateY((wide ? (this.phoneX < 0 ? 0.32 : -0.32) : 0) + Math.sin(t * 0.5) * 0.06 + view.local.x * 0.18 + this.spin * Math.PI * 0.18);
+    this.phone.rotateX(-0.05 + Math.sin(t * 0.4) * 0.04 - view.local.y * 0.12);
+    this.phone.position.y += Math.sin(t * 0.8) * 0.06 * scale;
+    this.phone.scale.setScalar(scale);
   }
 }
 

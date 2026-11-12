@@ -1,0 +1,28 @@
+{
+  "name": "english-room-redesign",
+  "version": "1.0.0",
+  "description": "The English Room - scroll-driven 3D exploration prototype",
+  "main": "index.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "start": "node preview-server.cjs",
+    "check": "node --check experiencia/experience.js && node --check experiencia/world.js && node --check preview-server.cjs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/santiagobouvier/the-english-room.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/santiagobouvier/the-english-room/issues"
+  },
+  "homepage": "https://github.com/santiagobouvier/the-english-room#readme",
+  "dependencies": {
+    "three": "^0.180.0"
+  }
+}

@@ -416,9 +416,16 @@
         </section>
 
         <dialog class="course-dialog" id="courseDialog" aria-labelledby="cdTitle">
-            <p class="cd-label" aria-hidden="true"></p>
-            <div class="cd-panel">
-                <button class="cd-close" type="button" aria-label="Cerrar detalle del curso">×</button>
+            <div class="cd-shell">
+                <header class="cd-top">
+                    <button class="cd-back" type="button"><span aria-hidden="true">←</span> Volver a los cursos</button>
+                    <span class="cd-count" aria-hidden="true"></span>
+                    <div class="cd-nav">
+                        <button class="cd-prev" type="button" aria-label="Curso anterior">←</button>
+                        <button class="cd-next" type="button" aria-label="Curso siguiente">→</button>
+                        <button class="cd-close" type="button" aria-label="Cerrar detalle del curso">×</button>
+                    </div>
+                </header>
                 <div class="cd-body"></div>
             </div>
         </dialog>

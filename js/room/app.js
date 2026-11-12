@@ -64,6 +64,7 @@ async function boot() {
   initLenis();
   initMenu();
   initLinks();
+  initPrefetch();
   initTilt();
   try { backdrop = startBackdrop($('#bg'), { reduced }); } catch (err) { console.warn('[room] sin fondo animado', err); }
 
@@ -238,10 +239,12 @@ async function navigate(url, { push = true, viaPortal = false } = {}) {
   busy = true;
   if (course) closeCourse({ silent: true });
 
-  const htmlP = fetch(url.pathname.split('/').pop() || 'index.html').then((r) => { if (!r.ok) throw new Error(r.status); return r.text(); });
+  const htmlP = getPage(fileOf(url) || 'index.html');
   const [dest, destVariant] = PAGE_HERO[fileOf(url)] || PAGE_HERO['index.html'];
 
   try {
+    // 1) la página actual se va enseguida y el viaje 3D pasa por encima del contenido
+    document.body.classList.add('leaving');
     if (world && !reduced) {
       if (viaPortal) world.takeOver(dest, destVariant);
       else await world.dive(dest, destVariant);
@@ -256,8 +259,12 @@ async function navigate(url, { push = true, viaPortal = false } = {}) {
 
     teardownPage();
     world?.unmount();
+    // 2) la página nueva entra con un fundido mientras la portada se acomoda
+    document.body.classList.add('entering');
     main.replaceWith(newMain);
     main = newMain;
+    document.body.classList.remove('leaving');
+    requestAnimationFrame(() => requestAnimationFrame(() => document.body.classList.remove('entering')));
     document.title = next.title;
     if (push) history.pushState({ page: key }, '', url.href);
     lenis?.scrollTo(0, { immediate: true, force: true });
@@ -278,6 +285,36 @@ async function navigate(url, { push = true, viaPortal = false } = {}) {
   } finally {
     busy = false;
   }
+}
+
+// ---------- precarga: el HTML de cada página se baja antes del clic ----------
+const pageCache = new Map();
+function getPage(file) {
+  if (!pageCache.has(file)) {
+    pageCache.set(file, fetch(file).then((r) => { if (!r.ok) throw new Error(r.status); return r.text(); })
+      .catch((e) => { pageCache.delete(file); throw e; }));
+  }
+  return pageCache.get(file);
+}
+function warm(a) {
+  try {
+    const url = new URL(a.href, location.href);
+    if (!isPage(url)) return;
+    const file = fileOf(url) || 'index.html';
+    if (PAGES[file] === main.dataset.page) return;
+    getPage(file).catch(() => {});
+    // también se prepara la escena 3D de destino, para que el viaje no se trabe
+    const [dest, variant] = PAGE_HERO[file] || PAGE_HERO['index.html'];
+    world?.getModule(dest, null, variant);
+  } catch (e) { /* link raro: se ignora */ }
+}
+function initPrefetch() {
+  const onIntent = (e) => { const a = e.target.closest?.('a[href]'); if (a && a.target !== '_blank') warm(a); };
+  document.addEventListener('pointerover', onIntent, { passive: true });
+  document.addEventListener('focusin', onIntent);
+  document.addEventListener('touchstart', onIntent, { passive: true });
+  // un rato después de entrar, se bajan las otras páginas en segundo plano
+  setTimeout(() => Object.keys(PAGES).filter((f) => f && PAGES[f] !== main.dataset.page).forEach((f) => getPage(f).catch(() => {})), 2500);
 }
 
 // =============================================================
@@ -446,17 +483,27 @@ function updateStages() {
 function initCourses() {
   const dialog = main.querySelector('#courseDialog');
   if (!dialog) return;
+  // salir es fácil: botón grande, X, Esc, atrás del navegador o tocar fuera del contenido
   const onCancel = (e) => { e.preventDefault(); closeCourse(); };
-  const onClick = (e) => { if (e.target === dialog) closeCourse(); };
-  const closeBtn = dialog.querySelector('.cd-close');
-  const onClose = () => closeCourse();
+  const onClick = (e) => {
+    const t = e.target;
+    if (t.closest('.cd-back, .cd-close')) { closeCourse(); return; }
+    const nav = t.closest('.cd-prev, .cd-next');
+    if (nav) { switchCourse(nav.dataset.slug); return; }
+    if (t === dialog || t.classList.contains('cd-shell')) closeCourse();
+  };
+  const onKey = (e) => {
+    if (!dialog.open || e.target.closest('input, textarea')) return;
+    if (e.key === 'ArrowRight') switchCourse(dialog.querySelector('.cd-next').dataset.slug);
+    if (e.key === 'ArrowLeft') switchCourse(dialog.querySelector('.cd-prev').dataset.slug);
+  };
   dialog.addEventListener('cancel', onCancel);
   dialog.addEventListener('click', onClick);
-  closeBtn.addEventListener('click', onClose);
+  dialog.addEventListener('keydown', onKey);
   pageCleanup.push(() => {
     dialog.removeEventListener('cancel', onCancel);
     dialog.removeEventListener('click', onClick);
-    closeBtn.removeEventListener('click', onClose);
+    dialog.removeEventListener('keydown', onKey);
   });
 }
 
@@ -530,6 +577,90 @@ function canonicalURL(slug) {
   return url.href;
 }
 
+/**
+ * Arma el detalle del curso con estructura, usando el texto original del curso tal cual:
+ * nivel, título, docente, descripción, datos en fichas (lo que tiene "Etiqueta: valor"),
+ * grupos (B2), notas y contacto.
+ */
+function renderCourse(dialog, slug) {
+  const art = main.querySelector(`.course-detail[data-slug="${slug}"]`);
+  if (!art) return;
+  const li = main.querySelector(`.spine-sec .course[data-slug="${slug}"]`);
+  const all = [...main.querySelectorAll('.course-detail')].map((a) => a.dataset.slug);
+  const idx = all.indexOf(slug);
+  const el = (tag, cls, html) => { const n = document.createElement(tag); if (cls) n.className = cls; if (html != null) n.innerHTML = html; return n; };
+
+  const title = art.querySelector('h3')?.textContent.trim() || '';
+  const img = art.querySelector('img')?.getAttribute('src');
+  const cta = art.querySelector('a[href*="wa.me"]');
+  const kids = [...art.children];
+  const ul = art.querySelector('ul');
+  const before = kids.filter((k) => k.tagName === 'P' && ul && (k.compareDocumentPosition(ul) & Node.DOCUMENT_POSITION_FOLLOWING));
+  const after = kids.filter((k) => k.tagName === 'P' && ul && (k.compareDocumentPosition(ul) & Node.DOCUMENT_POSITION_PRECEDING));
+  // párrafos destacados en negrita (IMPORTANTE, ¿PARA QUIÉN ES?, CUPOS LIMITADOS) van como notas
+  const isNote = (p) => p.innerHTML.trim().toLowerCase().startsWith('<b>');
+  const desc = before.filter((p) => !isNote(p));
+  const notes = [...before.filter(isNote), ...after];
+
+  const facts = el('dl', 'cd-facts');
+  const extra = el('ul', 'cd-extra');
+  const groups = el('ul', 'cd-groups');
+  [...(ul?.querySelectorAll('li') || [])].forEach((item) => {
+    const t = item.textContent.trim();
+    if (t.startsWith('•')) { groups.append(el('li', '', t.replace(/^•\s*/, '').split(' — ').map((x, i) => (i ? `<span>${x}</span>` : `<b>${x}</b>`)).join(''))); return; }
+    if (t === 'Grupos:') return;
+    const c = t.indexOf(':');
+    if (c > 0 && c < 40) {
+      const box = el('div');
+      box.append(el('dt', '', t.slice(0, c)), el('dd', '', t.slice(c + 1).trim()));
+      facts.append(box);
+    } else extra.append(el('li', '', t));
+  });
+
+  const body = dialog.querySelector('.cd-body');
+  body.innerHTML = '';
+  const grid = el('div', 'cd-grid');
+  const col = el('div', 'cd-main');
+  col.append(el('span', 'cd-level', li?.querySelector('.course-level')?.textContent.trim() || BADGE_LABEL[slug] || ''));
+  const h = el('h2', '', title); h.id = 'cdTitle'; col.append(h);
+  const chip = li?.querySelector('.teacher')?.cloneNode(true);
+  if (chip) { chip.classList.add('cd-teacher'); col.append(chip); }
+  desc.forEach((p) => col.append(el('p', 'cd-desc', p.innerHTML)));
+  if (facts.children.length) col.append(facts);
+  if (groups.children.length) { col.append(el('h3', 'cd-sub', 'Grupos')); col.append(groups); }
+  if (notes.length || extra.children.length) {
+    const nb = el('div', 'cd-notes');
+    notes.forEach((p) => nb.append(el('p', '', p.innerHTML)));
+    if (extra.children.length) nb.append(extra);
+    col.append(nb);
+  }
+  const ready = el('div', 'cd-cta');
+  ready.append(el('p', 'ready-title', 'Are you ready?'));
+  if (cta) { const a = cta.cloneNode(true); a.className = 'pill pill-turq pill-arrow'; a.textContent = 'Contactarme'; ready.append(a); }
+  col.append(ready);
+  const fig = el('figure', 'cd-photo');
+  if (img) { const im = el('img'); im.src = img; im.alt = ''; fig.append(im); }
+  grid.append(col, fig);
+  body.append(grid);
+  body.scrollTop = 0;
+
+  dialog.querySelector('.cd-count').textContent = `${String(idx + 1).padStart(2, '0')} / ${all.length}`;
+  dialog.querySelector('.cd-prev').dataset.slug = all[(idx - 1 + all.length) % all.length];
+  dialog.querySelector('.cd-next').dataset.slug = all[(idx + 1) % all.length];
+}
+
+/** Pasar al curso anterior/siguiente sin cerrar el detalle. */
+function switchCourse(slug) {
+  const dialog = main.querySelector('#courseDialog');
+  if (!dialog || !course) return;
+  renderCourse(dialog, slug);
+  const spine = spineOf();
+  const step = spine ? spine.steps.indexOf(slug) : -1;
+  if (spine && step >= 0) spine.frame.dataset.force = String(step);
+  history.replaceState({ page: 'cursos', curso: slug }, '', canonicalURL(slug));
+  course.slug = slug;
+}
+
 function openCourse(slug, { push = true, fromLoad = false } = {}) {
   const dialog = main.querySelector('#courseDialog');
   const art = main.querySelector(`.course-detail[data-slug="${slug}"]`);
@@ -537,20 +668,7 @@ function openCourse(slug, { push = true, fromLoad = false } = {}) {
   if (!dialog || !art) return;
   if (course?.slug === slug && dialog.open) return;
 
-  const body = dialog.querySelector('.cd-body');
-  const parts = art.cloneNode(true);
-  const title = parts.querySelector('h3');
-  const titleText = title?.textContent || '';
-  title?.remove();
-  body.innerHTML = '';
-  const eyebrow = document.createElement('span');
-  eyebrow.className = 'eyebrow';
-  eyebrow.textContent = 'Curso · The English Room';
-  const h = document.createElement('h2');
-  h.id = 'cdTitle';
-  h.textContent = titleText;
-  body.append(eyebrow, h, ...parts.childNodes);
-  dialog.querySelector('.cd-label').textContent = BADGE_LABEL[slug] || '';
+  renderCourse(dialog, slug);
 
   const spine = spineOf();
   const step = spine ? spine.steps.indexOf(slug) : -1;
@@ -569,7 +687,7 @@ function openCourse(slug, { push = true, fromLoad = false } = {}) {
   document.body.classList.add('course-open');
   dialog.showModal();
   requestAnimationFrame(() => dialog.classList.add('open'));
-  dialog.querySelector('.cd-close').focus({ preventScroll: true });
+  dialog.querySelector('.cd-back').focus({ preventScroll: true });
 
   const pushed = push && !fromLoad;
   if (pushed) history.pushState({ page: 'cursos', curso: slug }, '', canonicalURL(slug));

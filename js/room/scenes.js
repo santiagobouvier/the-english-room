@@ -436,8 +436,8 @@ class Call extends Base {
 
   beforeRender() {
     if (this.aspect < 0.9) {
-      this.camera.position.set(0, -3.4, this.fit(7.6, 14.5));
-      this.camera.lookAt(0, -3.4, 0);
+      this.camera.position.set(0, -2.7, this.fit(7.8, 15.6));
+      this.camera.lookAt(0, -2.7, 0);
       return;
     }
     const w = this.side ? 15.5 : 11;

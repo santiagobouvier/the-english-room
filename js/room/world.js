@@ -134,7 +134,8 @@ class Ribbon {
     const curve = new THREE.CatmullRomCurve3(pts, false, 'catmullrom', 0.5);
     this.segments = 420;
     this.radial = 14;
-    const radius = clamp(W * 0.012, 9, 22);
+    // en celular la cinta es más fina: acompaña sin tapar el texto
+    const radius = W < 700 ? 4.5 : clamp(W * 0.012, 9, 22);
     this.mesh.geometry.dispose();
     this.mesh.geometry = new THREE.TubeGeometry(curve, this.segments, radius, this.radial, false);
     this.total = this.mesh.geometry.index.count;
@@ -284,7 +285,7 @@ export class World {
       v.mesh.renderOrder = 50;
       v.state.dest = destName; v.state.destVariant = destVariant;
       v.state.p = 0; v.opacity = 0; v.state.mode = 'dive';
-      v.anim = { t: 0, dur: this.reduced ? 0.01 : 1.6, resolve };
+      v.anim = { t: 0, dur: this.reduced ? 0.01 : 1.2, resolve };
     });
   }
 
@@ -375,7 +376,7 @@ export class World {
         if (t >= 1) { const res = tv.anim.resolve; tv.anim = null; tv.state.mode = 'hold'; res(); }
       }
       if (tv.fade) {
-        tv.fade.t += dt / (this.reduced ? 0.01 : 0.7);
+        tv.fade.t += dt / (this.reduced ? 0.01 : 0.6);
         tv.opacity = 1 - easeOut(clamp(tv.fade.t));
         if (tv.fade.t >= 1) { tv.fade = null; tv.state.mode = 'idle'; tv.opacity = 0; }
       }

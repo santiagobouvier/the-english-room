@@ -42,7 +42,7 @@
     <canvas id="bg" aria-hidden="true"></canvas>
     <canvas id="gl" aria-hidden="true"></canvas>
     <header class="hd" id="hd">
-        <a class="hd-logo" href="index.html" aria-label="Campus The English Room, inicio">
+        <a class="hd-logo" href="#main" aria-label="Campus The English Room, inicio">
             <img src="img/logo-transparente.png" alt="">
             <span>THE ENGLISH ROOM<br><em class="hd-campus">campus</em></span>
         </a>
@@ -53,10 +53,11 @@
         </div>
         <nav class="menu" id="menu" aria-label="Principal" hidden>
             <div class="menu-card menu-links">
-                <a href="index.html" data-nav="inicio" aria-current="page"><span class="roll"><span>Inicio</span><span aria-hidden="true">Inicio</span></span></a>
-                <a href="alumnos.html" data-nav="alumnos"><span class="roll"><span>Alumnos</span><span aria-hidden="true">Alumnos</span></span></a>
-                <a href="profes.html" data-nav="profes"><span class="roll"><span>Profes</span><span aria-hidden="true">Profes</span></span></a>
-                <a href="ingresar.html" data-nav="ingresar"><span class="roll"><span>Cómo ingresar</span><span aria-hidden="true">Cómo ingresar</span></span></a>
+                <a href="#como"><span class="roll"><span>Cómo funciona</span><span aria-hidden="true">Cómo funciona</span></span></a>
+                <a href="#en-vivo"><span class="roll"><span>En vivo</span><span aria-hidden="true">En vivo</span></span></a>
+                <a href="#actividades"><span class="roll"><span>Actividades</span><span aria-hidden="true">Actividades</span></span></a>
+                <a href="#vistas"><span class="roll"><span>Alumnos y profes</span><span aria-hidden="true">Alumnos y profes</span></span></a>
+                <a href="#ingresar"><span class="roll"><span>Cómo ingresar</span><span aria-hidden="true">Cómo ingresar</span></span></a>
             </div>
             <a class="menu-card menu-level" href="https://santiagobouvier.github.io/campus-theenglishroom/">
                 <strong>Iniciar<br>sesión</strong>
@@ -107,7 +108,7 @@
             </ul>
         </section>
 
-        <section class="room over" aria-labelledby="h-room">
+        <section id="en-vivo" class="room over" aria-labelledby="h-room">
             <div class="sec" style="padding-bottom:0">
                 <div class="sec-head" style="margin-bottom:0">
                     <span class="eyebrow"><span class="n">02</span>En vivo</span>
@@ -139,10 +140,10 @@
             </div>
         </section>
 
-        <section class="spine-sec over" data-spine aria-labelledby="h-acts">
+        <section id="actividades" class="spine-sec over" data-spine aria-labelledby="h-acts">
             <div class="spine-sticky">
-                <div class="frame spine-frame" data-gl="spine"></div>
-                <a class="spine-hit" href="alumnos.html" tabindex="-1" aria-hidden="true"></a>
+                <div class="frame spine-frame" data-gl="spine" data-feather="0.26"></div>
+                <a class="spine-hit" href="#vistas" tabindex="-1" aria-hidden="true"></a>
                 <div class="spine-head">
                     <span class="eyebrow"><span class="n">03</span>Actividades</span>
                     <h2 id="h-acts" class="big">Seis formas de <em>practicar</em></h2>
@@ -150,12 +151,12 @@
                 </div>
                 <nav class="spine-index" aria-label="Tipos de actividad">
                     <ol>
-                        <li><a href="alumnos.html" data-step="0"><span>Quiz</span></a></li>
-                        <li><a href="alumnos.html" data-step="1"><span>Gaps</span></a></li>
-                        <li><a href="alumnos.html" data-step="2"><span>Match</span></a></li>
-                        <li><a href="alumnos.html" data-step="3"><span>Write</span></a></li>
-                        <li><a href="alumnos.html" data-step="4"><span>Speak</span></a></li>
-                        <li><a href="alumnos.html" data-step="5"><span>Play</span></a></li>
+                        <li><a href="#vistas" data-step="0"><span>Quiz</span></a></li>
+                        <li><a href="#vistas" data-step="1"><span>Gaps</span></a></li>
+                        <li><a href="#vistas" data-step="2"><span>Match</span></a></li>
+                        <li><a href="#vistas" data-step="3"><span>Write</span></a></li>
+                        <li><a href="#vistas" data-step="4"><span>Speak</span></a></li>
+                        <li><a href="#vistas" data-step="5"><span>Play</span></a></li>
                     </ol>
                 </nav>
                 <ul class="courses">
@@ -165,7 +166,6 @@
                         <h3>Multiple choice</h3>
                         <div class="course-tags"><span>Corrección: <b>automática</b></span><span>Reintentos: <b>2 o más</b></span></div>
                         <span class="chip teacher"><span><b>Resultado al instante</b><small>Campus · The English Room</small></span></span>
-                        <a class="pill pill-turq pill-arrow course-link" href="alumnos.html">Ver cómo es</a>
                     </li>
                     <li class="course" data-step="1" data-slug="gaps" data-img="img/room/foto-22.jpg" data-teacher="Resultado al instante">
                         <span class="course-count">02 / 6</span>
@@ -173,7 +173,6 @@
                         <h3>Completar espacios</h3>
                         <div class="course-tags"><span>Corrección: <b>automática</b></span><span>Adjuntos: <b>audio, imagen o YouTube</b></span></div>
                         <span class="chip teacher"><span><b>Resultado al instante</b><small>Campus · The English Room</small></span></span>
-                        <a class="pill pill-turq pill-arrow course-link" href="alumnos.html">Ver cómo es</a>
                     </li>
                     <li class="course" data-step="2" data-slug="match" data-img="img/room/foto-31.jpg" data-teacher="Resultado al instante">
                         <span class="course-count">03 / 6</span>
@@ -181,7 +180,6 @@
                         <h3>Unir</h3>
                         <div class="course-tags"><span>Corrección: <b>automática</b></span><span>Reintentos: <b>2 o más</b></span></div>
                         <span class="chip teacher"><span><b>Resultado al instante</b><small>Campus · The English Room</small></span></span>
-                        <a class="pill pill-turq pill-arrow course-link" href="alumnos.html">Ver cómo es</a>
                     </li>
                     <li class="course" data-step="3" data-slug="write" data-img="img/room/foto-17.jpg" data-teacher="La profe te devuelve feedback">
                         <span class="course-count">04 / 6</span>
@@ -189,7 +187,6 @@
                         <h3>Writing</h3>
                         <div class="course-tags"><span>Entrega: <b>cuenta como hecha</b></span><span>Corrección: <b>con feedback</b></span></div>
                         <span class="chip teacher"><span><b>La profe te devuelve feedback</b><small>Campus · The English Room</small></span></span>
-                        <a class="pill pill-turq pill-arrow course-link" href="alumnos.html">Ver cómo es</a>
                     </li>
                     <li class="course" data-step="4" data-slug="speak" data-img="img/room/foto-6.jpg" data-teacher="Tu voz, con devolución">
                         <span class="course-count">05 / 6</span>
@@ -197,7 +194,6 @@
                         <h3>Speaking</h3>
                         <div class="course-tags"><span>Audio: <b>grabás en el campus</b></span><span>Corrección: <b>con feedback</b></span></div>
                         <span class="chip teacher"><span><b>Tu voz, con devolución</b><small>Campus · The English Room</small></span></span>
-                        <a class="pill pill-turq pill-arrow course-link" href="alumnos.html">Ver cómo es</a>
                     </li>
                     <li class="course" data-step="5" data-slug="play" data-img="img/room/foto-4.jpg" data-teacher="Practicar jugando">
                         <span class="course-count">06 / 6</span>
@@ -205,43 +201,142 @@
                         <h3>Juego externo</h3>
                         <div class="course-tags"><span>Juegos: <b>Wordwall o puzzel.org</b></span><span>Al terminar: <b>casilla "terminé"</b></span></div>
                         <span class="chip teacher"><span><b>Practicar jugando</b><small>Campus · The English Room</small></span></span>
-                        <a class="pill pill-turq pill-arrow course-link" href="alumnos.html">Ver cómo es</a>
                     </li>
                 </ul>
                 <div class="spine-progress" aria-hidden="true"><i></i></div>
-                <p class="spine-hint" aria-hidden="true">Deslizá para recorrer las actividades</p>
+                <p class="spine-hint" aria-hidden="true">Deslizá para bajar por la biblioteca</p>
             </div>
         </section>
 
-        <section class="sec over" aria-labelledby="h-doors">
+        <section id="vistas" class="sec over vistas-intro" aria-labelledby="h-vistas">
             <div class="sec-head">
                 <span class="eyebrow"><span class="n">04</span>Dos vistas</span>
-                <h2 id="h-doors" class="mega" data-split>Para alumnos <em>y para profes</em></h2>
-            </div>
-            <div class="doors">
-                <a class="next-card door" href="alumnos.html" data-next-card style="--img: url('../img/room/foto-22.jpg')">
-                <span class="nc-media" aria-hidden="true"></span>
-                <div class="nc-top"><span class="eyebrow">Entrá</span><span class="nc-count">02 <i>/ 04</i></span></div>
-                <strong class="nc-title" data-chars>Alumnos</strong>
-                <div class="nc-foot"><p class="nc-desc">Tu semana, tus actividades y tu progreso.</p><span class="pill pill-arrow">Entrar</span></div>
-            </a>
-                <a class="next-card door" href="profes.html" data-next-card style="--img: url('../img/room/foto-30.jpg')">
-                <span class="nc-media" aria-hidden="true"></span>
-                <div class="nc-top"><span class="eyebrow">Entrá</span><span class="nc-count">03 <i>/ 04</i></span></div>
-                <strong class="nc-title" data-chars>Profes</strong>
-                <div class="nc-foot"><p class="nc-desc">Grupos, actividades, corrección y seguimiento.</p><span class="pill pill-arrow">Entrar</span></div>
-            </a>
+                <h2 id="h-vistas" class="mega" data-split>Para alumnos <em>y para profes</em></h2>
+                <p class="lead" data-reveal>El mismo campus, dos miradas: en el celular del alumno y en la compu de la profe.</p>
             </div>
         </section>
 
-        <nav class="next over" aria-label="Siguiente página">
-            <a class="next-card is-long" href="ingresar.html" data-next-card style="--img: url('../img/room/foto-perfil.jpg')">
-                <span class="nc-media" aria-hidden="true"></span>
-                <div class="nc-top"><span class="eyebrow">Siguiente</span><span class="nc-count">04 <i>/ 04</i></span></div>
-                <strong class="nc-title" data-chars>Cómo ingresar</strong>
-                <div class="nc-foot"><p class="nc-desc">Una sola puerta: Google, Microsoft o mail.</p><span class="pill pill-arrow">Entrar</span></div>
-            </a>
-        </nav>
+        <section class="about-stage" data-about aria-label="Cómo es el campus para alumnos y para profes">
+            <div class="about-sticky">
+                <div class="frame" data-gl="about" data-hero-frame data-focus="intro"></div>
+                <p class="about-giant over" aria-hidden="true">Alumnos <em>y profes</em></p>
+                <div class="dev" data-device data-mode="phone" data-intro-mode="phone" data-pos="intro" aria-hidden="true">
+                    <div class="dev-body">
+                        <div class="dev-lid">
+                            <i class="dev-cam"></i>
+                            <div class="dev-screen">
+                                <img data-shot="intro" class="on" src="img/room/campus-welcome.jpg" alt="">
+                                <img data-shot="semana" src="img/room/campus-home.jpg" alt="" loading="lazy">
+                                <img data-shot="speaking" src="img/room/campus-speaking.jpg" alt="" loading="lazy">
+                                <img data-shot="resultados" src="img/room/campus-week.jpg" alt="" loading="lazy">
+                                <img data-shot="progreso" src="img/room/campus-progress.jpg" alt="" loading="lazy">
+                                <img data-shot="overview" src="img/room/campus-desk-teacher.jpg" alt="" loading="lazy">
+                                <img data-shot="editor" src="img/room/campus-desk-editor.jpg" alt="" loading="lazy">
+                                <img data-shot="planner" src="img/room/campus-desk-teacher-planner.jpg" alt="" loading="lazy">
+                                <img data-shot="corregir" src="img/room/campus-desk-inbox.jpg" alt="" loading="lazy">
+                                <img data-shot="alumnos" src="img/room/campus-desk-teacher-students.jpg" alt="" loading="lazy">
+                                <span class="dev-glare"></span>
+                            </div>
+                        </div>
+                        <div class="dev-base"><i></i></div>
+                        <span class="dev-btn"></span>
+                        <span class="dev-shadow"></span>
+                        <div class="dev-tag"><span class="dev-tag-n"></span><strong class="dev-tag-place"></strong><span class="dev-tag-line"></span><em class="dev-tag-coord"></em></div>
+                    </div>
+                </div>
+            </div>
+            <div class="about-scroll">
+                <div class="story">
+                    <article class="story-step" data-focus="semana" data-device="phone">
+                        <span class="num">Alumnos · 01 / 04</span>
+                        <h3>Tu semana, <em>clara</em></h3>
+                        <p>Al entrar ves las actividades de la semana y en qué estado está cada una: pending, in progress, submitted o completed.</p>
+                        <p>Si estás en dos grupos (por ejemplo, tu nivel y pronunciación), ves las actividades de los dos.</p>
+                    </article>
+                    <article class="story-step" data-focus="speaking" data-device="phone">
+                        <span class="num">Alumnos · 02 / 04</span>
+                        <h3>Speaking, <em>con tu voz</em></h3>
+                        <p>Grabás tu audio dentro del campus. Writing y speaking cuentan como hechos al entregarlos, y tu profe te devuelve la corrección con feedback.</p>
+                    </article>
+                    <article class="story-step" data-focus="resultados" data-device="phone">
+                        <span class="num">Alumnos · 03 / 04</span>
+                        <h3>Resultados <em>al instante</em></h3>
+                        <p>En multiple choice, completar espacios y unir ves tu resultado apenas terminás, con al menos dos reintentos.</p>
+                        <p>Los juegos (Wordwall o puzzel.org) se abren con un link y se marcan con la casilla "terminé".</p>
+                    </article>
+                    <article class="story-step" data-focus="progreso" data-device="phone">
+                        <span class="num">Alumnos · 04 / 04</span>
+                        <h3>Tu progreso, <em>mes a mes</em></h3>
+                        <p>Cada mes por semanas, con los meses anteriores a la vista, cuánto llevás del curso y el historial de todo lo que hiciste.</p>
+                        <p>Y cuando completás la semana: ¡felicitaciones, con confetti!</p>
+                    </article>
+                    <article class="story-step" data-focus="overview" data-device="laptop">
+                        <span class="num">Profes · 01 / 05</span>
+                        <h3>La semana, <em>de un vistazo</em></h3>
+                        <p>Overview muestra la actividad de la semana con la barra de avance de cada grupo, y quién necesita un empujón ("Needs a nudge"), con un botón para mandarle un recordatorio.</p>
+                    </article>
+                    <article class="story-step" data-focus="editor" data-device="laptop">
+                        <span class="num">Profes · 02 / 05</span>
+                        <h3>Actividades <em>en minutos</em></h3>
+                        <p>Multiple choice, completar espacios, unir, writing, speaking o juego externo, con audio, imagen o video de YouTube.</p>
+                        <p>La misma actividad se puede duplicar en otros grupos.</p>
+                    </article>
+                    <article class="story-step" data-focus="planner" data-device="laptop">
+                        <span class="num">Profes · 03 / 05</span>
+                        <h3>Tu semana, <em>planificada</em></h3>
+                        <p>Programás cada actividad en su semana, con fecha de entrega, y los grupos los creás vos: los alumnos se unen con un código o un link.</p>
+                    </article>
+                    <article class="story-step" data-focus="corregir" data-device="laptop">
+                        <span class="num">Profes · 04 / 05</span>
+                        <h3>Corrección <em>con feedback</em></h3>
+                        <p>Writing y speaking llegan a una bandeja: escuchás el audio o leés el texto y mandás tu devolución.</p>
+                        <p>Varios profesores: Carla carga las actividades y el equipo corrige.</p>
+                    </article>
+                    <article class="story-step" data-focus="alumnos" data-device="laptop">
+                        <span class="num">Profes · 05 / 05</span>
+                        <h3>Cada alumno, <em>al día</em></h3>
+                        <p>Quién completó y quién tiene pendientes, con filtros "On track", "Behind" y "Not entering", la ficha de cada alumno y cada grupo semana por semana.</p>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <section id="app" class="sec over" data-ribbon="about" aria-labelledby="h-app">
+            <div class="sec-head">
+                <span class="eyebrow"><span class="n">05</span>App</span>
+                <h2 id="h-app" class="mega" data-split>Instalalo <em>como app</em></h2>
+                <p class="lead" data-reveal>Se instala en el celular y en la compu, gratis y sin pasar por tiendas.</p>
+            </div>
+            <ul class="facilities">
+                <li data-reveal><span class="n">i.</span><h3>Android, Chrome o Edge: con un toque</h3></li>
+                <li data-reveal style="--d:100"><span class="n">ii.</span><h3>iPhone y Safari de Mac: con una guía paso a paso</h3></li>
+                <li data-reveal style="--d:200"><span class="n">iii.</span><h3>En la compu abre en su propia ventana</h3></li>
+                <li data-reveal style="--d:300"><span class="n">iv.</span><h3>Avisos de actividades nuevas y feedback</h3></li>
+            </ul>
+        </section>
+
+        <section id="ingresar" class="sec over" data-ribbon="contact" aria-labelledby="h-ways">
+            <div class="signin">
+                <div>
+                    <span class="eyebrow"><span class="n">06</span>Cómo ingresar</span>
+                    <h2 id="h-ways" class="mega" data-split>Una sola <em>puerta</em></h2>
+                    <p class="lead" data-reveal>Alumnos y profes entran por el mismo lugar, como prefieran.</p>
+                    <ol class="ways">
+                        <li data-reveal><span class="w-ic g" aria-hidden="true">G</span><div><b>Con Google</b><p>Tu cuenta de Gmail. Entrás directo, sin elegir entre cuentas.</p></div></li>
+                        <li data-reveal style="--d:100"><span class="w-ic m" aria-hidden="true"><i></i><i></i><i></i><i></i></span><div><b>Con Microsoft</b><p>Outlook, Hotmail o Live.</p></div></li>
+                        <li data-reveal style="--d:200"><span class="w-ic e" aria-hidden="true">@</span><div><b>Con tu mail</b><p>Yahoo, iCloud o cualquier otro: escribís tu mail, te llega un código de 6 dígitos y entrás. El código evita que alguien entre con el mail de otra persona.</p></div></li>
+                    </ol>
+                    <div class="rules" data-reveal>
+                        <p><b>Solo mails invitados.</b> Tu profe carga la lista de mails de cada grupo. Si tu mail no está, podés mandar una solicitud y la profe la acepta o la rechaza.</p>
+                        <p><b>¿Tenés un link de invitación o un código de grupo?</b> También sirve para unirte.</p>
+                    </div>
+                    <p data-reveal style="margin-top:28px"><a class="pill pill-turq pill-arrow" href="https://santiagobouvier.github.io/campus-theenglishroom/">Iniciar sesión</a></p>
+                </div>
+                <figure class="phone-shot" data-reveal style="--d:150">
+                    <img src="img/room/campus-signin.jpg" alt="Pantalla de ingreso del campus: continuar con Google, con Microsoft o con email">
+                </figure>
+            </div>
+        </section>
 
         <footer class="ft over" aria-labelledby="ft-campus">
             <div class="ft-top">
@@ -250,10 +345,11 @@
                     <h3 id="ft-campus">Campus</h3>
                     <ul>
                         <li><a href="https://santiagobouvier.github.io/campus-theenglishroom/">Iniciar sesión</a></li>
-                        <li><a href="index.html">Inicio</a></li>
-                        <li><a href="alumnos.html">Alumnos</a></li>
-                        <li><a href="profes.html">Profes</a></li>
-                        <li><a href="ingresar.html">Cómo ingresar</a></li>
+                        <li><a href="#como">Cómo funciona</a></li>
+                        <li><a href="#en-vivo">En vivo</a></li>
+                        <li><a href="#actividades">Actividades</a></li>
+                        <li><a href="#vistas">Alumnos y profes</a></li>
+                        <li><a href="#ingresar">Cómo ingresar</a></li>
                     </ul>
                 </div>
                 <div data-reveal style="--d:200">

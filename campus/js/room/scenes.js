@@ -1772,6 +1772,17 @@ class Spine extends Base {
       this.root.add(o);
       return { o, y: y + yOff, ph: rand() * 6.28, spin: (rand() - 0.5) * 0.25 };
     });
+    // resplandor detrás de la torre: turquesa con un toque rosa, sigue a la cámara
+    this.glow = new THREE.Mesh(new THREE.PlaneGeometry(16, 16), new THREE.ShaderMaterial({
+      transparent: true, depthWrite: false, blending: THREE.CustomBlending, blendEquation: THREE.AddEquation, blendSrc: THREE.OneFactor, blendDst: THREE.OneFactor, blendSrcAlpha: THREE.ZeroFactor, blendDstAlpha: THREE.OneFactor,
+      uniforms: { uO: { value: 0.6 }, uA: { value: new THREE.Color(C.turq) }, uB: { value: new THREE.Color(C.pink) } },
+      vertexShader: 'varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix*modelViewMatrix*vec4(position,1.); }',
+      fragmentShader: 'uniform float uO; uniform vec3 uA; uniform vec3 uB; varying vec2 vUv; void main(){ float r = length(vUv-0.5)*2.0; float g = pow(clamp(1.0-r,0.0,1.0), 2.2); float p = pow(clamp(1.0-length(vUv-vec2(0.64,0.36))*2.6,0.0,1.0), 2.0); vec3 col = uA*g*g*0.16 + uB*p*p*0.06; gl_FragColor = vec4(col*uO, 1.0); }',
+    }));
+    this.glow.renderOrder = -1;
+    this.scene.add(this.glow);
+    this.scene.fog = new THREE.Fog(0x061317, 8, 24);
+
     // birrete: la meta, al final de la biblioteca
     this.goal = CAMPUS.cap();
     this.goal.position.set(0, -H - 2.4, 2.2);
@@ -1794,7 +1805,7 @@ class Spine extends Base {
     const pg = new THREE.BufferGeometry();
     pg.setAttribute('position', new THREE.BufferAttribute(pos, 3));
     pg.setAttribute('color', new THREE.BufferAttribute(pcol, 3));
-    this.dust = new THREE.Points(pg, new THREE.PointsMaterial({ size: 0.035, vertexColors: true, transparent: true, opacity: 0.55, depthWrite: false, blending: THREE.AdditiveBlending, toneMapped: false }));
+    this.dust = new THREE.Points(pg, new THREE.PointsMaterial({ size: 0.035, vertexColors: true, transparent: true, opacity: 0.55, depthWrite: false, blending: THREE.AdditiveBlending, toneMapped: false, fog: false }));
     this.root.add(this.dust);
 
     // tarjetas: foto (nítida, con movimiento lento) + capa de texto + vidrio
@@ -1871,7 +1882,8 @@ class Spine extends Base {
     const el = view.el;
     const force = el?.dataset.force;
     const tail = parseFloat(el?.dataset.tail || 0);
-    const target = (force != null && force !== '' ? +force : parseFloat(el?.dataset.s || 0)) + tail * 1.1;
+    const enter = el?.dataset.enter != null ? parseFloat(el.dataset.enter) : 1;
+    const target = (force != null && force !== '' ? +force : parseFloat(el?.dataset.s || 0)) + tail * 1.1 - (1 - enter) * 1.35;
     const prev = this.s;
     this.s = this.world.reduced ? target : lerp(this.s, target, 0.09);
     this.vel = lerp(this.vel, (this.s - prev) / Math.max(dt, 1e-3), 0.15);
@@ -1962,6 +1974,13 @@ class Spine extends Base {
     look.y += shy - 0.05 * free;
     this.camera.position.copy(cam);
     this.camera.lookAt(look);
+    // resplandor detrás de la torre, de frente a la cámara; la niebla acompaña la distancia
+    if (this.glow) {
+      this.glow.position.copy(out).multiplyScalar(-3.2).setY(y + 0.4);
+      this.glow.quaternion.copy(this.camera.quaternion);
+      this.glow.material.uniforms.uO.value = 0.85 + Math.sin(this.world.time * 0.6) * 0.12;
+    }
+    if (this.scene.fog) { this.scene.fog.near = dist + 2.5; this.scene.fog.far = dist + 15; }
     // ningún objeto del recorrido tapa la tarjeta activa: si queda delante, se achica y desaparece
     this.camera.updateMatrixWorld();
     const cardDist = cam.distanceTo(C0);

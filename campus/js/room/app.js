@@ -20,7 +20,7 @@ const $$ = (s, r = document) => [...r.querySelectorAll(s)];
 const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
-const PAGES = { '': 'inicio', 'index.html': 'inicio', 'alumnos.html': 'alumnos', 'profes.html': 'profes', 'ingresar.html': 'ingresar' };
+const PAGES = { '': 'inicio', 'index.html': 'inicio' };
 const fileOf = (url) => url.pathname.split('/').pop();
 const isPage = (url) => url.origin === location.origin && fileOf(url) in PAGES;
 
@@ -659,6 +659,11 @@ function updateStages() {
     sp.frame.dataset.s = f.toFixed(4);
     sp.sec.style.setProperty('--sp', (f / Math.max(1, sp.n - 1)).toFixed(4));
     const tail = sp.tail();
+    const er = sp.sec.getBoundingClientRect();
+    const enter = reduced ? 1 : clamp(1 - er.top / vh);
+    const ee = enter * enter * (3 - 2 * enter);
+    sp.sec.style.setProperty('--enter', ee.toFixed(4));
+    sp.frame.dataset.enter = ee.toFixed(4);
     const ease = tail * tail * (3 - 2 * tail);
     sp.sec.style.setProperty('--tail', ease.toFixed(4));
     sp.frame.dataset.tail = ease.toFixed(4);
@@ -671,7 +676,7 @@ function updateStages() {
         if (+a.dataset.step === i) a.setAttribute('aria-current', 'step'); else a.removeAttribute('aria-current');
       });
       const hit = sp.sec.querySelector('.spine-hit');
-      if (hit) { hit.href = `cursos.html?curso=${sp.steps[i]}`; hit.dataset.curso = sp.steps[i]; }
+      if (hit) { hit.href = '#vistas'; }
     }
   }
 

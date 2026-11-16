@@ -24,6 +24,7 @@ uniform vec2 uSize;
 uniform float uRadius;
 uniform float uOpacity;
 uniform float uReveal;
+uniform vec2 uFeather;
 varying vec2 vUv;
 float sdRoundBox(vec2 p, vec2 b, float r) { vec2 q = abs(p) - b + r; return length(max(q, 0.0)) + min(max(q.x, q.y), 0.0) - r; }
 void main() {
@@ -33,8 +34,12 @@ void main() {
   // revelado desde abajo, con borde suave
   float rv = smoothstep(0.0, 0.06, uReveal * 1.06 - (1.0 - vUv.y));
   vec4 c = texture2D(map, vUv);
-  float a = m * uOpacity * rv;
-  if (a * c.a < 0.003) discard;
+  // fundido vertical: la escena se disuelve en el fondo en vez de cortarse en línea recta
+  float py = vUv.y * uSize.y;
+  float fd = smoothstep(0.0, max(uFeather.x, 1e-3), uSize.y - py) * smoothstep(0.0, max(uFeather.y, 1e-3), py);
+  fd = mix(1.0, fd, step(0.5, uFeather.x + uFeather.y));
+  float a = m * uOpacity * rv * fd;
+  if (a * c.a < 0.003 && a * max(c.r, max(c.g, c.b)) < 0.0003) discard;
   gl_FragColor = vec4(c.rgb * a, c.a * a);
   #include <tonemapping_fragment>
   #include <colorspace_fragment>
@@ -61,7 +66,7 @@ class View {
     this.mat = new THREE.ShaderMaterial({
       vertexShader: COMP_VERT, fragmentShader: COMP_FRAG, transparent: true, premultipliedAlpha: true,
       depthWrite: true, depthTest: true,
-      uniforms: { map: { value: this.rt.texture }, uSize: { value: new THREE.Vector2(1, 1) }, uRadius: { value: 0 }, uOpacity: { value: 0 }, uReveal: { value: 1 } },
+      uniforms: { map: { value: this.rt.texture }, uSize: { value: new THREE.Vector2(1, 1) }, uRadius: { value: 0 }, uOpacity: { value: 0 }, uReveal: { value: 1 }, uFeather: { value: new THREE.Vector2(0, 0) } },
     });
     this.mesh = new THREE.Mesh(world.unitPlane, this.mat);
     this.mesh.frustumCulled = false;
@@ -509,6 +514,8 @@ export class World {
     u.uRadius.value = Math.min(v.radius || 0, Math.min(r.w, r.h) / 2);
     u.uOpacity.value = v.opacity;
     u.uReveal.value = 1;
+    const fe = v.el && v.el.dataset.feather ? parseFloat(v.el.dataset.feather) * this.H * (1 - (v.expandT || 0)) : 0;
+    u.uFeather.value.set(fe, fe);
     // los marcos normales se entrelazan con la cinta; los expandidos van siempre arriba
     v.mat.depthTest = v.mesh.renderOrder < 20;
   }

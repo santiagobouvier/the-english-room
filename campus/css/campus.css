@@ -59,3 +59,17 @@
   .dev-shadow { filter: none; }
   .loader-word span { animation-duration: .45s; }
 }
+
+/* =========================================================
+   Página única: la torre de actividades se funde con lo de
+   arriba y lo de abajo (sin cortes de sección)
+   ========================================================= */
+.spine-sec { height: calc(100vh + 5 * 62vh + 70vh); }
+.spine-sec .courses, .spine-index, .spine-head, .spine-progress, .spine-hint { opacity: calc(var(--enter, 1) * (1 - var(--tail, 0) * 1.6)); }
+.spine-head { transform: translateY(calc((1 - var(--enter, 1)) * 40px)); }
+.spine-sec + .sec { margin-top: -46vh; padding-top: 120px; }
+.vistas-intro { padding-bottom: 0; }
+.about-stage .about-giant em { font-style: italic; color: var(--turq); }
+@media (max-width: 900px) {
+  .spine-sec { height: calc(100vh + 5 * 52vh + 70vh); }
+}

@@ -73,3 +73,19 @@
 @media (max-width: 900px) {
   .spine-sec { height: calc(100vh + 5 * 52vh + 70vh); }
 }
+
+/* =========================================================
+   Instalá la app: espacio para video + pasos
+   ========================================================= */
+.app-grid { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, .85fr); gap: clamp(28px, 5vw, 80px); align-items: start; }
+.vid { position: relative; margin: 0; aspect-ratio: 16 / 9; border-radius: 22px; border: 1px solid var(--line); background: radial-gradient(120% 90% at 30% 20%, rgba(38,204,200,.14), rgba(6,19,23,.9) 60%); overflow: hidden; display: grid; place-items: center; }
+.vid::before { content: ""; position: absolute; inset: 14px; border: 1px dashed rgba(243,247,246,.16); border-radius: 14px; pointer-events: none; }
+.vid-play { width: 78px; height: 78px; border-radius: 50%; background: var(--turq); box-shadow: 0 0 0 10px rgba(38,204,200,.14), 0 20px 50px -10px rgba(38,204,200,.5); position: relative; }
+.vid-play::after { content: ""; position: absolute; left: 31px; top: 24px; border-left: 22px solid var(--ink, #061317); border-top: 15px solid transparent; border-bottom: 15px solid transparent; }
+.app-steps { display: grid; gap: 26px; }
+.app-block h3 { font-family: var(--serif); font-weight: 400; font-size: clamp(28px, 2.4vw, 38px); margin: 0 0 12px; display: flex; gap: 12px; align-items: baseline; }
+.app-block h3 .n { font-family: var(--serif); font-style: italic; color: var(--turq); font-size: .7em; }
+.app-block ol { margin: 0; padding-left: 20px; display: grid; gap: 8px; color: rgba(243,247,246,.84); font-size: 16px; }
+.app-block b { color: #fff; font-weight: 600; }
+.app-cta { display: flex; flex-wrap: wrap; gap: 10px; }
+@media (max-width: 900px) { .app-grid { grid-template-columns: 1fr; } .vid-play { width: 64px; height: 64px; } .vid-play::after { left: 25px; top: 19px; border-left-width: 18px; border-top-width: 13px; border-bottom-width: 13px; } }
